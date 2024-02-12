@@ -1,5 +1,8 @@
 #include "game.h"
+#include "Graphics/Sprite.h"
 #include <iostream>
+#include "SDL2/SDL.h"
+#include "debug.h"
 
 Game* Game::GetGame()
 {
@@ -8,33 +11,64 @@ Game* Game::GetGame()
 	return gameSingleton;
 }
 
-Game* Game::DestroyGame()
+void Game::DestroyGame()
 {
 	delete GetGame();
 }
 
-Game* Game::Run() { Initialise(); }
+void Game::Run() { Initialize(); }
 
-Game::Game() : _isRunning(true)
+void Game::Quit() { _isRunning = false; }
+
+Game::Game() : _isRunning(true), _windowReference(nullptr), _rendererReference(nullptr)
 {
-	printf("Game created.\n");
+	DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game created.");
 }
 
 Game::~Game()
 {
-	printf("Game destroyed.\n");
+	DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game destroyed.");
 }
 
-void Game::Initialise()
+void Game::Initialize()
 {
-	printf("Game initialised.\n");
+	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+	{
+		DEBUG_LOG_SDL_ERROR("");
+		return;
+	}
+
+	DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game initialised.");
 
 	Start();
 }
 
 void Game::Start()
 {
-	printf("Game started.\n");
+	_windowReference = SDL_CreateWindow("Bad Attempt Engine", 
+		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720,
+		0u);
+
+	if (_windowReference == nullptr)
+	{
+		DEBUG_LOG_SDL_ERROR("Window failed to create: ");
+
+		Dispose();
+		return;
+	}
+
+	_rendererReference = SDL_CreateRenderer(_windowReference, -1, 0u);
+
+	if (_rendererReference == nullptr)
+	{
+		DEBUG_LOG_SDL_ERROR("Renderer failed to create: ");
+
+		Dispose();
+		return;
+	}
+
+	_testTexture = new Sprite(_rendererReference);
+	_testTexture->ImportTexture("Content/Sprites/Letters/DBlue.png");
 
 	GameLoop();
 }
@@ -57,32 +91,52 @@ void Game::GameLoop()
 
 void Game::ProcessInput()
 {
-	printf("Input read.\n");
+	SDL_Event inputEvent;
+
+	while (SDL_PollEvent(&inputEvent))
+	{
+		if (inputEvent.type == SDL_QUIT)
+		{
+			Quit();
+		}
+	}
 }
 
 void Game::Update()
 {
-	printf("Frame processed.\n");
-
-	static int frameCount = 0;
-
-	if (frameCount >= 30)
-		_isRunning = false;
-	else
-		frameCount++;
 }
 
 void Game::Render()
 {
-	printf("Frame rendered.\n");
+	SDL_SetRenderDrawColor(_rendererReference, 0xFF, 0x00, 0x00, 0xFF);
+
+	SDL_RenderClear(_rendererReference);
+
+	_testTexture->Draw();
+
+	SDL_RenderPresent(_rendererReference);
 }
 
 void Game::CollectGarbage()
 {
-	printf("garbage collected.\n");
+
 }
 
 void Game::Dispose()
 {
-	printf("Game disposed.\n");
+	if (_rendererReference != nullptr)
+	{
+		SDL_DestroyRenderer(_rendererReference);
+		_rendererReference = nullptr;
+	}
+
+	if (_windowReference != nullptr)
+	{
+		SDL_DestroyWindow(_windowReference);
+		_windowReference = nullptr;
+	}
+
+	SDL_Quit();
+
+	DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game disposed.");
 }

@@ -1,18 +1,26 @@
 ﻿#pragma once
 
+struct SDL_Window;
+struct SDL_Renderer;
+struct Sprite;
+
 class Game
 {
-public:
-
 private:
 	bool _isRunning;
+
+	SDL_Window* _windowReference;
+	SDL_Renderer* _rendererReference;
+	Sprite* _testTexture;
 
 public:
 	static Game* GetGame();
 
-	static Game* DestroyGame();
+	static void DestroyGame();
 
-	Game* Run();
+	void Run();
+
+	void Quit();
 
 private:
 	Game();
@@ -22,9 +30,9 @@ private:
  /*
  ┏[Setup]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
  ┃  Initialise core and external functionality.          ┃ 
- ┃  */void Initialise();/*                               ┃
+ ┃  */void Initialize();/*                               ┃
  ┃                                                       ┃ 
- ┃  Initialise internal functions and load assets.       ┃ 
+ ┃  Initialise internal functionality and load assets.   ┃ 
  ┃  */void Start();/*                                    ┃
  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
                              ↓
