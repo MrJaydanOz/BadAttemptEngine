@@ -96,14 +96,22 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Private\game.cpp" />
+    <ClCompile Include="Source\Private\Math\RectT.cpp" />
+    <ClCompile Include="Source\Private\Game.cpp" />
+    <ClCompile Include="Source\Private\Graphics\Image.cpp" />
     <ClCompile Include="Source\Private\Graphics\Sprite.cpp" />
+    <ClCompile Include="Source\Private\Math\VectorT.cpp" />
     <ClCompile Include="Source\Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Public\debug.h" />
-    <ClInclude Include="Source\Public\game.h" />
+    <ClInclude Include="Source\Public\Def.h" />
+    <ClInclude Include="Source\Public\Math\RectT.h" />
+    <ClInclude Include="Source\Public\Debug.h" />
+    <ClInclude Include="Source\Public\Game.h" />
+    <ClInclude Include="Source\Public\Graphics\Image.h" />
     <ClInclude Include="Source\Public\Graphics\Sprite.h" />
+    <ClInclude Include="Source\Public\Math\VectorT.h" />
+    <ClInclude Include="Source\Public\For.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
