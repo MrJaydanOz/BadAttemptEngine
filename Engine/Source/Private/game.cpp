@@ -1,8 +1,8 @@
-#include "game.h"
+#include "Game.h"
 #include "Graphics/Sprite.h"
 #include <iostream>
 #include "SDL2/SDL.h"
-#include "debug.h"
+#include "Debug.h"
 
 Game* Game::GetGame()
 {

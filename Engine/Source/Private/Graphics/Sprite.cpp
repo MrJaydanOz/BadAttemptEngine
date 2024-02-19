@@ -1,5 +1,5 @@
 #include "Graphics/Sprite.h"
-#include "debug.h"
+#include "Debug.h"
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 

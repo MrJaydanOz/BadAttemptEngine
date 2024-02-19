@@ -24,7 +24,6 @@ public:
 
 private:
 	Game();
-
 	~Game();
 
  /*
