@@ -1,6 +1,8 @@
 #include "Graphics/Image.h"
 #include "Debug.h"
 #include <SDL2/SDL_image.h>
+#include <stdexcept>
+#include "Math/VectorT.h"
 
 Image* Image::Load(const char* path)
 {
@@ -8,16 +10,29 @@ Image* Image::Load(const char* path)
 
 	if (surfaceData == nullptr)
 	{
-		DEBUG_LOG_ERROR_CONTEXTED(BAE_LOG_CONTEXT, "Image failed to load: " << SDL_GetError());
+		DEBUG_LOG_SDL_ERROR("Image failed to load: ");
 		return nullptr;
 	}
 	else
 		return new Image(path, surfaceData);
 }
 
+bool Image::TryLoad(const char* path, Image*& image)
+{
+	image = Load(path);
+	return image != nullptr;
+}
+
 Image::~Image()
 {
 	SDL_FreeSurface(_surfaceData);
+	delete _surfaceData;
 }
+
+const Vector2I Image::GetSize() const { return Vector2I(GetWidth(), GetHeight()); }
+
+const int Image::GetWidth() const { return _surfaceData->w; }
+
+const int Image::GetHeight() const { return _surfaceData->h; }
 
 Image::Image(const char* path, SDL_Surface* surfaceData) : _path(path), _surfaceData(surfaceData) { }

@@ -1,36 +1,29 @@
 #pragma once
+#include <SDL2/SDL_image.h>
+#include "Nodes/Transform.h"
+#include "Image.h"
+#include "Color.h"
 
-struct SDL_Texture;
-struct SDL_Renderer;
-struct SDL_Surface;
+enum SpriteBlendingMode
+{
+	None,
+	Alpha,
+	Add,
+	Modulate,
+	Multiply
+};
 
-class Sprite
+class Sprite : public Transform
 {
 public:
-	int posX, posY;
-
-	float rotation;
-
-	float scale;
+	bool enabled = true;
+	Image* image;
+	Color color = 0xFFFFFFFF;
+	SpriteBlendingMode blendingMode = SpriteBlendingMode::None;
 
 private:
-	SDL_Texture* _textureReference;
-
-	SDL_Renderer* _rendererReference;
-
-	SDL_Surface* _surfaceData;
-
-	const char* _path;
+	int _renderLayer;
+	int _zIndex;
 
 public:
-	Sprite(SDL_Renderer* _rendererReference);
-	~Sprite();
-
-	bool ImportTexture(const char* pathToFile);
-
-	void Draw();
-
-	void Dispose();
-
-	const char* GetPath() const { return _path; }
 };

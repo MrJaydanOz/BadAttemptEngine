@@ -1,8 +1,6 @@
 ﻿#pragma once
-
-struct SDL_Window;
-struct SDL_Renderer;
-struct Sprite;
+#include <SDL2/SDL_image.h>
+#include "Graphics/Sprite.h"
 
 class Game
 {
