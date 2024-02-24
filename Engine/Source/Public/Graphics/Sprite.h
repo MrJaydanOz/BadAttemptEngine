@@ -1,8 +1,7 @@
 #pragma once
-#include <SDL2/SDL_image.h>
 #include "Nodes/Transform.h"
-#include "Image.h"
-#include "Color.h"
+#include "Graphics/Image.h"
+#include "Graphics/Color.h"
 
 enum SpriteBlendingMode
 {
@@ -16,10 +15,10 @@ enum SpriteBlendingMode
 class Sprite : public Transform
 {
 public:
-	bool enabled = true;
+	bool enabled;
 	Image* image;
-	Color color = 0xFFFFFFFF;
-	SpriteBlendingMode blendingMode = SpriteBlendingMode::None;
+	Color color;
+	SpriteBlendingMode blendingMode;
 
 private:
 	int _renderLayer;

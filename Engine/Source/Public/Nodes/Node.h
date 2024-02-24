@@ -1,6 +1,6 @@
 #pragma once
-#include <vector>
 #include <string>
+#include <vector>
 
 class Node
 {
@@ -10,6 +10,7 @@ public:
 public:
 	virtual ~Node();
 
+	/*
 	bool HasName() const;
 	std::string GetName() const;
 	void SetName(const std::string& name);
@@ -34,6 +35,7 @@ public:
 	T* CreateNode();
 	template<typename T>
 	T* CreateNode(const std::string& name);
+	*/
 
 private:
 	std::vector<Node*>* _children;

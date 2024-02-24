@@ -1,13 +1,19 @@
 #pragma once
-#include "Nodes/Node.h"
+#include "Node.h"
 #include "Math/PoseT.h"
+#include "Math/VectorT.h"
+
+// FORWARD DECLARATION F***ING SUCKS A***
+/*class Node;
+class PoseF;
+class Vector2F;*/
 
 class Transform : public Node
 {
 private:
-	PoseF _pose = PoseF(Vector2F(0.0f, 0.0f), 0.0f);
-	PoseF* _cachedWorldPose = nullptr;
-	bool _hasModified = false;
+	PoseF _pose; // <- COULDNT DEFINE FEILD WITH FORWARD DECLARATION IT IS NEVER WORTH IT.
+	PoseF* _cachedWorldPose;
+	bool _hasModified;
 
 public:
 	~Transform();

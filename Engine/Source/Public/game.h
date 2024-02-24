@@ -1,6 +1,10 @@
 ﻿#pragma once
-#include <SDL2/SDL_image.h>
-#include "Graphics/Sprite.h"
+#include <vector>
+
+struct SDL_Window;
+struct SDL_Renderer;
+class Image;
+class Sprite;
 
 class Game
 {
@@ -9,7 +13,14 @@ private:
 
 	SDL_Window* _windowReference;
 	SDL_Renderer* _rendererReference;
-	Sprite* _testTexture;
+	Image* _cube1Image;
+	Image* _cube2Image;
+	Image* _cube3Image;
+	Image* _cube4Image;
+	Image* _cube5Image;
+	Image* _fireRingImage;
+	Image* _fireSmallImage;
+	std::vector<Sprite*> _sprites;
 
 public:
 	static Game* GetGame();

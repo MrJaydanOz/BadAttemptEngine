@@ -1,6 +1,8 @@
 #include "Nodes/Transform.h"
 #include <algorithm>
 #include "Def.h"
+#include "Nodes/Node.h"
+#include "Math/PoseT.h"
 
 static bool tryGetNextParentTransform(const Node* node, Transform*& transform)
 {

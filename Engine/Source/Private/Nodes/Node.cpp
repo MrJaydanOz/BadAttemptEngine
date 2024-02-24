@@ -1,5 +1,7 @@
 #include "Nodes/Node.h"
 #include <algorithm> 
+#include <vector>
+#include <string>
 
 Node::~Node()
 {

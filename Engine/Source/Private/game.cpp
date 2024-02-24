@@ -1,6 +1,8 @@
 #include "Game.h"
-#include "Graphics/Sprite.h"
 #include <iostream>
+#include <SDL2/SDL_image.h>
+#include <vector>
+#include "Graphics/Sprite.h"
 #include "SDL2/SDL.h"
 #include "Debug.h"
 
@@ -67,9 +69,6 @@ void Game::Start()
 		return;
 	}
 
-	_testTexture = new Sprite(_rendererReference);
-	_testTexture->ImportTexture("Content/Sprites/Letters/DBlue.png");
-
 	GameLoop();
 }
 
@@ -111,8 +110,6 @@ void Game::Render()
 	SDL_SetRenderDrawColor(_rendererReference, 0xFF, 0x00, 0x00, 0xFF);
 
 	SDL_RenderClear(_rendererReference);
-
-	_testTexture->Draw();
 
 	SDL_RenderPresent(_rendererReference);
 }
