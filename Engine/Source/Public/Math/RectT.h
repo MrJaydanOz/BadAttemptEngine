@@ -2,13 +2,14 @@
 #include "VectorT.h"
 
 #define DECLARATION_RECT(rectType, vectorType, elementType, ...) \
-class rectType \
+struct rectType \
 { \
 public: \
     vectorType min, max; \
  \
 public: \
     rectType(vectorType min, vectorType max) : min(min), max(max) { } \
+    rectType(elementType minX, elementType minY, elementType maxX, elementType maxY) : min(minX, minY), max(maxX, maxY) { } \
     __VA_ARGS__ \
 };
 

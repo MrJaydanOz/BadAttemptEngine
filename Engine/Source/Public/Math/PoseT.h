@@ -2,7 +2,7 @@
 #include "VectorT.h"
 
 #define DECLARATION_POSE(poseType, positionType, positionElementType, rotationType, ...) \
-class poseType \
+struct poseType \
 { \
 public: \
     positionType position; \

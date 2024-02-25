@@ -1,11 +1,13 @@
 #pragma once
-#include <SDL2/SDL_image.h>
+#include "Math/RectT.h"
 #include "Math/VectorT.h"
+
+struct SDL_Surface;
 
 class Image
 {
 private:
-	SDL_Surface* _surfaceData;
+public: SDL_Surface* _surfaceData;
 
 	const char* _path;
 
@@ -28,9 +30,9 @@ public:
 
 	const char* GetPath() const { _path; }
 
-	const Vector2I GetSize() const;
-	const int GetWidth() const;
-	const int GetHeight() const;
+	Vector2I GetSize() const;
+	int GetWidth() const;
+	int GetHeight() const;
 
 private:
 	Image(const char* path, SDL_Surface* surfaceData);

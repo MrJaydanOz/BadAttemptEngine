@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include <vector>
+#include "Graphics/Image.h"
+#include "Graphics/Sprite.h"
 
 struct SDL_Window;
 struct SDL_Renderer;
-class Image;
-class Sprite;
+struct SDL_Texture;
 
 class Game
 {
@@ -14,13 +15,19 @@ private:
 	SDL_Window* _windowReference;
 	SDL_Renderer* _rendererReference;
 	Image* _cube1Image;
+	SDL_Texture* _cube1Texture;
 	Image* _cube2Image;
+	SDL_Texture* _cube2Texture;
 	Image* _cube3Image;
+	SDL_Texture* _cube3Texture;
 	Image* _cube4Image;
+	SDL_Texture* _cube4Texture;
 	Image* _cube5Image;
+	SDL_Texture* _cube5Texture;
 	Image* _fireRingImage;
+	SDL_Texture* _fireRingTexture;
 	Image* _fireSmallImage;
-	std::vector<Sprite*> _sprites;
+	SDL_Texture* _fireSmallTexture;
 
 public:
 	static Game* GetGame();

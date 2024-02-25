@@ -15,12 +15,16 @@ public:
 	std::string GetName() const;
 	void SetName(const std::string& name);
 
+	*/
 	bool HasParent() const;
-	Node* GetParent() const;
+	const Node* GetParent() const;
+	/*
 	void SetParent(const Node* node);
 
+	*/
 	const std::vector<Node*>* GetChildren() const;
 
+	/*
 	template<typename T>
 	T* FindChildOfType() const;
 	template<typename T>

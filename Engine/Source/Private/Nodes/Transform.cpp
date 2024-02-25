@@ -4,13 +4,13 @@
 #include "Nodes/Node.h"
 #include "Math/PoseT.h"
 
-static bool tryGetNextParentTransform(const Node* node, Transform*& transform)
+static bool tryGetNextParentTransform(const Node* node, const Transform*& transform)
 {
-	Node* parent = node->GetParent();
+	const Node* parent = node->GetParent();
 
 	while (parent != nullptr)
 	{
-		Transform* parentTransform = dynamic_cast<Transform*>(parent);
+		const Transform* parentTransform = dynamic_cast<const Transform*>(parent);
 		if (parentTransform)
 		{
 			transform = parentTransform;
@@ -40,7 +40,7 @@ PoseF Transform::GetPose() const
 	if (_cachedWorldPose != nullptr)
 		return *_cachedWorldPose;
 
-	Transform* parentTransform;
+	const Transform* parentTransform;
 
 	if (tryGetNextParentTransform(this, parentTransform))
 		return parentTransform->TransformPose(GetLocalPose());
@@ -50,7 +50,7 @@ PoseF Transform::GetPose() const
 
 void Transform::SetPose(const PoseF& pose)
 {
-	Transform* parentTransform;
+	const Transform* parentTransform;
 
 	if (tryGetNextParentTransform(this, parentTransform))
 		SetLocalPose(parentTransform->InverseTransformPose(pose));
@@ -68,7 +68,7 @@ Vector2F Transform::GetPosition() const
 	if (_cachedWorldPose != nullptr)
 		return _cachedWorldPose->position;
 
-	Transform* parentTransform;
+	const Transform* parentTransform;
 
 	if (tryGetNextParentTransform(this, parentTransform))
 		return parentTransform->TransformPoint(GetLocalPosition());
@@ -78,7 +78,7 @@ Vector2F Transform::GetPosition() const
 
 void Transform::SetPosition(const Vector2F& position)
 {
-	Transform* parentTransform;
+	const Transform* parentTransform;
 
 	if (tryGetNextParentTransform(this, parentTransform))
 		SetLocalPosition(parentTransform->InverseTransformPoint(position));
@@ -95,7 +95,7 @@ float Transform::GetRotation() const
 	if (_cachedWorldPose != nullptr)
 		return _cachedWorldPose->rotation;
 
-	Transform* parentTransform;
+	const Transform* parentTransform;
 
 	if (tryGetNextParentTransform(this, parentTransform))
 		return parentTransform->TransformRotation(GetLocalRotation());
@@ -105,7 +105,7 @@ float Transform::GetRotation() const
 
 void Transform::SetRotation(const float& rotation)
 {
-	Transform* parentTransform;
+	const Transform* parentTransform;
 
 	if (tryGetNextParentTransform(this, parentTransform))
 		SetLocalRotation(parentTransform->InverseTransformRotation(rotation));
@@ -137,18 +137,18 @@ void Transform::ClearWorldPoseCache(bool includeChildren)
 	_cachedWorldPose = nullptr;
 }
 
-PoseF Transform::TransformPose(const PoseF& pose) const { GetPose().TransformPose(pose); }
+PoseF Transform::TransformPose(const PoseF& pose) const { return GetPose().TransformPose(pose); }
 
-Vector2F Transform::TransformPoint(const Vector2F& point) const { GetPose().TransformPoint(point); }
+Vector2F Transform::TransformPoint(const Vector2F& point) const { return GetPose().TransformPoint(point); }
 
-Vector2F Transform::TransformDirection(const Vector2F& direction) const { GetPose().TransformDirection(direction); }
+Vector2F Transform::TransformDirection(const Vector2F& direction) const { return GetPose().TransformDirection(direction); }
 
-float Transform::TransformRotation(const float& rotation) const { GetPose().TransformRotation(rotation); }
+float Transform::TransformRotation(const float& rotation) const { return GetPose().TransformRotation(rotation); }
 
-PoseF Transform::InverseTransformPose(const PoseF& pose) const { GetPose().InverseTransformPose(pose); }
+PoseF Transform::InverseTransformPose(const PoseF& pose) const { return GetPose().InverseTransformPose(pose); }
 
-Vector2F Transform::InverseTransformPoint(const Vector2F& point) const { GetPose().InverseTransformPoint(point); }
+Vector2F Transform::InverseTransformPoint(const Vector2F& point) const { return GetPose().InverseTransformPoint(point); }
 
-Vector2F Transform::InverseTransformDirection(const Vector2F& direction) const { GetPose().InverseTransformDirection(direction); }
+Vector2F Transform::InverseTransformDirection(const Vector2F& direction) const { return GetPose().InverseTransformDirection(direction); }
 
-float Transform::InverseTransformRotation(const float& rotation) const { GetPose().InverseTransformRotation(rotation); }
+float Transform::InverseTransformRotation(const float& rotation) const { return GetPose().InverseTransformRotation(rotation); }

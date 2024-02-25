@@ -31,4 +31,8 @@ Node::~Node()
 	delete name;
 }
 
+bool Node::HasParent() const { return GetParent() != nullptr; }
+
+const Node* Node::GetParent() const { return _parent; }
+
 const std::vector<Node*>* Node::GetChildren() const { return _children; }

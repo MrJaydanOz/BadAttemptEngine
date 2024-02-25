@@ -1,7 +1,7 @@
 #pragma once
 
 #define DECLARATION_VECTOR_N(vectorType, elementType, elementCount, ...) \
-class vectorType \
+struct vectorType \
 { \
 public: \
     __VA_ARGS__ \

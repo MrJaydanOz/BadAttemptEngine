@@ -1,17 +1,12 @@
 #pragma once
-#include "Node.h"
+#include "Nodes/Node.h"
 #include "Math/PoseT.h"
 #include "Math/VectorT.h"
-
-// FORWARD DECLARATION F***ING SUCKS A***
-/*class Node;
-class PoseF;
-class Vector2F;*/
 
 class Transform : public Node
 {
 private:
-	PoseF _pose; // <- COULDNT DEFINE FEILD WITH FORWARD DECLARATION IT IS NEVER WORTH IT.
+	PoseF _pose;
 	PoseF* _cachedWorldPose;
 	bool _hasModified;
 

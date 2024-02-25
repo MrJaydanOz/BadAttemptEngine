@@ -29,10 +29,10 @@ Image::~Image()
 	delete _surfaceData;
 }
 
-const Vector2I Image::GetSize() const { return Vector2I(GetWidth(), GetHeight()); }
+Vector2I Image::GetSize() const { return Vector2I(GetWidth(), GetHeight()); }
 
-const int Image::GetWidth() const { return _surfaceData->w; }
+int Image::GetWidth() const { return _surfaceData->w; }
 
-const int Image::GetHeight() const { return _surfaceData->h; }
+int Image::GetHeight() const { return _surfaceData->h; }
 
 Image::Image(const char* path, SDL_Surface* surfaceData) : _path(path), _surfaceData(surfaceData) { }
