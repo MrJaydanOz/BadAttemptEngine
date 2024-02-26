@@ -5,9 +5,9 @@ class ColorF;
 class Color
 {
 public:
-	char r, g, b, a;
+	unsigned char r, g, b, a;
 
-	Color(char r, char g, char b, char a = 0xFF);
+	Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a = (unsigned char)0xFF);
 	Color(unsigned int hex);
 
 	Color& operator=(unsigned int hex);

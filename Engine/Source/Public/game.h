@@ -2,6 +2,7 @@
 #include <vector>
 #include "Graphics/Image.h"
 #include "Graphics/Sprite.h"
+#include "Input.h"
 
 struct SDL_Window;
 struct SDL_Renderer;
@@ -14,20 +15,8 @@ private:
 
 	SDL_Window* _windowReference;
 	SDL_Renderer* _rendererReference;
-	Image* _cube1Image;
-	SDL_Texture* _cube1Texture;
-	Image* _cube2Image;
-	SDL_Texture* _cube2Texture;
-	Image* _cube3Image;
-	SDL_Texture* _cube3Texture;
-	Image* _cube4Image;
-	SDL_Texture* _cube4Texture;
-	Image* _cube5Image;
-	SDL_Texture* _cube5Texture;
-	Image* _fireRingImage;
-	SDL_Texture* _fireRingTexture;
-	Image* _fireSmallImage;
-	SDL_Texture* _fireSmallTexture;
+
+	Input* input;
 
 public:
 	static Game* GetGame();

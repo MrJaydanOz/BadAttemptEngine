@@ -1,8 +1,9 @@
 #include "Math/VectorT.h"
+#include <iostream>
 #include <cmath>
 #include <stdexcept>
 #include <string>
-#include <tgmath.h>
+#include <limits>
 #include "For.h"
 #include "Math/Constants.h"
 
@@ -10,16 +11,19 @@
 
 #define DEFINITION_VECTOR_N_OPERATORS(vectorType, elementType, elementCount, ...) \
     vectorType::operator Vector##elementCount<elementType>() const { return Vector##elementCount<elementType>(__VA_ARGS__); } \
+    bool vectorType::operator==(const vectorType& other) const { return FOR_AA_IN(elementCount, , == other., , &&, __VA_ARGS__); } \
+    bool vectorType::operator!=(const vectorType& other) const { return FOR_AA_IN(elementCount, , != other., , ||, __VA_ARGS__); } \
     vectorType vectorType::operator+(const vectorType& other) const { return vectorType(FOR_AA_IN(elementCount, , + other., , COMMA2, __VA_ARGS__)); } \
+    vectorType& vectorType::operator+=(const vectorType& other) { return *this = *this + other; } \
     vectorType vectorType::operator-(const vectorType& other) const { return vectorType(FOR_AA_IN(elementCount, , - other., , COMMA2, __VA_ARGS__)); } \
+    vectorType& vectorType::operator-=(const vectorType& other) { return *this = *this - other; } \
     vectorType vectorType::operator*(const vectorType& other) const { return vectorType(FOR_AA_IN(elementCount, , * other., , COMMA2, __VA_ARGS__)); } \
+    vectorType& vectorType::operator*=(const vectorType& other) { return *this = *this * other; } \
     vectorType vectorType::operator*(const elementType& scaler) const { return vectorType(FOR_A_IN(elementCount, , * scaler, COMMA2, __VA_ARGS__)); } \
-    vectorType vectorType::operator/(const elementType& scaler) const { return vectorType(FOR_A_IN(elementCount, , / scaler, COMMA2, __VA_ARGS__)); } \
-    vectorType& vectorType::operator+=(const vectorType& other) { FOR_AA_IN(elementCount, , += other.,; , , __VA_ARGS__) return *this; } \
-    vectorType& vectorType::operator-=(const vectorType& other) { FOR_AA_IN(elementCount, , -= other.,; , , __VA_ARGS__) return *this; } \
-    vectorType& vectorType::operator*=(const vectorType& other) { FOR_AA_IN(elementCount, , *= other.,; , , __VA_ARGS__) return *this; } \
-    vectorType& vectorType::operator*=(const elementType& scaler) { FOR_A_IN(elementCount, , *= scaler; , , __VA_ARGS__) return *this; } \
-    vectorType& vectorType::operator/=(const elementType& scaler) { FOR_A_IN(elementCount, , /= scaler; , , __VA_ARGS__) return *this; } \
+    vectorType& vectorType::operator*=(const elementType& scaler) { return *this = *this * scaler; } \
+    vectorType vectorType::operator/(const elementType& scaler) const { return scaler == 0 ? vectorType(FOR_A_IN(elementCount, , / scaler, COMMA2, __VA_ARGS__)) : vectorType(std::numeric_limits<float>::quiet_NaN()); } \
+    vectorType& vectorType::operator/=(const elementType& scaler) { return *this = *this / scaler; } \
+    static std::ostream& operator<<(std::ostream& stream, vectorType const& vector) { return stream << "(" << FOR_A_IN(elementCount, vector.,, << ", " <<, __VA_ARGS__) << ")"; } \
 
 #define DEFINITION_VECTOR_2(vectorType, elementType) \
     DEFINITION_VECTOR_N(vectorType, elementType, 2) \
@@ -68,8 +72,8 @@
     DEFINITION_VECTOR_N_FLOAT(vectorType, elementType, 2) \
     vectorType vectorType::Rotate(const elementType& degrees) const \
     { \
-        elementType sin = std::sin(degrees * DEG_TO_RAD); \
-        elementType cos = std::cos(degrees * DEG_TO_RAD); \
+        elementType sin = (elementType)std::sin(degrees * DEG_TO_RAD_D); \
+        elementType cos = (elementType)std::cos(degrees * DEG_TO_RAD_D); \
  \
         elementType tx = x; \
         elementType ty = y; \
