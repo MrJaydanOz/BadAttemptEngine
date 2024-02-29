@@ -36,7 +36,7 @@
     <ClCompile Include="Source\Private\Nodes\Node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\Nodes\Scene.cpp">
+    <ClCompile Include="Source\Private\Nodes\RootNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Private\Nodes\Transform.cpp">
@@ -49,6 +49,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Private\Graphics\Canvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\GameInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\GameTime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,7 +86,7 @@
     <ClInclude Include="Source\Public\Nodes\Node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\Nodes\Scene.h">
+    <ClInclude Include="Source\Public\Nodes\RootNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Public\Nodes\Transform.h">
@@ -96,6 +102,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Public\Graphics\Canvas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\GameInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\GameTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

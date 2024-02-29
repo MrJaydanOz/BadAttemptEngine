@@ -4,44 +4,40 @@
 
 class Node
 {
-public:
-	std::string* name = nullptr;
-
-public:
-	virtual ~Node();
-
-	/*
-	bool HasName() const;
-	std::string GetName() const;
-	void SetName(const std::string& name);
-
-	*/
-	bool HasParent() const;
-	const Node* GetParent() const;
-	/*
-	void SetParent(const Node* node);
-
-	*/
-	const std::vector<Node*>* GetChildren() const;
-
-	/*
-	template<typename T>
-	T* FindChildOfType() const;
-	template<typename T>
-	bool FindChildrenOfType(const std::vector<T*>& results) const;
-
-	template<typename T = Node>
-	T* FindChildByName(const std::string& name) const;
-	template<typename T = Node>
-	bool FindChildrenByName(const std::string& name, const std::vector<T*>& results) const;
-
-	template<typename T>
-	T* CreateNode();
-	template<typename T>
-	T* CreateNode(const std::string& name);
-	*/
-
 private:
+	std::string _name;
 	std::vector<Node*>* _children;
 	Node* _parent;
+
+public:
+	Node(const std::string& name = "") noexcept;
+	virtual ~Node() noexcept;
+
+	bool HasName() const noexcept;
+	const std::string& GetName() const noexcept;
+	void SetName(const std::string& name) noexcept;
+
+	bool HasParent() const noexcept;
+	Node* GetParent() const noexcept;
+	void SetParent(Node* node) noexcept;
+
+	const std::vector<Node*>* GetChildren() const noexcept;
+
+	template<typename T>
+	T* FindChildOfType() const noexcept;
+	template<typename T>
+	bool FindChildrenOfType(const std::vector<T*>& results) const noexcept;
+
+	template<typename T = Node>
+	T* FindChildByName(const std::string& name) const noexcept;
+	template<typename T = Node>
+	bool FindChildrenByName(const std::string& name, const std::vector<T*>& results) const noexcept;
+
+	template<typename T, class... ConstructorArgs>
+	T* CreateNode(ConstructorArgs... args) noexcept;
+
+private:
+	void RemoveThisFromParent() noexcept;
+
+	void AddAsChild(Node* node) noexcept;
 };

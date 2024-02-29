@@ -1,8 +1,10 @@
 ﻿#pragma once
 #include <vector>
+#include "Nodes/RootNode.h"
 #include "Graphics/Image.h"
 #include "Graphics/Sprite.h"
-#include "Input.h"
+#include "GameInput.h"
+#include "GameTime.h"
 
 struct SDL_Window;
 struct SDL_Renderer;
@@ -10,13 +12,17 @@ struct SDL_Texture;
 
 class Game
 {
+public:
+	RootNode* root;
+
 private:
 	bool _isRunning;
 
 	SDL_Window* _windowReference;
 	SDL_Renderer* _rendererReference;
 
-	Input* input;
+	Input* _input;
+	Time* _time;
 
 public:
 	static Game* GetGame();
@@ -26,6 +32,10 @@ public:
 	void Run();
 
 	void Quit();
+
+	static const Input* GetInput();
+
+	static const Time* GetTime();
 
 private:
 	Game();
@@ -41,16 +51,16 @@ private:
  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
                              ↓
  ┏[*/void GameLoop();/*]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
- ┃  Process game functionality for one frame.            ┃ <─┐
+ ┃  Listen for user input and process it.                ┃ <─┐
  ┃  */void ProcessInput();/*                             ┃   │
  ┃                                                       ┃   │
- ┃  Render frame to the game window.                     ┃   │
+ ┃  Process game functionality for one frame.            ┃   │
  ┃  */void Update();/*                                   ┃   │
  ┃                                                       ┃   │
- ┃  Deallocate data marked for deletion.                 ┃   │
+ ┃  Render frame to the game window.                     ┃   │
  ┃  */void Render();/*                                   ┃   │
  ┃                                                       ┃   │
- ┃  Listen for user input and process it.                ┃   │
+ ┃  Deallocate data marked for deletion.                 ┃   │
  ┃  */void CollectGarbage();/*                           ┃ ──┘
  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ 
                              ↓

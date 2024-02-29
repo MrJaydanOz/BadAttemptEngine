@@ -2,8 +2,6 @@
 #include <iostream>
 #include <SDL2/SDL_image.h>
 #include <vector>
-#include <chrono>
-#include <thread>
 #include "Graphics/Sprite.h"
 #include "SDL2/SDL.h"
 #include "Debug.h"
@@ -24,7 +22,17 @@ void Game::Run() { Initialize(); }
 
 void Game::Quit() { _isRunning = false; }
 
-Game::Game() : _isRunning(true), _windowReference(nullptr), _rendererReference(nullptr)
+const Input* Game::GetInput() { return GetGame()->_input; }
+
+const Time* Game::GetTime() { return GetGame()->_time; }
+
+Game::Game() : 
+	_isRunning(true), 
+	_windowReference(nullptr), 
+	_rendererReference(nullptr),
+	_input(nullptr),
+	_time(nullptr),
+	root(nullptr)
 {
 	DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game created.");
 }
@@ -71,20 +79,16 @@ void Game::Start()
 		return;
 	}
 
-	input = new Input();
+	_input = new Input();
+	_time = new Time();
 
 	GameLoop();
 }
 
 void Game::GameLoop()
 {
-	const float framesPerSecond = 60.0f;
-	const unsigned long millisecondsPerFrame = std::lroundf(1000.0f / framesPerSecond);
-
 	while (_isRunning)
 	{
-		auto nextFrameTime = std::chrono::system_clock::now() + std::chrono::milliseconds(millisecondsPerFrame);
-
 		ProcessInput();
 
 		Update();
@@ -92,8 +96,6 @@ void Game::GameLoop()
 		Render();
 
 		CollectGarbage();
-
-		std::this_thread::sleep_until(nextFrameTime);
 	}
 
 	Dispose();
@@ -101,7 +103,7 @@ void Game::GameLoop()
 
 void Game::ProcessInput()
 {
-	input->ProcessInput();
+	_input->ProcessInput();
 }
 
 void Game::Update()
@@ -141,7 +143,7 @@ void Game::Dispose()
 		_windowReference = nullptr;
 	}
 
-	delete input;
+	delete _input;
 
 	SDL_Quit();
 

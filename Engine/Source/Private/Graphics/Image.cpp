@@ -1,7 +1,6 @@
 #include "Graphics/Image.h"
 #include "Debug.h"
 #include <SDL2/SDL_image.h>
-#include <stdexcept>
 #include "Math/VectorT.h"
 
 Image* Image::Load(const char* path)

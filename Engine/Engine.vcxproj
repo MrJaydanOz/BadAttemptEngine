@@ -97,7 +97,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Private\Graphics\Canvas.cpp" />
-    <ClCompile Include="Source\Private\Input.cpp" />
+    <ClCompile Include="Source\Private\GameInput.cpp" />
     <ClCompile Include="Source\Private\Math\PoseT.cpp" />
     <ClCompile Include="Source\Private\Math\RectT.cpp" />
     <ClCompile Include="Source\Private\Game.cpp" />
@@ -106,15 +106,16 @@
     <ClCompile Include="Source\Private\Math\VectorT.cpp" />
     <ClCompile Include="Source\Private\Nodes\Transform.cpp" />
     <ClCompile Include="Source\Private\Nodes\Node.cpp" />
-    <ClCompile Include="Source\Private\Nodes\Scene.cpp" />
+    <ClCompile Include="Source\Private\Nodes\RootNode.cpp" />
     <ClCompile Include="Source\Private\Graphics\Color.cpp" />
     <ClCompile Include="Source\Source.cpp" />
+    <ClCompile Include="Source\Private\GameTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\Def.h" />
     <ClInclude Include="Source\Public\Graphics\Canvas.h" />
     <ClInclude Include="Source\Public\Graphics\Color.h" />
-    <ClInclude Include="Source\Public\Input.h" />
+    <ClInclude Include="Source\Public\GameInput.h" />
     <ClInclude Include="Source\Public\Math\Constants.h" />
     <ClInclude Include="Source\Public\Math\PoseT.h" />
     <ClInclude Include="Source\Public\Math\RectT.h" />
@@ -126,7 +127,8 @@
     <ClInclude Include="Source\Public\For.h" />
     <ClInclude Include="Source\Public\Nodes\Transform.h" />
     <ClInclude Include="Source\Public\Nodes\Node.h" />
-    <ClInclude Include="Source\Public\Nodes\Scene.h" />
+    <ClInclude Include="Source\Public\Nodes\RootNode.h" />
+    <ClInclude Include="Source\Public\GameTime.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

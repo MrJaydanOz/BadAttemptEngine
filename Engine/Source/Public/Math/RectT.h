@@ -8,8 +8,8 @@ public: \
     vectorType min, max; \
  \
 public: \
-    rectType(vectorType min, vectorType max) : min(min), max(max) { } \
-    rectType(elementType minX, elementType minY, elementType maxX, elementType maxY) : min(minX, minY), max(maxX, maxY) { } \
+    rectType(vectorType min, vectorType max) noexcept : min(min), max(max) { } \
+    rectType(elementType minX, elementType minY, elementType maxX, elementType maxY) noexcept : min(minX, minY), max(maxX, maxY) { } \
     __VA_ARGS__ \
 };
 
