@@ -10,7 +10,6 @@ private:
 	Node* _parent;
 
 public:
-	Node(const std::string& name = "") noexcept;
 	virtual ~Node() noexcept;
 
 	bool HasName() const noexcept;
@@ -35,6 +34,9 @@ public:
 
 	template<typename T, class... ConstructorArgs>
 	T* CreateNode(ConstructorArgs... args) noexcept;
+
+protected:
+	Node(const std::string& name = "") noexcept;
 
 private:
 	void RemoveThisFromParent() noexcept;

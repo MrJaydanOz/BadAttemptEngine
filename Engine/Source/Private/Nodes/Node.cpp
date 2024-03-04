@@ -4,7 +4,11 @@
 #include <string>
 #include <type_traits>
 
-Node::Node(const std::string& name) noexcept : _name(name), _children(nullptr), _parent(nullptr) { }
+Node::Node(const std::string& name) noexcept : 
+	_name(name), 
+	_children(nullptr), 
+	_parent(nullptr) 
+{ }
 
 Node::~Node() noexcept
 {
