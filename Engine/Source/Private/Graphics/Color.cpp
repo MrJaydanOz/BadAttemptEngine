@@ -1,15 +1,15 @@
 #include "Graphics/Color.h"
 #include <cmath>
 
-Color::Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a) noexcept : r(r), g(g), b(b), a(a) { }
+constexpr Color::Color(const unsigned char& r, const unsigned char& g, const unsigned char& b, const unsigned char& a) noexcept : r(r), g(g), b(b), a(a) { }
 
-Color::Color(unsigned int hex) noexcept :
+constexpr Color::Color(const unsigned int& hex) noexcept :
 	r((hex & 0xFF000000) >> (6 * 4)),
 	g((hex & 0x00FF0000) >> (4 * 4)),
 	b((hex & 0x0000FF00) >> (2 * 4)),
 	a((hex & 0x000000FF) >> (0 * 4)) { }
 
-Color& Color::operator=(unsigned int hex) noexcept
+constexpr Color& Color::operator=(const unsigned int& hex) noexcept
 {
 	r = (hex & 0xFF000000) >> (6 * 4);
 	g = (hex & 0x00FF0000) >> (4 * 4);
@@ -19,27 +19,31 @@ Color& Color::operator=(unsigned int hex) noexcept
 	return *this;
 }
 
-Color::operator ColorF() const noexcept
+constexpr Color::operator ColorF() const noexcept
 {
 	const float reciprocal = 1.0f / 255.0f;
 	return ColorF(r * reciprocal, g * reciprocal, b * reciprocal, a * reciprocal);
 }
 
-ColorF::ColorF(float r, float g, float b, float a) noexcept : r(r), g(g), b(b), a(a) { }
+constexpr ColorF::ColorF(const float& r, const float& g, const float& b, const float& a) noexcept : r(r), g(g), b(b), a(a) { }
 
-ColorF::ColorF(unsigned int hex) noexcept
+constexpr ColorF::ColorF(const unsigned int& hex) noexcept :
+	r(((hex & 0xFF000000) >> (6 * 4)) * (1.0f / 255.0f)),
+	g(((hex & 0x00FF0000) >> (4 * 4)) * (1.0f / 255.0f)),
+	b(((hex & 0x0000FF00) >> (2 * 4)) * (1.0f / 255.0f)),
+	a(((hex & 0x000000FF) >> (0 * 4)) * (1.0f / 255.0f)) { }
+
+constexpr ColorF& ColorF::operator=(const unsigned int& hex) noexcept
 {
-	const float reciprocal = 1.0f / 255.0f;
+	r = ((hex & 0xFF000000) >> (6 * 4)) * (1.0f / 255.0f);
+	g = ((hex & 0x00FF0000) >> (4 * 4)) * (1.0f / 255.0f);
+	b = ((hex & 0x0000FF00) >> (2 * 4)) * (1.0f / 255.0f);
+	a = ((hex & 0x000000FF) >> (0 * 4)) * (1.0f / 255.0f);
 
-	r = ((hex & 0xFF000000) >> (6 * 4)) * reciprocal;
-	g = ((hex & 0x00FF0000) >> (4 * 4)) * reciprocal;
-	b = ((hex & 0x0000FF00) >> (2 * 4)) * reciprocal;
-	a = ((hex & 0x000000FF) >> (0 * 4)) * reciprocal;
+	return *this;
 }
 
-ColorF& ColorF::operator=(unsigned int hex) noexcept { return (ColorF)Color(hex); }
-
-ColorF::operator Color() const noexcept
+constexpr ColorF::operator Color() const noexcept
 {
 	return Color(
 		(unsigned char)std::max(0l, std::min(std::lroundf(r * 255.0f), 255l)),

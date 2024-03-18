@@ -14,6 +14,20 @@ public:
 	RectI clipRectangle;
 
 public:
-	ImageClip(Image* image) noexcept;
-	ImageClip(Image* image, RectI clipRectangle) noexcept;
+	constexpr ImageClip(Image* image) noexcept :
+		image(image),
+		clipRectangle(RectI(0, 0, 0, 0))
+	{ }
+	constexpr ImageClip(Image* image, const RectI& clipRectangle) noexcept :
+		image(image),
+		clipRectangle(clipRectangle)
+	{ }
+	constexpr ImageClip(Image* image, const Vector2I& clipRectangleMin, const Vector2I& clipRectangleMax) noexcept :
+		image(image),
+		clipRectangle(clipRectangleMin, clipRectangleMax)
+	{ }
+	constexpr ImageClip(Image* image, const int& clipRectangleMinX, const int& clipRectangleMinY, const int& clipRectangleMaxX, const int& clipRectangleMaxY) noexcept :
+		image(image),
+		clipRectangle(clipRectangleMinX, clipRectangleMinY, clipRectangleMaxX, clipRectangleMaxY)
+	{ }
 };

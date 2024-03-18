@@ -7,7 +7,7 @@
 #include "For.h"
 #include "Math/Constants.h"
 
-#define DEFINITION_VECTOR_N(vectorType, elementType, elementCount) \
+/*#define DEFINITION_VECTOR_N(vectorType, elementType, elementCount) \
 
 #define DEFINITION_VECTOR_N_OPERATORS(vectorType, elementType, elementCount, ...) \
     vectorType::operator Vector##elementCount<elementType>() const noexcept { return Vector##elementCount<elementType>(__VA_ARGS__); } \
@@ -103,4 +103,21 @@ DEFINITION_VECTOR_4_INTEGER(Vector4I, int)
 
 DEFINITION_VECTOR_2_INTEGER(Vector2L, long int)
 DEFINITION_VECTOR_3_INTEGER(Vector3L, long int)
-DEFINITION_VECTOR_4_INTEGER(Vector4L, long int)
+DEFINITION_VECTOR_4_INTEGER(Vector4L, long int)*/
+
+template<typename T>
+T Vector<2, T>::Magnitude() noexcept { return sqrt(SqrMagnitude()); }
+
+template<typename T>
+Vector<2, T> Vector<2, T>::Rotate(const T& degrees) const noexcept
+{
+    T sin = (T)std::sin(degrees * (T)DEG_TO_RAD_D);
+    T cos = (T)std::cos(degrees * (T)DEG_TO_RAD_D);
+
+    T tx = x;
+    T ty = y;
+    return Vector((cos * tx) - (sin * ty), (sin * tx) + (cos * ty));
+}
+
+template<typename T>
+Vector<2, T> Vector<2, T>::InverseRotate(const T& degrees) const noexcept { return Rotate(-degrees); }

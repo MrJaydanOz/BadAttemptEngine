@@ -15,9 +15,9 @@ void Input::ProcessInput()
 
 		unsigned int mouseStates = SDL_GetMouseState(nullptr, nullptr);
 
-		_previousKeyStates[KEYCODE_LMB] = (mouseStates & SDL_BUTTON_LMASK) != 0u;
-		_previousKeyStates[KEYCODE_RMB] = (mouseStates & SDL_BUTTON_RMASK) != 0u;
-		_previousKeyStates[KEYCODE_MMB] = (mouseStates & SDL_BUTTON_MMASK) != 0u;
+		_previousKeyStates[LMB] = (mouseStates & SDL_BUTTON_LMASK) != 0u;
+		_previousKeyStates[RMB] = (mouseStates & SDL_BUTTON_RMASK) != 0u;
+		_previousKeyStates[MMB] = (mouseStates & SDL_BUTTON_MMASK) != 0u;
 	}
 
 	while (SDL_PollEvent(&inputEvent) == 1)
@@ -41,11 +41,11 @@ bool Input::KeyHeld(KeyCode keyCode) const
 
 	switch (keyCode)
 	{
-	case KEYCODE_LMB:
+	case LMB:
 		return (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_LMASK) != 0u;
-	case KEYCODE_RMB:
+	case RMB:
 		return (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_RMASK) != 0u;
-	case KEYCODE_MMB:
+	case MMB:
 		return (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_MMASK) != 0u;
 	default:
 		const unsigned char* keyStates = SDL_GetKeyboardState(nullptr);
