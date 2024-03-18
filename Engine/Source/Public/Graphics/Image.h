@@ -7,7 +7,7 @@ struct SDL_Surface;
 class Image
 {
 private:
-public: SDL_Surface* _surfaceData;
+	SDL_Surface* _surfaceData;
 
 	const char* _path;
 
@@ -15,14 +15,14 @@ public:
 	/// <summary>
 	/// Loads the image at the given path into memory and returns the pointer.
 	/// </summary>
-	/// <param name="path">- char[]</param>
+	/// <param name="path">char[]</param>
 	/// <returns>Image* or nullptr if failed.</returns>
 	static Image* Load(const char* path);
 	/// <summary>
 	/// Tries to load the image at the given path into memory and returns the pointer.
 	/// </summary>
-	/// <param name="path">- char[]</param>
-	/// <param name="image">- OUT Image*</param>
+	/// <param name="path">char[]</param>
+	/// <param name="image">OUT Image*</param>
 	/// <returns>true if successful, false otherwise.</returns>
 	static bool TryLoad(const char* path, Image*& image);
 

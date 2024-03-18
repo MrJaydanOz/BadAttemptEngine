@@ -1,25 +1,24 @@
 #pragma once
 #include "VectorT.h"
 
-#define DECLARATION_POSE(poseType, positionType, positionElementType, rotationType, ...) \
-struct poseType \
-{ \
-public: \
-    positionType position; \
-    rotationType rotation; \
- \
-public: \
-	poseType(positionType position, rotationType rotation) noexcept; \
-	positionType TransformPoint(const positionType& point) const noexcept; \
-	positionType TransformDirection(const positionType& direction) const noexcept; \
-	rotationType TransformRotation(const rotationType& rotation) const noexcept; \
-	poseType TransformPose(const poseType& pose) const noexcept; \
-	positionType InverseTransformPoint(const positionType& point) const noexcept; \
-	positionType InverseTransformDirection(const positionType& direction) const noexcept; \
-	rotationType InverseTransformRotation(const rotationType& rotation) const noexcept; \
-	poseType InverseTransformPose(const poseType& pose) const noexcept; \
-    __VA_ARGS__ \
+template<typename TPos, typename TRot>
+struct Pose
+{
+public:
+	Vector<2, TPos> position;
+	TRot rotation;
+
+public:
+	constexpr Pose(Vector<2, TPos> position, TRot rotation) noexcept : position(position), rotation(rotation) { }
+	Vector<2, TPos> TransformPoint(const Vector<2, TPos>& point) const noexcept;
+	Vector<2, TPos> TransformDirection(const Vector<2, TPos>& direction) const noexcept;
+	TRot TransformRotation(const TRot& rotation) const noexcept;
+	Pose TransformPose(const Pose& pose) const noexcept;
+	Vector<2, TPos> InverseTransformPoint(const Vector<2, TPos>& point) const noexcept;
+	Vector<2, TPos> InverseTransformDirection(const Vector<2, TPos>& direction) const noexcept;
+	TRot InverseTransformRotation(const TRot& rotation) const noexcept;
+	Pose InverseTransformPose(const Pose& pose) const noexcept;
 };
 
-DECLARATION_POSE(PoseF, Vector2F, float, float)
-DECLARATION_POSE(PoseD, Vector2D, double, double)
+typedef Pose<float, float> PoseF;
+typedef Pose<double, double> PoseD;

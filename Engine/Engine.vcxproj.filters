@@ -21,7 +21,7 @@
     <ClCompile Include="Source\Private\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\Graphics\Sprite.cpp">
+    <ClCompile Include="Source\Private\Nodes\Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Private\Graphics\Image.cpp">
@@ -60,6 +60,15 @@
     <ClCompile Include="Source\Private\Graphics\ImageClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Private\Nodes\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\Nodes\Behaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\Nodes\CustomBehaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\Game.h">
@@ -68,7 +77,7 @@
     <ClInclude Include="Source\Public\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\Graphics\Sprite.h">
+    <ClInclude Include="Source\Public\Nodes\Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Public\Graphics\Image.h">
@@ -114,6 +123,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Public\Graphics\ImageClip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\Nodes\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\Nodes\Behaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\Nodes\CustomBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

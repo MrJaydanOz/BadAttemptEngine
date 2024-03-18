@@ -2,7 +2,7 @@
 #include <iostream>
 #include <SDL2/SDL_image.h>
 #include <vector>
-#include "Graphics/Sprite.h"
+#include "Nodes/Sprite.h"
 #include "SDL2/SDL.h"
 #include "Debug.h"
 
@@ -89,29 +89,16 @@ void Game::GameLoop()
 {
 	while (_isRunning)
 	{
-		ProcessInput();
-
 		Update();
-
-		Render();
-
-		CollectGarbage();
 	}
 
 	Dispose();
 }
 
-void Game::ProcessInput()
-{
-	_input->ProcessInput();
-}
-
 void Game::Update()
 {
-}
+	_input->ProcessInput();
 
-void Game::Render()
-{
 	SDL_SetRenderDrawColor(_rendererReference, 0x00, 0x00, 0x00, 0xFF);
 
 	SDL_RenderClear(_rendererReference);
@@ -122,11 +109,6 @@ void Game::Render()
 	unsigned long long time = SDL_GetTicks64();
 
 	SDL_RenderPresent(_rendererReference);
-}
-
-void Game::CollectGarbage()
-{
-
 }
 
 void Game::Dispose()

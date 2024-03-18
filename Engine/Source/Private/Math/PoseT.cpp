@@ -1,15 +1,26 @@
 #include "Math/PoseT.h"
+#include "Math/VectorT.h"
 
-#define DEFINITION_POSE(poseType, positionType, positionElementType, rotationType) \
-poseType::poseType(positionType position, rotationType rotation) noexcept : position(position), rotation(rotation) { } \
-positionType poseType::TransformPoint(const positionType& point) const noexcept { return TransformDirection(point) + position; } \
-positionType poseType::TransformDirection(const positionType& direction) const noexcept { return direction.Rotate(rotation); } \
-rotationType poseType::TransformRotation(const rotationType& rotation) const noexcept { return rotation + this->rotation; } \
-poseType poseType::TransformPose(const poseType& pose) const noexcept { return poseType(TransformPoint(pose.position), TransformRotation(pose.rotation)); } \
-positionType poseType::InverseTransformPoint(const positionType& point) const noexcept { return InverseTransformDirection(point - position); } \
-positionType poseType::InverseTransformDirection(const positionType& direction) const noexcept { return direction.InverseRotate(rotation); } \
-rotationType poseType::InverseTransformRotation(const rotationType& rotation) const noexcept { return rotation - this->rotation; } \
-poseType poseType::InverseTransformPose(const poseType& pose) const noexcept { return poseType(InverseTransformPoint(pose.position), InverseTransformRotation(pose.rotation)); }
+template<typename TPos, typename TRot>
+Vector<2, TPos> Pose<TPos, TRot>::TransformPoint(const Vector<2, TPos>& point) const noexcept { return TransformDirection(point) + position; }
 
-DEFINITION_POSE(PoseF, Vector2F, float, float)
-DEFINITION_POSE(PoseD, Vector2D, double, double)
+template<typename TPos, typename TRot>
+Vector<2, TPos> Pose<TPos, TRot>::TransformDirection(const Vector<2, TPos>& direction) const noexcept { return direction.Rotate(rotation); }
+
+template<typename TPos, typename TRot>
+TRot Pose<TPos, TRot>::TransformRotation(const TRot& rotation) const noexcept { return rotation + this->rotation; }
+
+template<typename TPos, typename TRot>
+Pose<TPos, TRot> Pose<TPos, TRot>::TransformPose(const Pose& pose) const noexcept { return Pose(TransformPoint(pose.position), TransformRotation(pose.rotation)); }
+
+template<typename TPos, typename TRot>
+Vector<2, TPos> Pose<TPos, TRot>::InverseTransformPoint(const Vector<2, TPos>& point) const noexcept { return InverseTransformDirection(point - position); }
+
+template<typename TPos, typename TRot>
+Vector<2, TPos> Pose<TPos, TRot>::InverseTransformDirection(const Vector<2, TPos>& direction) const noexcept { return direction.InverseRotate(rotation); }
+
+template<typename TPos, typename TRot>
+TRot Pose<TPos, TRot>::InverseTransformRotation(const TRot& rotation) const noexcept { return rotation - this->rotation; }
+
+template<typename TPos, typename TRot>
+Pose<TPos, TRot> Pose<TPos, TRot>::InverseTransformPose(const Pose<TPos, TRot>& pose) const noexcept { return Pose(InverseTransformPoint(pose.position), InverseTransformRotation(pose.rotation)); }

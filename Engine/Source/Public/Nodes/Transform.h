@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include "Nodes/Node.h"
 #include "Math/PoseT.h"
 #include "Math/VectorT.h"

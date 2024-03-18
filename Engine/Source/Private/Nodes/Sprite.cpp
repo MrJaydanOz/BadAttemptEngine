@@ -1,4 +1,4 @@
-#include "Graphics/Sprite.h"
+#include "Nodes/Sprite.h"
 #include <string>
 
 Sprite::Sprite(const std::string& name) noexcept : Transform(name),

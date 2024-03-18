@@ -2,7 +2,7 @@
 #include <vector>
 #include "Nodes/RootNode.h"
 #include "Graphics/Image.h"
-#include "Graphics/Sprite.h"
+#include "Nodes/Sprite.h"
 #include "GameInput.h"
 #include "GameTime.h"
 
@@ -48,21 +48,12 @@ private:
  ┃                                                       ┃ 
  ┃  Initialise internal functionality and load assets.   ┃ 
  ┃  */void Start();/*                                    ┃
- ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛                     */void/*
                              ↓
- ┏[*/void GameLoop();/*]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
- ┃  Listen for user input and process it.                ┃ <─┐
- ┃  */void ProcessInput();/*                             ┃   │
- ┃                                                       ┃   │
+ ┏[*/GameLoop/*]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ <─┐                 */();/*
  ┃  Process game functionality for one frame.            ┃   │
  ┃  */void Update();/*                                   ┃   │
- ┃                                                       ┃   │
- ┃  Render frame to the game window.                     ┃   │
- ┃  */void Render();/*                                   ┃   │
- ┃                                                       ┃   │
- ┃  Deallocate data marked for deletion.                 ┃   │
- ┃  */void CollectGarbage();/*                           ┃ ──┘
- ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ 
+ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ──┘
                              ↓
  ┏[Exit]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
  ┃  Deallocate all memory associated with the game.      ┃

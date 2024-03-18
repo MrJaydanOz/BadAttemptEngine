@@ -103,8 +103,11 @@
     <ClCompile Include="Source\Private\Math\RectT.cpp" />
     <ClCompile Include="Source\Private\Game.cpp" />
     <ClCompile Include="Source\Private\Graphics\Image.cpp" />
-    <ClCompile Include="Source\Private\Graphics\Sprite.cpp" />
+    <ClCompile Include="Source\Private\Nodes\Behaviour.cpp" />
+    <ClCompile Include="Source\Private\Nodes\CustomBehaviour.cpp" />
+    <ClCompile Include="Source\Private\Nodes\Sprite.cpp" />
     <ClCompile Include="Source\Private\Math\VectorT.cpp" />
+    <ClCompile Include="Source\Private\Nodes\Camera.cpp" />
     <ClCompile Include="Source\Private\Nodes\Transform.cpp" />
     <ClCompile Include="Source\Private\Nodes\Node.cpp" />
     <ClCompile Include="Source\Private\Nodes\RootNode.cpp" />
@@ -124,9 +127,12 @@
     <ClInclude Include="Source\Public\Debug.h" />
     <ClInclude Include="Source\Public\Game.h" />
     <ClInclude Include="Source\Public\Graphics\Image.h" />
-    <ClInclude Include="Source\Public\Graphics\Sprite.h" />
+    <ClInclude Include="Source\Public\Nodes\Behaviour.h" />
+    <ClInclude Include="Source\Public\Nodes\CustomBehaviour.h" />
+    <ClInclude Include="Source\Public\Nodes\Sprite.h" />
     <ClInclude Include="Source\Public\Math\VectorT.h" />
     <ClInclude Include="Source\Public\For.h" />
+    <ClInclude Include="Source\Public\Nodes\Camera.h" />
     <ClInclude Include="Source\Public\Nodes\Transform.h" />
     <ClInclude Include="Source\Public\Nodes\Node.h" />
     <ClInclude Include="Source\Public\Nodes\RootNode.h" />
