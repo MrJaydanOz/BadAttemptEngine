@@ -113,12 +113,12 @@ void Transform::ClearWorldPoseCache(bool includeChildren) noexcept
 	auto children = GetChildren();
 
 	if (includeChildren && children != nullptr)
-		std::for_each(children->begin(), children->end(), [](Node* child)
+		for (Node* child : *children)
 		{
 			Transform* childTransform = dynamic_cast<Transform*>(child);
 			if (childTransform)
 				childTransform->ClearWorldPoseCache(true);
-		});
+		}
 
 	delete _cachedWorldPose;
 	_cachedWorldPose = nullptr;

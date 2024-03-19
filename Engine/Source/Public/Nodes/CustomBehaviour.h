@@ -5,10 +5,6 @@ class CustomBehaviour : public Behaviour
 {
 	friend Game;
 
-private:
-	bool enabled;
-	bool isFirstFrame;
-
 protected:
 	virtual int UpdateOrder() { return 0; }
 
@@ -17,7 +13,7 @@ protected:
 /*
 ┏[Activation]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃  Triggers when is first created.                      ┃
-┃  - [Constructor]*/(const std::string& name = "")/*; - ┃                      */noexcept;public:/*
+┃  - [Constructor]*/(const std::string& name = "")/*; - ┃                      */noexcept:Behaviour(name){}public:/*
 ┃                                                       ┃
 ┃  Triggers when is enabled in the hierarchy.           ┃
 ┃  - virtual void OnEnable() { } -                      ┃

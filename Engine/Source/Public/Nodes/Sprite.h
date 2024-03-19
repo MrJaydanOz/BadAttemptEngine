@@ -1,43 +1,35 @@
 #pragma once
 #include <string>
-#include "Nodes/Transform.h"
-#include "Graphics/ImageClip.h"
-#include "Graphics/Image.h"
 #include "Graphics/Color.h"
+#include "Graphics/Image.h"
+#include "Graphics/ImageClip.h"
 #include "Math/VectorT.h"
+#include "Nodes/Behaviour.h"
+#include "Nodes/Transform.h"
+#include "Nodes/Visual.h"
 
-enum SpriteBlendingMode
+enum SpriteFlipMode
 {
 	None,
-	Alpha,
-	Add,
-	Modulate,
-	Multiply
+	Horizontal,
+	Vertical,
 };
 
-enum SpriteScaleMode
-{
-	PreservePixelSize,
-	UnitSquare,
-	UnitWidth,
-	UnitHeight
-};
-
-class Sprite : public Transform
+class Sprite : public Transform, public Visual
 {
 public:
-	bool enabled;
 	ImageClip imageClip;
 	Color color;
-	SpriteBlendingMode blendingMode;
-	SpriteScaleMode scaleMode;
+	VisualBlendingMode blendingMode;
+	SpriteFlipMode flipMode;
 	Vector2F scale;
-
-private:
-	int _renderLayer;
-	int _zIndex;
+	Vector2F pivot;
 
 public:
-	Sprite(const std::string& name = "") noexcept;
+	Sprite(int zOrder, int renderLayer = 0) noexcept;
+	Sprite(const std::string& name = "", int zOrder = 0, int renderLayer = 0) noexcept;
 	virtual ~Sprite() noexcept override;
+
+protected:
+	void Render(SDL_Renderer* renderer, const Camera* camera) override;
 };

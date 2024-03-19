@@ -7,8 +7,8 @@ class Behaviour : public Node
 	friend Game;
 
 private:
-	bool enabled;
-	bool isFirstFrame;
+	bool _enabled;
+	bool _isFirstFrame;
 
 public:
 	void SetEnabled(const bool& enabled);

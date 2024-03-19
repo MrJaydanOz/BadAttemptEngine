@@ -12,11 +12,13 @@
 #define UNPACK(...) __VA_ARGS__
 #define UNPACK2(...) UNPACK BRACKET_OPEN __VA_ARGS__ BRACKET_CLOSE
 
-#define FLAGGED_ENUM_OPERATORS(enumName, inheritedType) \
-static enumName operator~ (enumName e) { return (enumName)~(inheritedType)e; } \
-static enumName operator| (enumName e, enumName other) { return (enumName)((inheritedType)e | (inheritedType)other); } \
-static enumName& operator|= (enumName& e, enumName other) { return (enumName&)((inheritedType&)e |= (inheritedType)other); } \
-static enumName operator& (enumName e, enumName other) { return (enumName)((inheritedType)e & (inheritedType)other); } \
-static enumName& operator&= (enumName& e, enumName other) { return (enumName&)((inheritedType&)e &= (inheritedType)other); } \
-static enumName operator^ (enumName e, enumName other) { return (enumName)((inheritedType)e ^ (inheritedType)other); } \
-static enumName& operator^= (enumName& e, enumName other) { return (enumName&)((inheritedType&)e ^= (inheritedType)other); } \
+#define FLAGGED_ENUM(enumName, inheritedType) \
+enum enumName : inheritedType; \
+static constexpr enumName operator~ (enumName e) { return (enumName)(~(inheritedType)e); } \
+static constexpr enumName operator| (enumName e, enumName other) { return (enumName)((inheritedType)e | (inheritedType)other); } \
+static constexpr enumName& operator|= (enumName& e, enumName other) { return (enumName&)(e = (enumName)(e | other)); } \
+static constexpr enumName operator& (enumName e, enumName other) { return (enumName)((inheritedType)e & (inheritedType)other); } \
+static constexpr enumName& operator&= (enumName& e, enumName other) { return (enumName&)(e = (enumName)(e & other)); } \
+static constexpr enumName operator^ (enumName e, enumName other) { return (enumName)((inheritedType)e ^ (inheritedType)other); } \
+static constexpr enumName& operator^= (enumName& e, enumName other) { return (enumName&)(e = (enumName)(e ^ other)); } \
+enum enumName : inheritedType

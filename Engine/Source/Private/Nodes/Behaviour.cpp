@@ -1,24 +1,34 @@
 #include "Nodes/Behaviour.h"
 
 Behaviour::Behaviour(const std::string& name) noexcept :
-	enabled(true),
-	isFirstFrame(true)
+	Node(name),
+	_enabled(true),
+	_isFirstFrame(true)
 { }
 
 void Behaviour::SetEnabled(const bool& enabled)
 {
-	this->enabled = enabled;
+	this->_enabled = enabled;
 }
 
 bool Behaviour::IsEnabled(const bool& includeHerarchy) const
 {
-	if (!enabled)
+	if (!_enabled)
 		return false;
 
 	if (includeHerarchy)
 	{
+		Node* parent = GetParent();
 
+		while (parent != nullptr)
+		{
+			Behaviour* parentBehaviour = dynamic_cast<Behaviour*>(parent);
+			if (parentBehaviour && !parentBehaviour->_enabled)
+				return false;
+
+			parent = parent->GetParent();
+		}
 	}
-	else
-		return true;
+
+	return true;
 }

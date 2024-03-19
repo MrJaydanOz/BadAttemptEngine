@@ -25,15 +25,19 @@ public:
 	template<typename T>
 	T* FindChildOfType() const noexcept;
 	template<typename T>
-	bool FindChildrenOfType(const std::vector<T*>& results) const noexcept;
+	bool TryFindChildOfType(T*& result) const noexcept;
+	template<typename T>
+	bool FindChildrenOfType(std::vector<T*>& results) const noexcept;
 
 	template<typename T = Node>
 	T* FindChildByName(const std::string& name) const noexcept;
 	template<typename T = Node>
-	bool FindChildrenByName(const std::string& name, const std::vector<T*>& results) const noexcept;
+	bool TryFindChildByName(T*& result) const noexcept;
+	template<typename T = Node>
+	bool FindChildrenByName(const std::string& name, std::vector<T*>& results) const noexcept;
 
 	template<typename T, class... ConstructorArgs>
-	T* CreateNode(ConstructorArgs... args) noexcept;
+	T* Add(ConstructorArgs... args) noexcept;
 
 protected:
 	Node(const std::string& name = "") noexcept;

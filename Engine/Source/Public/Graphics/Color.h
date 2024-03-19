@@ -49,6 +49,3 @@ const Color COLOUR_AQUA    = COLOR_AQUA;
 const Color COLOUR_BLUE    = COLOR_BLUE;
 const Color COLOUR_MAGENTA = COLOR_MAGENTA;
 const Color COLOUR_CLEAR   = COLOR_CLEAR;
-
-typedef Color Colour;
-typedef ColorF ColourF;

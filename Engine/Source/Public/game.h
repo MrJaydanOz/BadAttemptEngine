@@ -1,28 +1,28 @@
 ﻿#pragma once
 #include <vector>
 #include "Nodes/RootNode.h"
-#include "Graphics/Image.h"
-#include "Nodes/Sprite.h"
 #include "GameInput.h"
 #include "GameTime.h"
-
-struct SDL_Window;
-struct SDL_Renderer;
-struct SDL_Texture;
+#include "GameGraphics.h"
+#include "Nodes/Camera.h"
 
 class Game
 {
+	friend Input;
+	friend Time;
+	friend Graphics;
+	friend Camera;
+
 public:
 	RootNode* root;
 
 private:
 	bool _isRunning;
 
-	SDL_Window* _windowReference;
-	SDL_Renderer* _rendererReference;
-
 	Input* _input;
 	Time* _time;
+	Graphics* _graphics;
+	Camera* _mainCamera;
 
 public:
 	static Game* GetGame();
@@ -33,9 +33,13 @@ public:
 
 	void Quit();
 
-	static const Input* GetInput();
+	static Input* GetInput();
 
-	static const Time* GetTime();
+	static Time* GetTime();
+
+	static Graphics* GetGraphics();
+
+	static Camera* GetMainCamera();
 
 private:
 	Game();

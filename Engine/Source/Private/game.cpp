@@ -1,9 +1,4 @@
 #include "Game.h"
-#include <iostream>
-#include <SDL2/SDL_image.h>
-#include <vector>
-#include "Nodes/Sprite.h"
-#include "SDL2/SDL.h"
 #include "Debug.h"
 
 Game* Game::GetGame()
@@ -22,16 +17,19 @@ void Game::Run() { Initialize(); }
 
 void Game::Quit() { _isRunning = false; }
 
-const Input* Game::GetInput() { return GetGame()->_input; }
+Input* Game::GetInput() { return GetGame()->_input; }
 
-const Time* Game::GetTime() { return GetGame()->_time; }
+Time* Game::GetTime() { return GetGame()->_time; }
+
+Graphics* Game::GetGraphics() { return GetGame()->_graphics; }
+
+Camera* Game::GetMainCamera() { return GetGame()->_mainCamera; }
 
 Game::Game() : 
 	_isRunning(true), 
-	_windowReference(nullptr), 
-	_rendererReference(nullptr),
 	_input(nullptr),
 	_time(nullptr),
+	_graphics(nullptr),
 	root(nullptr)
 {
 	DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game created.");

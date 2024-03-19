@@ -14,13 +14,10 @@ Node::~Node() noexcept
 {
 	if (_children != nullptr)
 	{
-		std::for_each(_children->begin(), _children->end(), [](Node* child)
-		{
-			delete child;
-		});
+		for (auto i = _children->rbegin(); i != _children->rend(); ++i)
+			delete *i;
 
 		delete _children;
-		_children = nullptr;
 	}
 
 	RemoveThisFromParent();
@@ -53,32 +50,93 @@ const std::vector<Node*>* Node::GetChildren() const noexcept { return _children;
 template<typename T>
 T* Node::FindChildOfType() const noexcept
 {
-	auto removeIndex = std::find(GetChildren()->begin(), GetChildren()->end(), this);
+	static_assert(std::is_base_of<Node, T>::value);
+
+	for (Node* child : GetChildren())
+		if (child != nullptr)
+		{
+			const T* castedChild = dynamic_cast<const T*>(child);
+			if (castedChild)
+				return castedChild;
+		}
 
 	return nullptr;
-	//if (removeIndex != siblings->end())
 }
 
 template<typename T>
-bool Node::FindChildrenOfType(const std::vector<T*>& results) const noexcept
+bool Node::TryFindChildOfType(T*& result) const noexcept
 {
-	return false;
+	static_assert(std::is_base_of<Node, T>::value);
+
+	result = FindChildOfType<T>();
+	return result != nullptr;
+}
+
+template<typename T>
+bool Node::FindChildrenOfType(std::vector<T*>& results) const noexcept
+{
+	static_assert(std::is_base_of<Node, T>::value);
+
+	bool found = false;
+
+	for (Node* child : GetChildren())
+		if (child != nullptr)
+		{
+			const T* castedChild = dynamic_cast<const T*>(child);
+			if (castedChild)
+			{
+				found = true;
+				results.push_back(castedChild);
+			}
+		}
 }
 
 template<typename T>
 T* Node::FindChildByName(const std::string& name) const noexcept
 {
+	static_assert(std::is_base_of<Node, T>::value);
+
+	for (Node* child : GetChildren())
+		if (child != nullptr)
+		{
+			const T* castedChild = dynamic_cast<const T*>(child);
+			if (castedChild && castedChild->_name == name)
+				return castedChild;
+		}
+
 	return nullptr;
 }
 
 template<typename T>
-bool Node::FindChildrenByName(const std::string& name, const std::vector<T*>& results) const noexcept
+bool Node::TryFindChildByName(T*& result) const noexcept
 {
-	return false;
+	static_assert(std::is_base_of<Node, T>::value);
+
+	result = FindChildByName<T>();
+	return result != nullptr;
+}
+
+template<typename T>
+bool Node::FindChildrenByName(const std::string& name, std::vector<T*>& results) const noexcept
+{
+	static_assert(std::is_base_of<Node, T>::value);
+
+	bool found = false;
+
+	for (Node* child : GetChildren())
+		if (child != nullptr)
+		{
+			const T* castedChild = dynamic_cast<const T*>(child);
+			if (castedChild && castedChild->_name == name)
+			{
+				found = true;
+				results.push_back(castedChild);
+			}
+		}
 }
 
 template<typename T, class ...ConstructorArgs>
-T* Node::CreateNode(ConstructorArgs... args) noexcept
+T* Node::Add(ConstructorArgs... args) noexcept
 {
 	static_assert(std::is_base_of<Node, T>::value);
 	T* newNode = new T(args...);

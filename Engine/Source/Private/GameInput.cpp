@@ -22,6 +22,9 @@ void Input::ProcessInput()
 
 	while (SDL_PollEvent(&inputEvent) == 1)
 	{
+		inputEvent.type == SDL_WINDOWEVENT;
+		inputEvent.window.event == SDL_WINDOWEVENT_CLOSE;
+
 		switch (inputEvent.type)
 		{
 		case SDL_QUIT:

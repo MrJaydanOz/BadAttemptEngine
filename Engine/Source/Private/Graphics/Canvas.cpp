@@ -1,2 +1,0 @@
-#include "Graphics/Canvas.h"
-

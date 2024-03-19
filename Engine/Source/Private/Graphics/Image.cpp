@@ -3,7 +3,7 @@
 #include <SDL2/SDL_image.h>
 #include "Math/VectorT.h"
 
-Image* Image::Load(const char* path)
+Image* Image::Load(const char* path) noexcept
 {
 	SDL_Surface* surfaceData = IMG_Load(path);
 
@@ -16,22 +16,22 @@ Image* Image::Load(const char* path)
 		return new Image(path, surfaceData);
 }
 
-bool Image::TryLoad(const char* path, Image*& image)
+bool Image::TryLoad(const char* path, Image*& image) noexcept
 {
 	image = Load(path);
 	return image != nullptr;
 }
 
-Image::~Image()
+Image::~Image() noexcept
 {
 	SDL_FreeSurface(_surfaceData);
 	delete _surfaceData;
 }
 
-Vector2I Image::GetSize() const { return Vector2I(GetWidth(), GetHeight()); }
+Vector2I Image::GetSize() const noexcept { return Vector2I(GetWidth(), GetHeight()); }
 
-int Image::GetWidth() const { return _surfaceData->w; }
+int Image::GetWidth() const noexcept { return _surfaceData->w; }
 
-int Image::GetHeight() const { return _surfaceData->h; }
+int Image::GetHeight() const noexcept { return _surfaceData->h; }
 
-Image::Image(const char* path, SDL_Surface* surfaceData) : _path(path), _surfaceData(surfaceData) { }
+Image::Image(const char* path, SDL_Surface* surfaceData) noexcept : _path(path), _surfaceData(surfaceData) { }
