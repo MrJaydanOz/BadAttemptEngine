@@ -72,17 +72,15 @@ bool Input::KeyReleased(KeyCode keyCode) const
 
 Vector2I Input::MousePosition() const
 {
-	Vector2I position = Vector2I(0);
+	Vector2I position = Vector2I(0, 0);
 
 	SDL_GetMouseState(&position.x, &position.y);
 
 	return position;
 }
 
-Input::Input()
-{
-	//_previousKeyStates = new unsigned char[KEYCODE_NUM_CODES];
-}
+Input::Input() : _previousKeyStates()
+{ }
 
 Input::~Input()
 {
