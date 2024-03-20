@@ -25,7 +25,6 @@ bool Image::TryLoad(const char* path, Image*& image) noexcept
 Image::~Image() noexcept
 {
 	SDL_FreeSurface(_sdlSurface);
-	delete _sdlSurface;
 }
 
 Vector2I Image::GetSize() const noexcept { return Vector2I(GetWidth(), GetHeight()); }

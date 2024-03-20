@@ -2,12 +2,14 @@
 #include <SDL2/SDL_image.h>
 #include "Graphics/Color.h"
 #include "Nodes/Visual.h"
+#include "Game.h"
 
 struct Color;
 enum VisualBlendingMode;
 
 class Graphics
 {
+    friend class Game;
     friend class Visual;
 
 private:
@@ -104,5 +106,6 @@ public:
     static constexpr int CenteredWindowFlag(int display = 0) { return SDL_WINDOWPOS_CENTERED_DISPLAY(display); }
     static constexpr int AutoPosWindowFlag(int display = 0) { return SDL_WINDOWPOS_UNDEFINED_DISPLAY(display); }
 
+private:
     void DoRender();
 };

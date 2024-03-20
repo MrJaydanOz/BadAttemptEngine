@@ -2,21 +2,32 @@
 
 Behaviour::~Behaviour() noexcept
 {
+	if (IsEnabled(true))
+		OnDisable();
 	Node::~Node();
 }
 
-Behaviour::Behaviour(const std::string& name) noexcept :
-	Node(name),
-	_enabled(true),
-	_isFirstFrame(true)
-{ }
+void Behaviour::OnParentChanged() noexcept
+{
+	if (IsEnabled(true))
+		OnDisable();
 
-void Behaviour::SetEnabled(const bool& enabled)
+	Node::OnParentChanged();
+}
+
+Behaviour::Behaviour(const std::string& name, bool enabled) noexcept :
+	Node(name),
+	_enabled(enabled)
+{
+
+}
+
+void Behaviour::SetEnabled(const bool& enabled) noexcept
 {
 	this->_enabled = enabled;
 }
 
-bool Behaviour::IsEnabled(const bool& includeHerarchy) const
+bool Behaviour::IsEnabled(const bool& includeHerarchy) const noexcept
 {
 	if (!_enabled)
 		return false;

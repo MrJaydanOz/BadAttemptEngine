@@ -10,7 +10,7 @@ int Visual::GetRenderLayer() const { return _renderLayer; }
 
 void Visual::SetRenderLayer(int layer)
 {
-	if (layer != _renderLayer)
+	if (IsEnabled() && layer != _renderLayer)
 	{
 		RemoveFromRenderList();
 		_renderLayer = layer;
@@ -22,7 +22,7 @@ int Visual::GetZOrder() const { return _zOrder; }
 
 void Visual::SetZOrder(int index)
 {
-	if (index != _zOrder)
+	if (IsEnabled() && index != _zOrder)
 	{
 		RemoveFromRenderList();
 		_zOrder = index;
@@ -37,7 +37,7 @@ Visual::Visual(const std::string& name, int zOrder, int renderLayer) noexcept : 
 	_renderLayer(renderLayer)
 { }
 
-void Visual::RemoveFromRenderList()
+void Visual::RemoveFromRenderList() noexcept
 {
 	std::vector<Graphics::VisualsInRenderLayer>& visuals = Game::GetGame()->GetGraphics()->_visualsInRenderLayers;
 
@@ -52,7 +52,7 @@ void Visual::RemoveFromRenderList()
 	}
 }
 
-void Visual::AddToRenderList()
+void Visual::AddToRenderList() noexcept
 {
 	std::vector<Graphics::VisualsInRenderLayer>& visuals = Game::GetGame()->GetGraphics()->_visualsInRenderLayers;
 
@@ -64,4 +64,14 @@ void Visual::AddToRenderList()
 
 		foundLayer->visualsInZOrder.insert(insertIndex, this);
 	}
+}
+
+void Visual::OnEnable() noexcept
+{
+	AddToRenderList();
+}
+
+void Visual::OnDisable() noexcept
+{
+	RemoveFromRenderList();
 }

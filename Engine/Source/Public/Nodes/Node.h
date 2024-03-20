@@ -12,6 +12,8 @@ private:
 public:
 	virtual ~Node() noexcept;
 
+	virtual void OnParentChanged() noexcept { };
+
 	bool HasName() const noexcept;
 	const std::string& GetName() const noexcept;
 	void SetName(const std::string& name) noexcept;
@@ -45,5 +47,5 @@ protected:
 private:
 	void RemoveThisFromParent() noexcept;
 
-	void AddAsChild(Node* node) noexcept;
+	void AddAsChild(Node* childNode) noexcept;
 };

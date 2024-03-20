@@ -32,7 +32,7 @@ public:
 	float GetRotation() const noexcept;
 	void SetRotation(const float& rotation) noexcept;
 
-	void CacheWorldPose() noexcept;
+	void CacheWorldPose(bool recalculateIfAlreadyCached = false) noexcept;
 	void ClearWorldPoseCache(bool includeChildren = true) noexcept;
 
 	PoseF TransformPose(const PoseF& pose) const noexcept;

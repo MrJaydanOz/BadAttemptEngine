@@ -43,7 +43,6 @@ void Transform::SetPose(const PoseF& pose) noexcept
 		SetLocalPose(parentTransform->InverseTransformPose(pose));
 	else
 		SetLocalPose(pose);
-
 }
 
 Vector2F Transform::GetLocalPosition() const noexcept { return _pose.position; }
@@ -100,25 +99,28 @@ void Transform::SetRotation(const float& rotation) noexcept
 		SetLocalRotation(rotation);
 }
 
-void Transform::CacheWorldPose() noexcept
+void Transform::CacheWorldPose(bool recalculateIfAlreadyCached = false) noexcept
 {
 	if (_cachedWorldPose == nullptr)
 		_cachedWorldPose = new PoseF(GetPose());
-	else
+	else if (recalculateIfAlreadyCached)
 		*_cachedWorldPose = GetPose();
 }
 
 void Transform::ClearWorldPoseCache(bool includeChildren) noexcept
 {
-	auto children = GetChildren();
+	if (includeChildren)
+	{
+		auto children = GetChildren();
 
-	if (includeChildren && children != nullptr)
-		for (Node* child : *children)
-		{
-			Transform* childTransform = dynamic_cast<Transform*>(child);
-			if (childTransform)
-				childTransform->ClearWorldPoseCache(true);
-		}
+		if (children != nullptr)
+			for (Node* child : *children)
+			{
+				Transform* childTransform = dynamic_cast<Transform*>(child);
+				if (childTransform)
+					childTransform->ClearWorldPoseCache(true);
+			}
+	}
 
 	delete _cachedWorldPose;
 	_cachedWorldPose = nullptr;

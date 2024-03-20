@@ -5,18 +5,19 @@ class Behaviour : public Node
 {
 private:
 	bool _enabled;
-	bool _isFirstFrame;
 
 public:
 	virtual ~Behaviour() noexcept override;
 
-	void SetEnabled(const bool& enabled);
-	bool IsEnabled(const bool& includeHerarchy = true) const;
+	void SetEnabled(const bool& enabled) noexcept;
+	bool IsEnabled(const bool& includeHerarchy = true) const noexcept;
 
-	virtual void OnEnable() { };
+	virtual void OnEnable() noexcept { };
 
-	virtual void OnDisable() { };
+	virtual void OnDisable() noexcept { };
+
+	virtual void OnParentChanged() noexcept;;
 
 protected:
-	Behaviour(const std::string& name = "") noexcept;
+	Behaviour(const std::string& name = "", bool enabled = true) noexcept;
 };

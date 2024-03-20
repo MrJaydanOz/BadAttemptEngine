@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <vector>
 #include "Nodes/RootNode.h"
+#include "Nodes/CustomBehaviour.h"
 #include "GameInput.h"
 #include "GameTime.h"
 #include "GameGraphics.h"
@@ -25,6 +26,8 @@ private:
 	Time* _time;
 	Graphics* _graphics;
 	Camera* _mainCamera;
+	bool _isFixedUpdate;
+	std::vector<CustomBehaviour> _customBehaviourInOrder;
 
 public:
 	static Game* GetGame();

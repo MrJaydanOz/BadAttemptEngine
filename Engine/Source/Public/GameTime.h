@@ -1,4 +1,5 @@
 #pragma once
+#include <chrono>
 
 class Time
 {
@@ -8,23 +9,49 @@ private:
 	float _maxTimestep;
 	float _fixedTimestep;
 
-	double _lastTimeCount;
+	double _unscaledCurrentTimeCount;
+	double _unscaledLastTimeCount;
+	double _unscaledFixedTimeCount;
 	double _currentTimeCount;
+	double _lastTimeCount;
 	double _fixedTimeCount;
-	bool _isFixedUpdate;
+	std::chrono::system_clock::time_point _nextFrameTime;
 
 public:
 	Time();
 	~Time();
 
-	float SecondsAfterStart() const;
-	double SecondsAfterStartDouble() const;
+	float GetTimeScale() const noexcept;
+	void SetTimeScale(float timeScale) noexcept;
 
-	float DeltaTime() const;
-	double DeltaTimeDouble() const;
+	float GetMinTimestep() const noexcept;
+	void SetMinTimestep(float timeScale) noexcept;
 
-	bool IsFixedUpdate();
+	float GetMaxTimestep() const noexcept;
+	void SetMaxTimestep(float timeScale) noexcept;
 
-private:
+	float GetFixedTimestep() const noexcept;
+	void SetFixedTimestep(float timeScale) noexcept;
 
+	float SecondsAfterStart() const noexcept;
+	double SecondsAfterStartDouble() const noexcept;
+
+	float UnscaledSecondsAfterStart() const noexcept;
+	double UnscaledSecondsAfterStartDouble() const noexcept;
+
+	float DeltaTime() const noexcept;
+	double DeltaTimeDouble() const noexcept;
+
+	float UnscaledDeltaTime() const noexcept;
+	double UnscaledDeltaTimeDouble() const noexcept;
+
+	float FixedDeltaTime() const noexcept;
+	double FixedDeltaTimeDouble() const noexcept;
+
+	float UnscaledFixedDeltaTime() const noexcept;
+	double UnscaledFixedDeltaTimeDouble() const noexcept;
+
+	bool IsFixedUpdate() const noexcept;
+
+	void SleepUntilNextFrame() noexcept;
 };

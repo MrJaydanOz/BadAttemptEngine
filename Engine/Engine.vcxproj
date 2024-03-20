@@ -97,6 +97,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Private\GameGraphics.cpp" />
+    <ClCompile Include="Source\Private\GamePhysics.cpp" />
     <ClCompile Include="Source\Private\Graphics\Stamp.cpp" />
     <ClCompile Include="Source\Private\GameInput.cpp" />
     <ClCompile Include="Source\Private\Math\PoseT.cpp" />
@@ -105,6 +106,7 @@
     <ClCompile Include="Source\Private\Graphics\Image.cpp" />
     <ClCompile Include="Source\Private\Nodes\Behaviour.cpp" />
     <ClCompile Include="Source\Private\Nodes\CustomBehaviour.cpp" />
+    <ClCompile Include="Source\Private\Nodes\Particle.cpp" />
     <ClCompile Include="Source\Private\Nodes\Sprite.cpp" />
     <ClCompile Include="Source\Private\Math\VectorT.cpp" />
     <ClCompile Include="Source\Private\Nodes\Camera.cpp" />
@@ -119,6 +121,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Public\Def.h" />
     <ClInclude Include="Source\Public\GameGraphics.h" />
+    <ClInclude Include="Source\Public\GamePhysics.h" />
     <ClInclude Include="Source\Public\Graphics\Stamp.h" />
     <ClInclude Include="Source\Public\Graphics\Color.h" />
     <ClInclude Include="Source\Public\GameInput.h" />
@@ -130,6 +133,7 @@
     <ClInclude Include="Source\Public\Graphics\Image.h" />
     <ClInclude Include="Source\Public\Nodes\Behaviour.h" />
     <ClInclude Include="Source\Public\Nodes\CustomBehaviour.h" />
+    <ClInclude Include="Source\Public\Nodes\Particle.h" />
     <ClInclude Include="Source\Public\Nodes\Sprite.h" />
     <ClInclude Include="Source\Public\Math\VectorT.h" />
     <ClInclude Include="Source\Public\For.h" />

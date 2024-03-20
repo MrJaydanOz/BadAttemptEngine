@@ -71,6 +71,8 @@ void Game::GameLoop()
 	while (_isRunning)
 	{
 		Update();
+
+		_time->SleepUntilNextFrame();
 	}
 
 	Dispose();

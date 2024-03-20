@@ -38,3 +38,5 @@
 #define DEBUG_LOG_ERROR(message)											DEBUG_LOG_COLOURED          ("ERROR"  ,          message, DEBUG_CONSOLE_COLORID_RED    )
 #define DEBUG_LOG_ERROR_CONTEXTED(context, message)							DEBUG_LOG_CONTEXTED_COLOURED("ERROR"  , context, message, DEBUG_CONSOLE_COLORID_RED    )
 #define DEBUG_LOG_SDL_ERROR(message)                                        DEBUG_LOG_ERROR_CONTEXTED(SDL_LOG_CONTEXT, message << SDL_GetError());
+
+#define DEBUG_NODE_NAME(nodePointer) "\'" << nodePointer->_name << "'(" << typeid(nodePointer).name() << ')'

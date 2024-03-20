@@ -1,17 +1,24 @@
 ﻿#pragma once
+#include "Game.h"
 #include "Nodes/Behaviour.h"
 
 class CustomBehaviour : public Behaviour
 {
-public:
+	friend class Game;
+
+private:
+	bool _isFirstFrame;
+
+protected:
 	virtual int UpdateOrder() { return 0; }
 
+public:
 	CustomBehaviour
 
 /*
 ┏[Activation]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃  Triggers when is first created.                      ┃
-┃  - [Constructor]*/(const std::string& name = "")/*; - ┃                      */noexcept:Behaviour(name){}public:/*
+┃  - [Constructor]*/(const std::string& name = "")/*; - ┃                      */noexcept; public:/*
 ┃                                                       ┃
 ┃  Triggers when is enabled in the hierarchy.           ┃
 ┃  - virtual void OnEnable() { } -                      ┃

@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <type_traits>
+#include "Debug.h"
 
 Node::Node(const std::string& name) noexcept : 
 	_name(name), 
@@ -40,9 +41,12 @@ void Node::SetParent(Node* node) noexcept
 
 	RemoveThisFromParent();
 
-	_parent = node;
-	if (_parent != nullptr)
-		_parent->AddAsChild(this);
+	if (node == nullptr)
+		_parent = nullptr;
+	else
+		node->AddAsChild(this);
+
+	OnParentChanged();
 }
 
 const std::vector<Node*>* Node::GetChildren() const noexcept { return _children; }
@@ -59,6 +63,8 @@ T* Node::FindChildOfType() const noexcept
 			if (castedChild)
 				return castedChild;
 		}
+		else
+			DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, DEBUG_NODE_NAME(this) << " has a null child.");
 
 	return nullptr;
 }
@@ -89,6 +95,8 @@ bool Node::FindChildrenOfType(std::vector<T*>& results) const noexcept
 				results.push_back(castedChild);
 			}
 		}
+		else
+			DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, DEBUG_NODE_NAME(this) << " has a null child.");
 }
 
 template<typename T>
@@ -103,6 +111,8 @@ T* Node::FindChildByName(const std::string& name) const noexcept
 			if (castedChild && castedChild->_name == name)
 				return castedChild;
 		}
+		else
+			DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, DEBUG_NODE_NAME(this) << " has a null child.");
 
 	return nullptr;
 }
@@ -133,6 +143,8 @@ bool Node::FindChildrenByName(const std::string& name, std::vector<T*>& results)
 				results.push_back(castedChild);
 			}
 		}
+		else
+			DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, DEBUG_NODE_NAME(this) << " has a null child.");
 }
 
 template<typename T, class ...ConstructorArgs>
@@ -158,9 +170,13 @@ void Node::RemoveThisFromParent() noexcept
 
 	if (removeIndex != siblings->end())
 		siblings->erase(removeIndex);
+		
+	_parent = nullptr;
 }
 
-void Node::AddAsChild(Node* node) noexcept
+void Node::AddAsChild(Node* childNode) noexcept
 {
-	_children->push_back(node);
+	_children->push_back(childNode);
+	childNode->_parent = this;
+	OnParentChanged();
 }
