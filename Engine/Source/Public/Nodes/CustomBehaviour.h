@@ -3,9 +3,7 @@
 
 class CustomBehaviour : public Behaviour
 {
-	friend Game;
-
-protected:
+public:
 	virtual int UpdateOrder() { return 0; }
 
 	CustomBehaviour

@@ -41,7 +41,7 @@ void Visual::RemoveFromRenderList()
 {
 	std::vector<Graphics::VisualsInRenderLayer>& visuals = Game::GetGame()->GetGraphics()->_visualsInRenderLayers;
 
-	auto foundLayer = std::find(visuals.begin(), visuals.end(), [](const Graphics::VisualsInRenderLayer& a, const Graphics::VisualsInRenderLayer& b) -> bool { return a.index == b.index; });
+	auto foundLayer = std::find_if(visuals.begin(), visuals.end(), [&](const Graphics::VisualsInRenderLayer& v) -> bool { return v.index == _renderLayer; });
 
 	if (foundLayer != visuals.end())
 	{
@@ -56,11 +56,11 @@ void Visual::AddToRenderList()
 {
 	std::vector<Graphics::VisualsInRenderLayer>& visuals = Game::GetGame()->GetGraphics()->_visualsInRenderLayers;
 
-	auto foundLayer = std::find(visuals.begin(), visuals.end(), [](const Graphics::VisualsInRenderLayer& a, const Graphics::VisualsInRenderLayer& b) -> bool { return a.index == b.index; });
+	auto foundLayer = std::find_if(visuals.begin(), visuals.end(), [&](const Graphics::VisualsInRenderLayer& v) -> bool { return v.index == _renderLayer; });
 
 	if (foundLayer != visuals.end())
 	{
-		auto insertIndex = std::upper_bound(foundLayer->visualsInZOrder.begin(), foundLayer->visualsInZOrder.end(), [](const Visual* a, const Visual* b) -> bool { return a->GetZOrder() < b->GetZOrder(); });
+		auto insertIndex = std::upper_bound(foundLayer->visualsInZOrder.begin(), foundLayer->visualsInZOrder.end(), _zOrder, [](const int& a, const Visual* b) -> bool { return a < b->GetZOrder(); });
 
 		foundLayer->visualsInZOrder.insert(insertIndex, this);
 	}

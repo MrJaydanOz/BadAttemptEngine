@@ -1,8 +1,8 @@
 #pragma once
 
-class ColorF;
+struct ColorF;
 
-class Color
+struct Color
 {
 public:
 	unsigned char r, g, b, a;
@@ -16,7 +16,7 @@ public:
 	constexpr operator ColorF() const noexcept;
 };
 
-class ColorF
+struct ColorF
 {
 public:
 	float r, g, b, a;

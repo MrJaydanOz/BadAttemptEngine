@@ -6,12 +6,14 @@
 #include "GameGraphics.h"
 #include "Nodes/Camera.h"
 
+class RootNode;
+
 class Game
 {
-	friend Input;
-	friend Time;
-	friend Graphics;
-	friend Camera;
+	friend class Input;
+	friend class Time;
+	friend class Graphics;
+	friend class Camera;
 
 public:
 	RootNode* root;

@@ -6,10 +6,11 @@
 Sprite::Sprite(int zOrder, int renderLayer) noexcept : Sprite("", zOrder, renderLayer) { }
 
 Sprite::Sprite(const std::string& name, int zOrder, int renderLayer) noexcept : Visual(name, zOrder, renderLayer), Transform(name),
-	imageClip(nullptr),
+	image(nullptr),
+	clipRectangle(0, 0, 0, 0),
 	color(COLOR_WHITE),
-	blendingMode(VisualBlendingMode::None),
-	flipMode(SpriteFlipMode::None),
+	blendingMode(VisualBlendingMode_None),
+	flipMode(SpriteFlipMode_None),
 	scale(1.0f, 1.0f),
 	pivot(0.5f, 0.5f)
 { }
@@ -21,11 +22,11 @@ Sprite::~Sprite() noexcept
 
 void Sprite::Render(SDL_Renderer* renderer, const Camera* camera)
 {
-	if (imageClip.image != nullptr)
+	if (image != nullptr)
 	{
-		Vector2I imageSize = imageClip.image->GetSize();
+		Vector2I imageSize = image->GetSize();
 
-		RectI clipRect = imageClip.clipRectangle;
+		RectI clipRect = clipRectangle;
 		if (clipRect.min.x < 0) clipRect.min.x += imageSize.x;
 		if (clipRect.min.y < 0) clipRect.min.y += imageSize.y;
 		if (clipRect.max.x <= 0) clipRect.min.x += imageSize.x;
@@ -56,7 +57,7 @@ void Sprite::Render(SDL_Renderer* renderer, const Camera* camera)
 		};
 
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-		if (SDL_RenderCopyExF(renderer, imageClip.image->_sdlTexture, &sdlClipRect, &sdlDestinationRect, -pose.rotation, &sdlPivotPoint, (SDL_RendererFlip)flipMode) < 0)
+		if (SDL_RenderCopyExF(renderer, image->_sdlTexture, &sdlClipRect, &sdlDestinationRect, -pose.rotation, &sdlPivotPoint, (SDL_RendererFlip)flipMode) < 0)
 			DEBUG_LOG_SDL_ERROR("Error drawing sprite:");
 	}
 }

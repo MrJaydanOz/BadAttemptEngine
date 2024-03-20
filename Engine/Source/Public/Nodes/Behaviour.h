@@ -1,16 +1,15 @@
 #pragma once
 #include "Nodes/Node.h"
-#include "Game.h"
 
 class Behaviour : public Node
 {
-	friend Game;
-
 private:
 	bool _enabled;
 	bool _isFirstFrame;
 
 public:
+	virtual ~Behaviour() noexcept override;
+
 	void SetEnabled(const bool& enabled);
 	bool IsEnabled(const bool& includeHerarchy = true) const;
 

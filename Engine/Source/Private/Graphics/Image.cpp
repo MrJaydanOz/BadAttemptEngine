@@ -24,14 +24,14 @@ bool Image::TryLoad(const char* path, Image*& image) noexcept
 
 Image::~Image() noexcept
 {
-	SDL_FreeSurface(_surfaceData);
-	delete _surfaceData;
+	SDL_FreeSurface(_sdlSurface);
+	delete _sdlSurface;
 }
 
 Vector2I Image::GetSize() const noexcept { return Vector2I(GetWidth(), GetHeight()); }
 
-int Image::GetWidth() const noexcept { return _surfaceData->w; }
+int Image::GetWidth() const noexcept { return _sdlSurface->w; }
 
-int Image::GetHeight() const noexcept { return _surfaceData->h; }
+int Image::GetHeight() const noexcept { return _sdlSurface->h; }
 
-Image::Image(const char* path, SDL_Surface* surfaceData) noexcept : _path(path), _surfaceData(surfaceData) { }
+Image::Image(const char* path, SDL_Surface* surfaceData) noexcept : _path(path), _sdlSurface(surfaceData) { }

@@ -4,7 +4,7 @@
 
 class RootNode : public Node
 {
-	friend Game;
+	friend class Game;
 
 private:
 	RootNode() noexcept;

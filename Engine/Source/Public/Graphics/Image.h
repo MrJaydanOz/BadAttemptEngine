@@ -6,7 +6,7 @@
 
 class Image
 {
-	friend Sprite;
+	friend class Sprite;
 
 private:
 	SDL_Surface* _sdlSurface;
@@ -29,7 +29,7 @@ public:
 	/// <returns>true if successful, false otherwise.</returns>
 	static bool TryLoad(const char* path, Image*& image) noexcept;
 
-	~Image();
+	~Image() noexcept;
 
 	const char* GetPath() const noexcept { _path; }
 

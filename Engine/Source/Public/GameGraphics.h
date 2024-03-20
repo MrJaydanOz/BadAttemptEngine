@@ -1,13 +1,14 @@
 #pragma once
 #include <SDL2/SDL_image.h>
-#include "Game.h"
 #include "Graphics/Color.h"
 #include "Nodes/Visual.h"
 
+struct Color;
+enum VisualBlendingMode;
+
 class Graphics
 {
-    friend Game;
-    friend Visual;
+    friend class Visual;
 
 private:
     struct VisualsInRenderLayer
@@ -78,7 +79,7 @@ public:
         Color color;
         VisualBlendingMode blendingMode;
 
-        constexpr RenderLayerFlags(int renderLayerIndex, Color color = COLOR_WHITE, VisualBlendingMode blendingMode = Alpha) :
+        constexpr RenderLayerFlags(int renderLayerIndex, Color color = COLOR_WHITE, VisualBlendingMode blendingMode = (VisualBlendingMode)0u) :
             renderLayerIndex(renderLayerIndex),
             color(color),
             blendingMode(blendingMode)
@@ -100,9 +101,8 @@ public:
     Graphics(const char* title, int posX, int posY, int sizeX, int sizeY, unsigned int flags) noexcept;
     ~Graphics() noexcept;
 
-    static constexpr int CenteredWindowFlag(int display = 0);
-    static constexpr int AutoPosWindowFlag(int display = 0);
+    static constexpr int CenteredWindowFlag(int display = 0) { return SDL_WINDOWPOS_CENTERED_DISPLAY(display); }
+    static constexpr int AutoPosWindowFlag(int display = 0) { return SDL_WINDOWPOS_UNDEFINED_DISPLAY(display); }
 
-private:
     void DoRender();
 };

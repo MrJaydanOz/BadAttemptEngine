@@ -30,6 +30,7 @@ Game::Game() :
 	_input(nullptr),
 	_time(nullptr),
 	_graphics(nullptr),
+	_mainCamera(nullptr),
 	root(nullptr)
 {
 	DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game created.");
@@ -55,30 +56,12 @@ void Game::Initialize()
 
 void Game::Start()
 {
-	_windowReference = SDL_CreateWindow("Bad Attempt Engine", 
-		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720,
-		0u);
-
-	if (_windowReference == nullptr)
-	{
-		DEBUG_LOG_SDL_ERROR("Window failed to create: ");
-
-		Dispose();
-		return;
-	}
-
-	_rendererReference = SDL_CreateRenderer(_windowReference, -1, 0u);
-
-	if (_rendererReference == nullptr)
-	{
-		DEBUG_LOG_SDL_ERROR("Renderer failed to create: ");
-
-		Dispose();
-		return;
-	}
-
 	_input = new Input();
 	_time = new Time();
+	_graphics = new Graphics("Bad Attempt Engine", 
+		Graphics::CenteredWindowFlag(), Graphics::CenteredWindowFlag(), 
+		1280, 720, 
+		Graphics::WindowFlags::None);
 
 	GameLoop();
 }
@@ -96,33 +79,13 @@ void Game::GameLoop()
 void Game::Update()
 {
 	_input->ProcessInput();
-
-	SDL_SetRenderDrawColor(_rendererReference, 0x00, 0x00, 0x00, 0xFF);
-
-	SDL_RenderClear(_rendererReference);
-
-	const float framesPerSecond = 12.0f;
-	const unsigned long long millisecondsPerFrame = std::lroundf(1000.0f / framesPerSecond);
-
-	unsigned long long time = SDL_GetTicks64();
-
-	SDL_RenderPresent(_rendererReference);
+	_graphics->DoRender();
 }
 
 void Game::Dispose()
 {
-	if (_rendererReference != nullptr)
-	{
-		SDL_DestroyRenderer(_rendererReference);
-		_rendererReference = nullptr;
-	}
-
-	if (_windowReference != nullptr)
-	{
-		SDL_DestroyWindow(_windowReference);
-		_windowReference = nullptr;
-	}
-
+	delete _time;
+	delete _graphics;
 	delete _input;
 
 	SDL_Quit();

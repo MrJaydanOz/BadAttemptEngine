@@ -25,10 +25,6 @@ Graphics::~Graphics() noexcept
 	}
 }
 
-constexpr int Graphics::CenteredWindowFlag(int display) { return SDL_WINDOWPOS_CENTERED_DISPLAY(display); }
-
-constexpr int Graphics::AutoPosWindowFlag(int display) { return SDL_WINDOWPOS_UNDEFINED_DISPLAY(display); }
-
 void Graphics::DoRender()
 {
 	if (_window == nullptr)
@@ -43,7 +39,7 @@ void Graphics::DoRender()
 		return;
 	}
 
-	Camera* mainCamera = Game::GetGame()->_mainCamera;
+	Camera* mainCamera = Game::GetGame()->GetMainCamera();
 
 	if (mainCamera == nullptr)
 	{

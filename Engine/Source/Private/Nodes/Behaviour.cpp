@@ -1,5 +1,10 @@
 #include "Nodes/Behaviour.h"
 
+Behaviour::~Behaviour() noexcept
+{
+	Node::~Node();
+}
+
 Behaviour::Behaviour(const std::string& name) noexcept :
 	Node(name),
 	_enabled(true),
