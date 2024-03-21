@@ -196,18 +196,9 @@ void Game::Render()
 	unsigned long time = SDL_GetTicks64();
 
 	/*
-	* I took a break to fix my mental health and now I'm pissed off because I'm getting f***ed 
-	* by this f***ing university! I have been programming for 4 years now and I get less marks
-	* than some chap who just copied the example! I am here to learn. I already know how basics
-	* work. I am learning things by making this "unnecessarily complicated". I am using bitmasks.
-	* Do you know what they are? Is 'SDL_GetMouseState' ringing any bells? I mean it says it in
-	* the comments above the ctrl+click. Why didn't you use?
-	* 
 	* This engine is just a mess now bolting through drawing basic crap to the screen. I am
 	* starting this engine over again, this time with my own plan. I'm not giving up and copying
-	* the example anymore. I am learning my way whether I fail or not. 
-	* 
-	* BTW want proof? Look on steam. Search 'BombsweeperVR'.
+	* the example anymore. I am learning my way whether I fail or not.
 	*/
 
 	rectS.x = (int)((time / millisecondsPerFrame) % 12) * 32;
