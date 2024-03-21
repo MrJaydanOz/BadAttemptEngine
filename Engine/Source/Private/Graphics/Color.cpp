@@ -4,17 +4,17 @@
 Color::Color(char r, char g, char b, char a) : r(r), g(g), b(b), a(a) { }
 
 Color::Color(unsigned int hex) :
-	r((hex & 0xFF000000) >> (6 * 8)),
-	g((hex & 0x00FF0000) >> (4 * 8)),
-	b((hex & 0x0000FF00) >> (2 * 8)),
-	a((hex & 0x000000FF) >> (0 * 8)) { }
+	r((hex & 0xFF000000) >> (6 * 4)),
+	g((hex & 0x00FF0000) >> (4 * 4)),
+	b((hex & 0x0000FF00) >> (2 * 4)),
+	a((hex & 0x000000FF) >> (0 * 4)) { }
 
 Color& Color::operator=(unsigned int hex)
 {
-	r = (hex & 0xFF000000) >> (6 * 8);
-	g = (hex & 0x00FF0000) >> (4 * 8);
-	b = (hex & 0x0000FF00) >> (2 * 8);
-	a = (hex & 0x000000FF) >> (0 * 8);
+	r = (hex & 0xFF000000) >> (6 * 4);
+	g = (hex & 0x00FF0000) >> (4 * 4);
+	b = (hex & 0x0000FF00) >> (2 * 4);
+	a = (hex & 0x000000FF) >> (0 * 4);
 
 	return *this;
 }

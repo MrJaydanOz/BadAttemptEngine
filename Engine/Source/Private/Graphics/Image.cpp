@@ -26,7 +26,6 @@ bool Image::TryLoad(const char* path, Image*& image)
 Image::~Image()
 {
 	SDL_FreeSurface(_surfaceData);
-	delete _surfaceData;
 }
 
 Vector2I Image::GetSize() const { return Vector2I(GetWidth(), GetHeight()); }

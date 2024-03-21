@@ -14,20 +14,19 @@ private:
 
 	SDL_Window* _windowReference;
 	SDL_Renderer* _rendererReference;
-	Image* _cube1Image;
-	SDL_Texture* _cube1Texture;
-	Image* _cube2Image;
-	SDL_Texture* _cube2Texture;
-	Image* _cube3Image;
-	SDL_Texture* _cube3Texture;
-	Image* _cube4Image;
-	SDL_Texture* _cube4Texture;
-	Image* _cube5Image;
-	SDL_Texture* _cube5Texture;
-	Image* _fireRingImage;
-	SDL_Texture* _fireRingTexture;
-	Image* _fireSmallImage;
-	SDL_Texture* _fireSmallTexture;
+	Image* _enemyImage;
+	SDL_Texture* _enemyTexture;
+	Image* _playerImage;
+	SDL_Texture* _playerTexture;
+	Image* _complaintImage;
+	SDL_Texture* _complaintTexture;
+
+	Vector2F _enemy1Position;
+	int _enemy1Rotation;
+	Vector2F _enemy2Position;
+	int _enemy2Rotation;
+	Vector2F _playerPosition;
+	int _playerRotation;
 
 public:
 	static Game* GetGame();
