@@ -27,12 +27,6 @@
     <ClCompile Include="Source\Private\Graphics\Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\Math\VectorT.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Private\Math\RectT.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Private\Nodes\Node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,13 +36,10 @@
     <ClCompile Include="Source\Private\Nodes\Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\Math\PoseT.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Private\Graphics\Color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\Graphics\Canvas.cpp">
+    <ClCompile Include="Source\Private\GamePhysics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,7 +86,13 @@
     <ClInclude Include="Source\Public\Graphics\Color.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\Graphics\Canvas.h">
+    <ClInclude Include="Source\Public\GamePhysics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\Math\Func\Comparison.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\Math\Func\Simple.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

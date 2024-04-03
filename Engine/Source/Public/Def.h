@@ -1,4 +1,12 @@
 #pragma once
+#include <vcruntime.h>
+
+#define IN(...) const __VA_ARGS__&
+#define IN_NULLABLE(...) const __VA_ARGS__*
+#define OUT(...) __VA_ARGS__&
+#define OUT_NULLABLE(...) __VA_ARGS__*&
+#define REF(...) __VA_ARGS__&
+#define REF_NULLABLE(...) __VA_ARGS__*
 
 #define COMMA ,
 #define COMMA2 COMMA_ BRACKET_OPEN2 BRACKET_CLOSE2

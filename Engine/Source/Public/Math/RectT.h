@@ -1,43 +1,115 @@
 #pragma once
 #include "VectorT.h"
+#include "Def.h"
 
-#define DECLARATION_RECT(rectType, vectorType, elementType, ...) \
-struct rectType \
-{ \
-public: \
-    vectorType min, max; \
- \
-public: \
-    rectType(vectorType min, vectorType max) : min(min), max(max) { } \
-    rectType(elementType minX, elementType minY, elementType maxX, elementType maxY) : min(minX, minY), max(maxX, maxY) { } \
-    __VA_ARGS__ \
-};
-
-#define DECLARATION_RECT_FLOAT_FUNCTIONS(rectType, vectorType, elementType, ...) \
-    DECLARATION_VECTOR_N(vectorType, elementType, 2, \
-    __VA_ARGS__ \
-    )
-
-#define DECLARATION_RECT_INTEGER_FUNCTIONS(rectType, vectorType, elementType, ...) \
-    DECLARATION_VECTOR_N(vectorType, elementType, 2, \
-    __VA_ARGS__ \
-    )
-
-#define DECLARATION_RECT_FLOAT(rectType, vectorType, elementType, ...) DECLARATION_RECT(rectType, vectorType, elementType, DECLARATION_RECT_FLOAT_FUNCTIONS(rectType, vectorType, elementType) __VA_ARGS__)
-#define DECLARATION_RECT_INTEGER(rectType, vectorType, elementType, ...) DECLARATION_RECT(rectType, vectorType, elementType, DECLARATION_RECT_INTEGER_FUNCTIONS(rectType, vectorType, elementType) __VA_ARGS__)
-
-template<typename T>
-class Rect
+namespace bae
 {
-public:
-    T min, max;
+    template<typename T>
+    class Rect
+    {
+    public:
+        Vector<2, T> position;
+        Vector<2, T> size;
 
-public:
-    Rect(T min, T max) : min(min), max(max) { }
-};
+    public:
+        constexpr Rect(IN(Vector<2, T>) position, IN(Vector<2, T>) size) noexcept : 
+            position(position), size(size) { }
+        static constexpr AsPositionSize(IN(Vector<2, T>) position, IN(Vector<2, T>) size) noexcept(noexcept(Rect<T>(position, size)))
+        { return Rect<T>(position, size); }
+        static constexpr AsMinMax(IN(Vector<2, T>) min, IN(Vector<2, T>) max) noexcept(noexcept(Rect<T>(min, max - min)))
+        { return Rect<T>(min, max - min); }
+        static constexpr AsCenterExtents(IN(Vector<2, T>) center, IN(Vector<2, T>) extents) noexcept(noexcept(Rect<T>(center - extents, extents * 2)))
+        { return Rect<T>(center - extents, extents * 2); }
+        static constexpr AsCenterSize(IN(Vector<2, T>) center, IN(Vector<2, T>) size) noexcept(noexcept(AsCenterExtents(center, size * 0.5f)))
+        { return AsCenterExtents(center, size * 0.5f); }
 
-DECLARATION_RECT_FLOAT(RectF, Vector2F, float)
-DECLARATION_RECT_FLOAT(RectD, Vector2D, double)
+        static constexpr Vector<2, T> GetMin() const noexcept
+        { return position; }
+        static constexpr Vector<2, T> GetMax() const noexcept(noexcept(position + size))
+        { return position + size; }
+        static constexpr Vector<2, T> GetCenter() const noexcept(noexcept(position + (size * 0.5f)))
+        { return position - (size * 0.5f); }
+        static constexpr Vector<2, T> GetSize() const noexcept
+        { return size; }
+        static constexpr Vector<2, T> GetExtent() const noexcept
+        { return size * 0.5f; }
 
-DECLARATION_RECT_INTEGER(RectI, Vector2I, int)
-DECLARATION_RECT_INTEGER(RectL, Vector2L, long)
+        constexpr bool Contains(IN(Vector<2, T>) point) const noexcept(noexcept(position + size) && noexcept(point.x <= max.x && point.x >= min.x && point.y <= max.y && point.y >= min.y))
+        {
+            const Vector<2, T>& min = position;
+            const Vector<2, T> max = position + size;
+
+            return 
+                point.x <= max.x && point.x >= min.x &&
+                point.y <= max.y && point.y >= min.y;
+        }
+
+        constexpr void FixNegative() const noexcept(noexcept(size.x < 0) && noexcept(position.x += size.x) && noexcept(size.x = -size.x) && noexcept(size.y < 0) && noexcept(position.y += size.y) && noexcept(size.y = -size.y))
+        {
+            if (size.x < 0)
+            {
+                position.x += size.x;
+                size.x = -size.x;
+            }
+            if (size.y < 0)
+            {
+                position.y += size.y;
+                size.y = -size.y;
+            }
+        }
+    };
+
+    typedef Rect<float> RectF;
+    typedef Rect<double> RectD;
+    typedef Rect<int> RectI;
+
+    template<typename T>
+    class Bounds
+    {
+    public:
+        Vector<2, T> min;
+        Vector<2, T> max;
+
+    public:
+        constexpr Bounds(IN(Vector<2, T>) min, IN(Vector<2, T>) max) noexcept :
+            min(min), max(max) { }
+        static constexpr AsPositionSize(IN(Vector<2, T>) position, IN(Vector<2, T>) size) noexcept(noexcept(Rect<T>(position, size)))
+        { return Bounds<T>(position, position + size); }
+        static constexpr AsMinMax(IN(Vector<2, T>) min, IN(Vector<2, T>) max) noexcept(noexcept(Rect<T>(min, max - min)))
+        { return Bounds<T>(min, max); }
+        static constexpr AsCenterExtents(IN(Vector<2, T>) center, IN(Vector<2, T>) extents) noexcept(noexcept(Rect<T>(center - extents, center + extents)))
+        { return Bounds<T>(center - extents, center + extents); }
+        static constexpr AsCenterSize(IN(Vector<2, T>) center, IN(Vector<2, T>) size) noexcept(noexcept(AsCenterExtents(center, size * 0.5f)))
+        { return AsCenterExtents(center, size * 0.5f); }
+        
+        static constexpr Vector<2, T> GetMin() const noexcept
+        { return min; }
+        static constexpr Vector<2, T> GetMax() const noexcept
+        { return max; }
+        static constexpr Vector<2, T> GetCenter() const noexcept(noexcept((min + max) * 0.5f))
+        { return (min + max) * 0.5f; }
+        static constexpr Vector<2, T> GetSize() const noexcept(noexcept(max - min))
+        { return max - min; }
+        static constexpr Vector<2, T> GetExtent() const noexcept(noexcept((max - min) * 0.5f))
+        { return (max - min) * 0.5f; }
+
+        constexpr bool Contains(IN(Vector<2, T>) point) noexcept(noexcept(point.x <= max.x && point.x >= min.x && point.y <= max.y && point.y >= min.y))
+        {
+            return
+                point.x <= max.x && point.x >= min.x &&
+                point.y <= max.y && point.y >= min.y;
+        }
+
+        constexpr void FixNegative() noexcept(noexcept(size.x < 0) && noexcept(position.x += size.x) && noexcept(size.x = -size.x) && noexcept(size.y < 0) && noexcept(position.y += size.y) && noexcept(size.y = -size.y))
+        {
+            if (min.x > max.x)
+                Swap(min.x, max.x);
+            if (min.y > max.y)
+                Swap(min.y, max.y);
+        }
+    };
+
+    typedef Bounds<float> BoundsF;
+    typedef Bounds<double> BoundsD;
+    typedef Bounds<int> BoundsI;
+}

@@ -1,38 +1,69 @@
 #include "Nodes/Node.h"
-#include <algorithm> 
-#include <vector>
-#include <string>
+#include <algorithm>
 
-Node::~Node()
+namespace bae
 {
-	if (_children != nullptr)
+	Node::Node(const std::string& name) noexcept :
+		_name(name),
+		_children(),
+		_parent(nullptr),
+		_active(true) { }
+
+	Node::~Node() noexcept
 	{
-		_children = nullptr;
-		std::vector<Node*>* childrenBuffer = _children;
+		_active = false;
 
-		std::for_each(childrenBuffer->begin(), childrenBuffer->end(), [](Node* child)
-		{
-			delete child;
-		});
+		for (auto i = _children.rbegin(); i != _children.rend(); ++i)
+			delete* i;
 
-		delete childrenBuffer;
+		RemoveThisFromParent();
 	}
 
-	if (_parent != nullptr && _parent->_children != nullptr)
+	_NODISCARD bool Node::HasName() const noexcept { return _name.length() > 0u; }
+
+	_NODISCARD const std::string& Node::GetName() const noexcept { return _name; }
+
+	void Node::SetName(const std::string& name) noexcept { _name = name; }
+
+	_NODISCARD bool Node::HasParent() const noexcept { return GetParent() != nullptr; }
+
+	Node* Node::GetParent() const noexcept { return _parent; }
+	void Node::SetParent(Node* node) noexcept
 	{
-		std::vector<Node*>* siblings = _parent->_children;
+		if (_parent == node)
+			return;
 
-		auto removeIndex = std::find(siblings->begin(), siblings->end(), this);
+		RemoveThisFromParent();
 
-		if (removeIndex != siblings->end())
-			siblings->erase(removeIndex);
+		if (node == nullptr)
+			_parent = nullptr;
+		else
+			node->AddAsChild(this);
+
+		OnParentChanged();
 	}
 
-	delete name;
+	const std::vector<Node*>& Node::GetChildren() const noexcept { return _children; }
+
+	void Node::RemoveThisFromParent() noexcept
+	{
+		if (!HasParent())
+			return;
+
+		std::vector<Node*>& siblings = _parent->_children;
+
+		auto removeIndex = std::find(siblings.begin(), siblings.end(), this);
+
+		if (removeIndex != siblings.end())
+			siblings.erase(removeIndex);
+
+		_parent = nullptr;
+	}
+
+	void Node::AddAsChild(Node* childNode) noexcept
+	{
+		_children.push_back(childNode);
+		childNode->_parent = this;
+		OnParentChanged();
+	}
 }
-
-bool Node::HasParent() const { return GetParent() != nullptr; }
-
-const Node* Node::GetParent() const { return _parent; }
-
-const std::vector<Node*>* Node::GetChildren() const { return _children; }
