@@ -1,37 +1,58 @@
 #include "Graphics/Color.h"
 #include <cmath>
 
-Color::Color(char r, char g, char b, char a) : r(r), g(g), b(b), a(a) { }
-
-Color::Color(unsigned int hex) :
-	r((hex & 0xFF000000) >> (6 * 8)),
-	g((hex & 0x00FF0000) >> (4 * 8)),
-	b((hex & 0x0000FF00) >> (2 * 8)),
-	a((hex & 0x000000FF) >> (0 * 8)) { }
-
-Color& Color::operator=(unsigned int hex)
+namespace bae
 {
-	r = (hex & 0xFF000000) >> (6 * 8);
-	g = (hex & 0x00FF0000) >> (4 * 8);
-	b = (hex & 0x0000FF00) >> (2 * 8);
-	a = (hex & 0x000000FF) >> (0 * 8);
+	constexpr Color::Color(in<uint8> r, in<uint8> g, in<uint8> b, in<uint8> a) noexcept :
+		r(r), g(g), b(b), a(a) { }
 
-	return *this;
-}
+	constexpr Color::Color(in<std::uintx_t<8 * 4>> hex) noexcept :
+		r((hex & 0xFF000000u) >> (6 * 4)),
+		g((hex & 0x00FF0000u) >> (4 * 4)),
+		b((hex & 0x0000FF00u) >> (2 * 4)),
+		a((hex & 0x000000FFu) >> (0 * 4)) { }
 
-Color::operator ColorF() const
-{
-	const float reciprocal = 1.0f / 255.0f;
-	return ColorF(r * reciprocal, g * reciprocal, b * reciprocal, a * reciprocal);
-}
+	constexpr Color& Color::operator=(in<std::uintx_t<8 * 4>> hex) noexcept
+	{
+		r = (hex & 0xFF000000u) >> (6 * 4);
+		g = (hex & 0x00FF0000u) >> (4 * 4);
+		b = (hex & 0x0000FF00u) >> (2 * 4);
+		a = (hex & 0x000000FFu) >> (0 * 4);
 
-ColorF::ColorF(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) { }
+		return *this;
+	}
 
-ColorF::operator Color() const
-{
-	return Color(
-		std::min(0l, std::max<long>(std::lroundf(r * 255.0f), 255l)), 
-		std::min(0l, std::max<long>(std::lroundf(g * 255.0f), 255l)),
-		std::min(0l, std::max<long>(std::lroundf(b * 255.0f), 255l)),
-		std::min(0l, std::max<long>(std::lroundf(a * 255.0f), 255l)));
+	constexpr Color::operator ColorF() const noexcept
+	{
+		const float reciprocal = 1.0f / 255.0f;
+		return ColorF(r * reciprocal, g * reciprocal, b * reciprocal, a * reciprocal);
+	}
+
+	constexpr ColorF::ColorF(in<float> r, in<float> g, in<float> b, in<float> a) noexcept :
+		r(r), g(g), b(b), a(a) { }
+
+	constexpr ColorF::ColorF(in<std::uintx_t<8 * 4>> hex) noexcept :
+		r(((hex & 0xFF000000u) >> (6 * 4)) * (1.0f / 255.0f)),
+		g(((hex & 0x00FF0000u) >> (4 * 4)) * (1.0f / 255.0f)),
+		b(((hex & 0x0000FF00u) >> (2 * 4)) * (1.0f / 255.0f)),
+		a(((hex & 0x000000FFu) >> (0 * 4)) * (1.0f / 255.0f)) { }
+
+	constexpr ColorF& ColorF::operator=(in<std::uintx_t<8 * 4>> hex) noexcept
+	{
+		r = ((hex & 0xFF000000u) >> (6 * 4)) * (1.0f / 255.0f);
+		g = ((hex & 0x00FF0000u) >> (4 * 4)) * (1.0f / 255.0f);
+		b = ((hex & 0x0000FF00u) >> (2 * 4)) * (1.0f / 255.0f);
+		a = ((hex & 0x000000FFu) >> (0 * 4)) * (1.0f / 255.0f);
+
+		return *this;
+	}
+
+	constexpr ColorF::operator Color() const noexcept
+	{
+		return Color(
+			(uint8)std::max(0l, std::min(std::lroundf(r * 255.0f), 255l)),
+			(uint8)std::max(0l, std::min(std::lroundf(g * 255.0f), 255l)),
+			(uint8)std::max(0l, std::min(std::lroundf(b * 255.0f), 255l)),
+			(uint8)std::max(0l, std::min(std::lroundf(a * 255.0f), 255l)));
+	}
 }

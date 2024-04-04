@@ -1,154 +1,153 @@
 #include "Nodes/Transform.h"
 #include <algorithm>
+#include <string>
 #include "Def.h"
 #include "Nodes/Node.h"
 #include "Math/PoseT.h"
 
-static bool tryGetNextParentTransform(const Node* node, const Transform*& transform)
+namespace bae
 {
-	const Node* parent = node->GetParent();
+	Transform::Transform(in<std::string> name) noexcept : Node(name),
+		_pose(Vector2F(0.0f), 0.0f),
+		_cachedWorldPose(nullptr),
+		_hasModified(false)
+	{ }
 
-	while (parent != nullptr)
+	Transform::~Transform() noexcept
 	{
-		const Transform* parentTransform = dynamic_cast<const Transform*>(parent);
-		if (parentTransform)
-		{
-			transform = parentTransform;
-			return true;
-		}
+		delete _cachedWorldPose;
 
-		parent = parent->GetParent();
+		Node::~Node();
 	}
 
-	transform = nullptr;
-	return false;
-}
+	PoseF Transform::GetLocalPose() const noexcept { return _pose; }
 
-Transform::~Transform()
-{
-	delete _cachedWorldPose;
+	void Transform::SetLocalPose(in<PoseF> pose) noexcept { _pose = pose; _hasModified = true; }
 
-	Node::~Node();
-}
+	PoseF Transform::GetPose() const noexcept
+	{
+		if (_cachedWorldPose != nullptr)
+			return *_cachedWorldPose;
 
-PoseF Transform::GetLocalPose() const { return _pose; }
+		Transform* parentTransform;
 
-void Transform::SetLocalPose(const PoseF& pose) { _pose = pose; _hasModified = true; }
+		if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
+			return parentTransform->TransformPose(GetLocalPose());
+		else
+			return GetLocalPose();
+	}
 
-PoseF Transform::GetPose() const
-{
-	if (_cachedWorldPose != nullptr)
-		return *_cachedWorldPose;
+	void Transform::SetPose(in<PoseF> pose) noexcept
+	{
+		Transform* parentTransform;
 
-	const Transform* parentTransform;
+		if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
+			SetLocalPose(parentTransform->InverseTransformPose(pose));
+		else
+			SetLocalPose(pose);
+	}
 
-	if (tryGetNextParentTransform(this, parentTransform))
-		return parentTransform->TransformPose(GetLocalPose());
-	else
-		return GetLocalPose();
-}
+	Vector2F Transform::GetLocalPosition() const noexcept { return _pose.position; }
 
-void Transform::SetPose(const PoseF& pose)
-{
-	const Transform* parentTransform;
+	void Transform::SetLocalPosition(in<Vector2F> position) noexcept { _pose.position = position; _hasModified = true; }
 
-	if (tryGetNextParentTransform(this, parentTransform))
-		SetLocalPose(parentTransform->InverseTransformPose(pose));
-	else
-		SetLocalPose(pose);
+	Vector2F Transform::GetPosition() const noexcept
+	{
+		if (_cachedWorldPose != nullptr)
+			return _cachedWorldPose->position;
 
-}
+		Transform* parentTransform;
 
-Vector2F Transform::GetLocalPosition() const { return _pose.position; }
+		if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
+			return parentTransform->TransformPoint(GetLocalPosition());
+		else
+			return GetLocalPosition();
+	}
 
-void Transform::SetLocalPosition(const Vector2F& position) { _pose.position = position; _hasModified = true; }
+	void Transform::SetPosition(in<Vector2F> position) noexcept
+	{
+		Transform* parentTransform;
 
-Vector2F Transform::GetPosition() const
-{
-	if (_cachedWorldPose != nullptr)
-		return _cachedWorldPose->position;
+		if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
+			SetLocalPosition(parentTransform->InverseTransformPoint(position));
+		else
+			SetLocalPosition(position);
+	}
 
-	const Transform* parentTransform;
+	float Transform::GetLocalRotation() const noexcept { return _pose.rotation; }
 
-	if (tryGetNextParentTransform(this, parentTransform))
-		return parentTransform->TransformPoint(GetLocalPosition());
-	else
-		return GetLocalPosition();
-}
+	void Transform::SetLocalRotation(in<float> rotation) noexcept { _pose.rotation = rotation; _hasModified = true; }
 
-void Transform::SetPosition(const Vector2F& position)
-{
-	const Transform* parentTransform;
+	float Transform::GetRotation() const noexcept
+	{
+		if (_cachedWorldPose != nullptr)
+			return _cachedWorldPose->rotation;
 
-	if (tryGetNextParentTransform(this, parentTransform))
-		SetLocalPosition(parentTransform->InverseTransformPoint(position));
-	else
-		SetLocalPosition(position);
-}
+		Transform* parentTransform;
 
-float Transform::GetLocalRotation() const { return _pose.rotation; }
+		if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
+			return parentTransform->TransformRotation(GetLocalRotation());
+		else
+			return GetLocalRotation();
+	}
 
-void Transform::SetLocalRotation(const float& rotation) { _pose.rotation = rotation; _hasModified = true; }
+	void Transform::SetRotation(in<float> rotation) noexcept
+	{
+		Transform* parentTransform;
 
-float Transform::GetRotation() const
-{
-	if (_cachedWorldPose != nullptr)
-		return _cachedWorldPose->rotation;
+		if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
+			SetLocalRotation(parentTransform->InverseTransformRotation(rotation));
+		else
+			SetLocalRotation(rotation);
+	}
 
-	const Transform* parentTransform;
+	void Transform::CacheWorldPose(in<bool> recalculateIfAlreadyCached) noexcept
+	{
+		if (_cachedWorldPose == nullptr)
+			_cachedWorldPose = new PoseF(GetPose());
+		else if (recalculateIfAlreadyCached)
+			*_cachedWorldPose = GetPose();
+	}
 
-	if (tryGetNextParentTransform(this, parentTransform))
-		return parentTransform->TransformRotation(GetLocalRotation());
-	else
-		return GetLocalRotation();
-}
-
-void Transform::SetRotation(const float& rotation)
-{
-	const Transform* parentTransform;
-
-	if (tryGetNextParentTransform(this, parentTransform))
-		SetLocalRotation(parentTransform->InverseTransformRotation(rotation));
-	else
-		SetLocalRotation(rotation);
-}
-
-void Transform::CacheWorldPose()
-{
-	if (_cachedWorldPose == nullptr)
-		_cachedWorldPose = new PoseF(GetPose());
-	else
-		*_cachedWorldPose = GetPose();
-}
-
-void Transform::ClearWorldPoseCache(bool includeChildren)
-{
-	auto children = GetChildren();
-
-	if (includeChildren && children != nullptr)
-		std::for_each(children->begin(), children->end(), [](Node* child)
+	void Transform::ClearWorldPoseCache(in<bool> includeChildren) noexcept
+	{
+		if (includeChildren)
 		{
-			Transform* childTransform = dynamic_cast<Transform*>(child);
-			if (childTransform)
-				childTransform->ClearWorldPoseCache(true);
-		});
+			auto children = GetChildren();
 
-	delete _cachedWorldPose;
-	_cachedWorldPose = nullptr;
+			for (Node* child : children)
+			{
+				Transform* childTransform = dynamic_cast<Transform*>(child);
+				if (childTransform)
+					childTransform->ClearWorldPoseCache(true);
+			}
+		}
+
+		delete _cachedWorldPose;
+		_cachedWorldPose = nullptr;
+	}
+
+	PoseF Transform::TransformPose(in<PoseF> pose) const noexcept 
+	{ return GetPose().TransformPose(pose); }
+
+	Vector2F Transform::TransformPoint(in<Vector2F> point) const noexcept 
+	{ return GetPose().TransformPoint(point); }
+
+	Vector2F Transform::TransformDirection(in<Vector2F> direction) const noexcept 
+	{ return GetPose().TransformDirection(direction); }
+
+	float Transform::TransformRotation(in<float> rotation) const noexcept 
+	{ return GetPose().TransformRotation(rotation); }
+
+	PoseF Transform::InverseTransformPose(in<PoseF> pose) const noexcept 
+	{ return GetPose().InverseTransformPose(pose); }
+
+	Vector2F Transform::InverseTransformPoint(in<Vector2F> point) const noexcept 
+	{ return GetPose().InverseTransformPoint(point); }
+
+	Vector2F Transform::InverseTransformDirection(in<Vector2F> direction) const noexcept 
+	{ return GetPose().InverseTransformDirection(direction); }
+
+	float Transform::InverseTransformRotation(in<float> rotation) const noexcept 
+	{ return GetPose().InverseTransformRotation(rotation); }
 }
-
-PoseF Transform::TransformPose(const PoseF& pose) const { return GetPose().TransformPose(pose); }
-
-Vector2F Transform::TransformPoint(const Vector2F& point) const { return GetPose().TransformPoint(point); }
-
-Vector2F Transform::TransformDirection(const Vector2F& direction) const { return GetPose().TransformDirection(direction); }
-
-float Transform::TransformRotation(const float& rotation) const { return GetPose().TransformRotation(rotation); }
-
-PoseF Transform::InverseTransformPose(const PoseF& pose) const { return GetPose().InverseTransformPose(pose); }
-
-Vector2F Transform::InverseTransformPoint(const Vector2F& point) const { return GetPose().InverseTransformPoint(point); }
-
-Vector2F Transform::InverseTransformDirection(const Vector2F& direction) const { return GetPose().InverseTransformDirection(direction); }
-
-float Transform::InverseTransformRotation(const float& rotation) const { return GetPose().InverseTransformRotation(rotation); }

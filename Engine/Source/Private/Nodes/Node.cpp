@@ -3,7 +3,7 @@
 
 namespace bae
 {
-	Node::Node(const std::string& name) noexcept :
+	Node::Node(in<std::string> name) noexcept :
 		_name(name),
 		_children(),
 		_parent(nullptr),
@@ -19,15 +19,20 @@ namespace bae
 		RemoveThisFromParent();
 	}
 
-	_NODISCARD bool Node::HasName() const noexcept { return _name.length() > 0u; }
+	bool Node::HasName() const noexcept 
+	{ return _name.length() > 0u; }
 
-	_NODISCARD const std::string& Node::GetName() const noexcept { return _name; }
+	const std::string& Node::GetName() const noexcept 
+	{ return _name; }
 
-	void Node::SetName(const std::string& name) noexcept { _name = name; }
+	void Node::SetName(in<std::string> name) noexcept
+	{ _name = name; }
 
-	_NODISCARD bool Node::HasParent() const noexcept { return GetParent() != nullptr; }
+	bool Node::HasParent() const noexcept 
+	{ return GetParent() != nullptr; }
 
-	Node* Node::GetParent() const noexcept { return _parent; }
+	Node* Node::GetParent() const noexcept
+	{ return _parent; }
 	void Node::SetParent(Node* node) noexcept
 	{
 		if (_parent == node)
@@ -43,7 +48,8 @@ namespace bae
 		OnParentChanged();
 	}
 
-	const std::vector<Node*>& Node::GetChildren() const noexcept { return _children; }
+	const std::vector<Node*>& Node::GetChildren() const noexcept 
+	{ return _children; }
 
 	void Node::RemoveThisFromParent() noexcept
 	{
