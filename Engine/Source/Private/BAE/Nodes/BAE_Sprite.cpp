@@ -1,0 +1,6 @@
+#include "BAE_Debug.h"
+#include "Math/BAE_Color.h"
+#include "Nodes/BAE_Sprite.h"
+#include "Nodes/BAE_Transform.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"

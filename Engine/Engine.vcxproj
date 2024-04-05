@@ -19,13 +19,13 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -59,7 +59,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(ProjectDir)ExternalLibs\Includes;$(ProjectDir)Source\Public\BAE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ExternalLibs\Includes;$(ProjectDir)Source\Public;$(ProjectDir)Source\Public\BAE;$(ProjectDir)Source\Public\Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -81,7 +81,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(ProjectDir)ExternalLibs\Includes;$(ProjectDir)Source\Public\BAE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ExternalLibs\Includes;$(ProjectDir)Source\Public;$(ProjectDir)Source\Public\BAE;$(ProjectDir)Source\Public\Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -96,16 +96,22 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Private\Game.cpp" />
-    <ClCompile Include="Source\Private\GameScene.cpp" />
-    <ClCompile Include="Source\Private\Graphics\Image.cpp" />
-    <ClCompile Include="Source\Private\Graphics\Sprite.cpp" />
-    <ClCompile Include="Source\Private\Nodes\Transform.cpp" />
-    <ClCompile Include="Source\Private\Nodes\Node.cpp" />
-    <ClCompile Include="Source\Private\Graphics\Color.cpp" />
-    <ClCompile Include="Source\Private\GamePhysics.cpp" />
-    <ClCompile Include="Source\Public\BAE\GameScene.h" />
-    <ClCompile Include="Source\Public\Source.cpp" />
+    <ClCompile Include="Source\Private\BAE\BAE_Game.cpp" />
+    <ClCompile Include="Source\Private\BAE\BAE_Graphics.cpp" />
+    <ClCompile Include="Source\Private\BAE\BAE_Scene.cpp" />
+    <ClCompile Include="Source\Private\BAE\BAE_Image.cpp" />
+    <ClCompile Include="Source\Private\BAE\Nodes\BAE_Behaviour.cpp" />
+    <ClCompile Include="Source\Private\BAE\Nodes\BAE_Sprite.cpp" />
+    <ClCompile Include="Source\Private\BAE\Math\Func\BAE_Simple.cpp" />
+    <ClCompile Include="Source\Private\BAE\Nodes\BAE_Transform.cpp" />
+    <ClCompile Include="Source\Private\BAE\Nodes\BAE_Node.cpp" />
+    <ClCompile Include="Source\Private\BAE\Math\BAE_Color.cpp" />
+    <ClCompile Include="Source\Private\BAE\BAE_Physics.cpp" />
+    <ClCompile Include="Source\Private\BAE\BAE_Engine.cpp" />
+    <ClCompile Include="Source\Private\BAE\Nodes\BAE_Visual.cpp" />
+    <ClCompile Include="Source\Private\Game\Source.cpp" />
+    <ClCompile Include="Source\Public\BAE\BAE_GameScene.h" />
+    <ClCompile Include="Source\Private\BAE\BAE_Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ExternalLibs\Includes\SDL2\begin_code.h" />
@@ -187,23 +193,28 @@
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_version.h" />
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_video.h" />
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_vulkan.h" />
-    <ClInclude Include="Source\Public\BAE\Def.h" />
-    <ClInclude Include="Source\Public\BAE\Engine.h" />
-    <ClInclude Include="Source\Public\BAE\Graphics\Color.h" />
-    <ClInclude Include="Source\Public\BAE\Math\Constants.h" />
-    <ClInclude Include="Source\Public\BAE\Math\Func\Comparison.h" />
-    <ClInclude Include="Source\Public\BAE\Math\Func\Simple.h" />
-    <ClInclude Include="Source\Public\BAE\Math\PoseT.h" />
-    <ClInclude Include="Source\Public\BAE\Math\RectT.h" />
-    <ClInclude Include="Source\Public\BAE\Debug.h" />
-    <ClInclude Include="Source\Public\BAE\Game.h" />
-    <ClInclude Include="Source\Public\BAE\Graphics\Image.h" />
-    <ClInclude Include="Source\Public\BAE\Graphics\Sprite.h" />
-    <ClInclude Include="Source\Public\BAE\Math\VectorT.h" />
-    <ClInclude Include="Source\Public\BAE\For.h" />
-    <ClInclude Include="Source\Public\BAE\Nodes\Transform.h" />
-    <ClInclude Include="Source\Public\BAE\Nodes\Node.h" />
-    <ClInclude Include="Source\Public\BAE\GamePhysics.h" />
+    <ClInclude Include="Source\Public\BAE\BAE.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Def.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Engine.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Graphics.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Math.h" />
+    <ClInclude Include="Source\Public\BAE\Math\BAE_Color.h" />
+    <ClInclude Include="Source\Public\BAE\Math\BAE_Constants.h" />
+    <ClInclude Include="Source\Public\BAE\Math\Func\BAE_Comparison.h" />
+    <ClInclude Include="Source\Public\BAE\Math\Func\BAE_Simple.h" />
+    <ClInclude Include="Source\Public\BAE\Math\BAE_PoseT.h" />
+    <ClInclude Include="Source\Public\BAE\Math\BAE_RectT.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Debug.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Game.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Image.h" />
+    <ClInclude Include="Source\Public\BAE\Nodes\BAE_Behaviour.h" />
+    <ClInclude Include="Source\Public\BAE\Nodes\BAE_Sprite.h" />
+    <ClInclude Include="Source\Public\BAE\Math\BAE_VectorT.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_For.h" />
+    <ClInclude Include="Source\Public\BAE\Nodes\BAE_Transform.h" />
+    <ClInclude Include="Source\Public\BAE\Nodes\BAE_Node.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_GamePhysics.h" />
+    <ClInclude Include="Source\Public\BAE\Nodes\BAE_Visual.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="ExternalLibs\StaticLibs\SDL2.lib" />

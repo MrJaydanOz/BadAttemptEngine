@@ -15,87 +15,105 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Public\Source.cpp">
+    <ClCompile Include="Source\Private\BAE\BAE_Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\Game.cpp">
+    <ClCompile Include="Source\Private\BAE\BAE_Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\Graphics\Sprite.cpp">
+    <ClCompile Include="Source\Private\BAE\Nodes\BAE_Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\Graphics\Image.cpp">
+    <ClCompile Include="Source\Private\BAE\BAE_Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\Nodes\Node.cpp">
+    <ClCompile Include="Source\Private\BAE\Nodes\BAE_Node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\Nodes\Transform.cpp">
+    <ClCompile Include="Source\Private\BAE\Nodes\BAE_Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\Graphics\Color.cpp">
+    <ClCompile Include="Source\Private\BAE\Math\BAE_Color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\GamePhysics.cpp">
+    <ClCompile Include="Source\Private\BAE\BAE_Physics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Public\BAE\GameScene.h">
+    <ClCompile Include="Source\Public\BAE\BAE_GameScene.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\GameScene.cpp">
+    <ClCompile Include="Source\Private\BAE\BAE_Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\BAE\Math\Func\BAE_Simple.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\Game\Source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\BAE\BAE_Engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\BAE\BAE_Graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\BAE\Nodes\BAE_Visual.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\BAE\Nodes\BAE_Behaviour.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Public\BAE\Game.h">
+    <ClInclude Include="Source\Public\BAE\BAE_Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Debug.h">
+    <ClInclude Include="Source\Public\BAE\BAE_Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Graphics\Sprite.h">
+    <ClInclude Include="Source\Public\BAE\Nodes\BAE_Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Graphics\Image.h">
+    <ClInclude Include="Source\Public\BAE\BAE_Image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Math\VectorT.h">
+    <ClInclude Include="Source\Public\BAE\Math\BAE_VectorT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\For.h">
+    <ClInclude Include="Source\Public\BAE\BAE_For.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Math\RectT.h">
+    <ClInclude Include="Source\Public\BAE\Math\BAE_RectT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Def.h">
+    <ClInclude Include="Source\Public\BAE\BAE_Def.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Nodes\Node.h">
+    <ClInclude Include="Source\Public\BAE\Nodes\BAE_Node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Nodes\Transform.h">
+    <ClInclude Include="Source\Public\BAE\Nodes\BAE_Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Math\PoseT.h">
+    <ClInclude Include="Source\Public\BAE\Math\BAE_PoseT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Math\Constants.h">
+    <ClInclude Include="Source\Public\BAE\Math\BAE_Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Graphics\Color.h">
+    <ClInclude Include="Source\Public\BAE\Math\BAE_Color.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\GamePhysics.h">
+    <ClInclude Include="Source\Public\BAE\BAE_GamePhysics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Math\Func\Comparison.h">
+    <ClInclude Include="Source\Public\BAE\Math\Func\BAE_Comparison.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Math\Func\Simple.h">
+    <ClInclude Include="Source\Public\BAE\Math\Func\BAE_Simple.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Engine.h">
+    <ClInclude Include="Source\Public\BAE\BAE_Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_vulkan.h">
@@ -333,6 +351,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_video.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\BAE\BAE.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\BAE\BAE_Math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\BAE\BAE_Graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\BAE\Nodes\BAE_Visual.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\BAE\Nodes\BAE_Behaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
