@@ -1,11 +1,17 @@
 #pragma once
+#include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_VectorT.h"))
+#endif
 #include "Math/Func/BAE_Simple.h"
 #include "Math/BAE_Constants.h"
-#include "BAE_Def.h"
 #include <cmath>
 
 namespace bae
 {
+#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Vector<size_t, typename>))
+#endif
 	template<size_t elementCount, typename T>
 	class Vector { };
 
@@ -16,6 +22,8 @@ namespace bae
 		T x, y;
 
 	public:
+		constexpr Vector() noexcept :
+			x(), y() { }
 		constexpr Vector(in<T> fill) noexcept : 
 			x(fill), y(fill) { }
 		constexpr Vector(in<T> x, in<T> y) noexcept : 
@@ -52,6 +60,13 @@ namespace bae
 		_NODISCARD Vector InverseRotate(in<T> degrees) const noexcept(noexcept(Rotate(-degrees))) { return Rotate(-degrees); }
 
 	public:
+		friend std::ostream& operator<<(ref<std::ostream> stream, in<Vector> vector)
+		{
+			return stream <<
+				 '(' << std::setprecision(2) << std::fixed << vector.x <<
+				", " << std::setprecision(2) << std::fixed << vector.y << ')';
+		}
+
 		constexpr Vector& operator=(in<Vector> other) noexcept(noexcept(x = other.x) && noexcept(y = other.y)) { x = other.x; y = other.y; return *this; }
 
 		_NODISCARD constexpr Vector operator+(in<Vector> other) const noexcept(noexcept(Vector(x + other.x, y + other.y))) { return Vector(x + other.x, y + other.y); }
@@ -68,6 +83,9 @@ namespace bae
 
 		_NODISCARD constexpr bool operator==(in<Vector> other) const noexcept(noexcept(x == other.x) && noexcept(y == other.y)) { return x == other.x && y == other.y; }
 		_NODISCARD constexpr bool operator!=(in<Vector> other) const noexcept(noexcept(x != other.x) && noexcept(y != other.y)) { return x != other.x || y != other.y; }
+
+		template<typename TResult>
+		_NODISCARD constexpr explicit operator Vector<2, TResult>() const noexcept(noexcept(Vector<2, TResult>((TResult)x, (TResult)y))) { return Vector<2, TResult>((TResult)x, (TResult)y); }
 	};
 
 	template<typename T>
@@ -96,6 +114,8 @@ namespace bae
 		T x, y, z;
 
 	public:
+		constexpr Vector() noexcept :
+			x(), y(), z() { }
 		constexpr Vector(in<T> fill) noexcept : 
 			x(fill), y(fill), z(fill) { }
 		constexpr Vector(in<T> x, in<T> y, in<T> z) noexcept : 
@@ -118,6 +138,14 @@ namespace bae
 		{ return Vector<3, T>((y * other.z) - (z * other.y), (z * other.x) - (x * other.z), (x * other.y) - (y * other.x)); }
 
 	public:
+		friend std::ostream& operator<<(ref<std::ostream> stream, in<Vector> vector)
+		{
+			return stream <<
+				 '(' << std::setprecision(2) << std::fixed << vector.x <<
+				", " << std::setprecision(2) << std::fixed << vector.y <<
+				", " << std::setprecision(2) << std::fixed << vector.z << ')';
+		}
+
 		constexpr Vector& operator=(in<Vector> other) noexcept(noexcept(x = other.x) && noexcept(y = other.y) && noexcept(z = other.z)) { x = other.x; y = other.y; z = other.z; return *this; }
 
 		_NODISCARD constexpr Vector operator+(in<Vector> other) const noexcept(noexcept(Vector(x + other.x, y + other.y, z + other.z))) { return Vector(x + other.x, y + other.y, z + other.z); }
@@ -134,6 +162,9 @@ namespace bae
 
 		_NODISCARD constexpr bool operator==(in<Vector> other) const noexcept(noexcept(x == other.x) && noexcept(y == other.y) && noexcept(z == other.z)) { return x == other.x && y == other.y && z == other.z; }
 		_NODISCARD constexpr bool operator!=(in<Vector> other) const noexcept(noexcept(x != other.x) && noexcept(y != other.y) && noexcept(z != other.z)) { return x != other.x || y != other.y || z != other.z; }
+
+		template<typename TResult>
+		_NODISCARD constexpr explicit operator Vector<3, TResult>() const noexcept(noexcept(Vector<3, TResult>((TResult)x, (TResult)y, (TResult)z))) { return Vector<3, TResult>((TResult)x, (TResult)y, (TResult)z); }
 	};
 
 	template<typename T>
@@ -162,6 +193,8 @@ namespace bae
 		T x, y, z, w;
 
 	public:
+		constexpr Vector() noexcept :
+			x(), y(), z(), w() { }
 		constexpr Vector(in<T> fill) noexcept : 
 			x(fill), y(fill), z(fill), w(fill) { }
 		constexpr Vector(in<T> x, in<T> y, in<T> z, in<T> w) noexcept : 
@@ -181,6 +214,15 @@ namespace bae
 		{ return (x * other.x) + (y * other.y) + (z * other.z) + (w * other.w); }
 
 	public:
+		friend std::ostream& operator<<(ref<std::ostream> stream, in<Vector> vector)
+		{
+			return stream <<
+				 '(' << std::setprecision(2) << std::fixed << vector.x <<
+				", " << std::setprecision(2) << std::fixed << vector.y <<
+				", " << std::setprecision(2) << std::fixed << vector.z <<
+				", " << std::setprecision(2) << std::fixed << vector.w << ')';
+		}
+
 		constexpr Vector& operator=(in<Vector> other) noexcept(noexcept(x = other.x) && noexcept(y = other.y) && noexcept(z = other.z) && noexcept(w = other.w)) { x = other.x; y = other.y; z = other.z; w = other.w; return *this; }
 
 		_NODISCARD constexpr Vector operator+(in<Vector> other) const noexcept(noexcept(Vector(x + other.x, y + other.y, z + other.z, w + other.w))) { return Vector(x + other.x, y + other.y, z + other.z, w + other.w); }
@@ -197,6 +239,9 @@ namespace bae
 
 		_NODISCARD constexpr bool operator==(in<Vector> other) const noexcept(noexcept(x == other.x) && noexcept(y == other.y) && noexcept(z == other.z) && noexcept(w == other.w)) { return x == other.x && y == other.y && z == other.z && w == other.w; }
 		_NODISCARD constexpr bool operator!=(in<Vector> other) const noexcept(noexcept(x != other.x) && noexcept(y != other.y) && noexcept(z != other.z) && noexcept(w != other.w)) { return x != other.x || y != other.y || z != other.z || w != other.w; }
+
+		template<typename TResult>
+		_NODISCARD constexpr explicit operator Vector<4, TResult>() const noexcept(noexcept(Vector<4, TResult>((TResult)x, (TResult)y, (TResult)z, (TResult)w))) { return Vector<4, TResult>((TResult)x, (TResult)y, (TResult)z, (TResult)w); }
 	};
 
 	template<typename T>

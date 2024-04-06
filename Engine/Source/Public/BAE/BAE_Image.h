@@ -1,42 +1,58 @@
 #pragma once
 #include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_Image.h"))
+#endif
 #include <SDL2/SDL_image.h>
 #include "Math/BAE_RectT.h"
 #include "Math/BAE_VectorT.h"
+#include "Math/BAE_Color.h"
+#include "Math/BAE_PoseT.h"
 #include "BAE_Game.h"
-
-class Visual;
 
 namespace bae
 {
-	enum ImageFlipMode : bae::int_fit_t<FLIP_VERTIAL>
+	class Visual;
+
+#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+#pragma message(MESSAGE_WHEN_CLASS_DEFINED(enum class ImageFlipMode))
+#endif
+	enum class ImageFlipMode : bae::int_fit_t<2>
 	{
 		FLIP_NONE,
 		FLIP_HORIZONTAL,
-		FLIP_VERTIAL
+		FLIP_VERTICAL
 	};
 
-	enum ImageBlendMode
+#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+#pragma message(MESSAGE_WHEN_CLASS_DEFINED(enum class ImageBlendMode))
+#endif
+	enum class ImageBlendMode
 	{
-		BLENDMODE_NONE = 0x00000000,     /**< no blending
-												  dstRGBA = srcRGBA */
-		BLENDMODE_BLEND = 0x00000001,    /**< alpha blending
-												  dstRGB = (srcRGB * srcA) + (dstRGB * (1-srcA))
-												  dstA = srcA + (dstA * (1-srcA)) */
-		BLENDMODE_ADD = 0x00000002,      /**< additive blending
-												  dstRGB = (srcRGB * srcA) + dstRGB
-												  dstA = dstA */
-		BLENDMODE_MOD = 0x00000004,      /**< color modulate
-												  dstRGB = srcRGB * dstRGB
-												  dstA = dstA */
-		BLENDMODE_MUL = 0x00000008,      /**< color multiply
-												  dstRGB = (srcRGB * dstRGB) + (dstRGB * (1-srcA))
-												  dstA = dstA */
-
-		/* Additional custom blend modes can be returned by SDL_ComposeCustomBlendMode() */
-
+		/// <summary>No blending</summary>
+		/// <param name="dst.RGBA">= src.RGBA</param>
+		BLENDMODE_NONE,
+		/// <summary>Alpha blending</summary>
+		/// <param name="dst.RGB">= (src.RGB * src.A) + (dst.RGB * (1 - src.A))</param>
+		/// <param name="dst.A">= src.A + (dst.A * (1 - src.A))</param>
+		BLENDMODE_BLEND,
+		/// <summary>Additive blending</summary>
+		/// <param name="dst.RGB">= (src.RGB * src.A) + dst.RGB</param>
+		/// <param name="dst.A">= dst.A</param>
+		BLENDMODE_ADD,
+		/// <summary>Modulative blending</summary>
+		/// <param name="dst.RGB">= srcRGB + dst.RGB</param>
+		/// <param name="dst.A">= dst.A</param>
+		BLENDMODE_MOD,
+		/// <summary>Modulative blending</summary>
+		/// <param name="dst.RGB">= (src.RGB * dst.RGB) + (dst.RGB * (1 - src.A))</param>
+		/// <param name="dst.A">= dst.A</param>
+		BLENDMODE_MUL
 	};
 
+#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+#pragma message(MESSAGE_WHEN_CLASS_DEFINED(struct Image))
+#endif
 	struct Image
 	{
 		friend class Visual;
@@ -53,52 +69,34 @@ namespace bae
 		/// </summary>
 		/// <param name="path">- char[]</param>
 		/// <returns>Image* or nullptr if failed.</returns>
-		static Image* Load(in_array<char> path);
+		_NODISCARD static Image* Load(in_value<char*> path) noexcept;
 		/// <summary>
 		/// Tries to load the image at the given path into memory and returns the pointer.
 		/// </summary>
 		/// <param name="path">- char[]</param>
 		/// <param name="image">- OUT Image*</param>
 		/// <returns>true if successful, false otherwise.</returns>
-		static bool TryLoad(in_array<char> path, out<Image*> image);
+		static bool TryLoad(in_value<char*> path, out<Image*> image) noexcept;
 
-		~Image();
+		~Image() noexcept;
 
-		const char* GetPath() const;
+		_NODISCARD const char* GetPath() const noexcept;
 
-		Vector2I GetSize() const;
-		int GetWidth() const;
-		int GetHeight() const;
+		_NODISCARD Vector2I GetSize() const noexcept;
+		_NODISCARD int GetWidth() const noexcept;
+		_NODISCARD int GetHeight() const noexcept;
 
-		void Render(in<RectI> sourceRect, in<RectF> destinationRect, in<double> rotation, in<Vector2F> rotationCenter, in<ImageFlipMode> flipMode = ImageFlipMode::FLIP_NONE, in<Color> color = COLOR_WHITE)
-		{
-			SDL_Rect srcRect =
-			{
-				sourceRect.position.x, sourceRect.position.y,
-				sourceRect.size.x, sourceRect.size.y
-			};
+		//static void RenderBlankAsObject(in_optional<RectI> sourceRect, in<PoseF> pose, in<Vector2F> pivot, in<Vector2F> scale = Vector2F(1.0f, 1.0f), in<Color> color = COLOR_WHITE, ImageBlendMode blendingMode = ImageBlendMode::BLENDMODE_NONE);
 
-			SDL_FRect dstRect =
-			{
-				destinationRect.position.x, destinationRect.position.y,
-				destinationRect.size.x, destinationRect.size.y
-			};
+		void RenderAsObject(in_optional<RectI> sourceRect, in<PoseF> pose, in<Vector2F> pivot, in<Vector2F> scale = Vector2F(1.0f, 1.0f), in<ImageFlipMode> flipMode = ImageFlipMode::FLIP_NONE, in<Color> color = COLOR_WHITE, ImageBlendMode blendingMode = ImageBlendMode::BLENDMODE_NONE);
 
-			SDL_FPoint center =
-			{
-				rotationCenter.x, rotationCenter.y
-			};
+		//static void RenderBlankAsDefault(in_optional<RectF> destinationRect, in<double> rotation = 0.0, in_optional<Vector2F> rotationCenter = {}, in<Color> color = COLOR_WHITE, ImageBlendMode blendingMode = ImageBlendMode::BLENDMODE_NONE);
 
-			SDL_Renderer* renderer = Game::GetGraphics()->_sdlRenderer;
-
-			SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND)
-			SDL_RenderCopyExF(renderer, _sdlTexture, &srcRect, &dstRect, rotation, &center, (SDL_RendererFlip)flipMode);
-		}
+		void RenderAsDefault(in_optional<RectI> sourceRect, in_optional<RectF> destinationRect, in<double> rotation = 0.0, in_optional<Vector2F> rotationCenter = {}, in<ImageFlipMode> flipMode = ImageFlipMode::FLIP_NONE, in<Color> color = COLOR_WHITE, ImageBlendMode blendingMode = ImageBlendMode::BLENDMODE_NONE);
 
 	private:
-		Image(in_array<char> path, in<SDL_Surface*> surfaceData);
+		Image(in_value<char*> path, in<SDL_Surface*> surfaceData, in<SDL_Texture*> textureData) noexcept;
+	
+		static void _ObjectParamsToDefaultParams(in<PoseF> pose, in<Vector2F> pivot, in<Vector2F> resultSize, ref<RectF> destinationRect, ref<double> rotation, ref<Vector2F> rotationCenter);
 	};
 }
-
-#include "Nodes/BAE_Visual.h"

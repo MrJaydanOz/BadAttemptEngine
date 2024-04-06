@@ -1,4 +1,8 @@
 #pragma once
+#include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_Debug.h"))
+#endif
 #include <iostream>
 
 #define CONSOLE_COLORID_DEFAULT "0"

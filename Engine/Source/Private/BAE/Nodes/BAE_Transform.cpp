@@ -8,7 +8,7 @@
 namespace bae
 {
 	Transform::Transform(in<std::string> name) noexcept : Node(name),
-		_pose(Vector2F(0.0f), 0.0f),
+		_pose(),
 		_cachedWorldPose(nullptr),
 		_hasModified(false)
 	{ }
@@ -18,6 +18,13 @@ namespace bae
 		delete _cachedWorldPose;
 
 		Node::~Node();
+	}
+
+	Transform* Transform::CloneInto(Node* parent) noexcept
+	{
+		Transform* newNode = CloneIntoBegin<Transform>(parent, GetName());
+		newNode->SetPose(GetPose());
+		return newNode;
 	}
 
 	PoseF Transform::GetLocalPose() const noexcept { return _pose; }
@@ -122,21 +129,25 @@ namespace bae
 
 	PoseF Transform::TransformPose(in<PoseF> pose) const noexcept 
 	{ return GetPose().TransformPose(pose); }
+
 	Vector2F Transform::TransformPoint(in<Vector2F> point) const noexcept 
 	{ return GetPose().TransformPoint(point); }
 
 	Vector2F Transform::TransformDirection(in<Vector2F> direction) const noexcept 
 	{ return GetPose().TransformDirection(direction); }
+
 	float Transform::TransformRotation(in<float> rotation) const noexcept 
 	{ return GetPose().TransformRotation(rotation); }
 
 	PoseF Transform::InverseTransformPose(in<PoseF> pose) const noexcept 
 	{ return GetPose().InverseTransformPose(pose); }
+
 	Vector2F Transform::InverseTransformPoint(in<Vector2F> point) const noexcept 
 	{ return GetPose().InverseTransformPoint(point); }
 
 	Vector2F Transform::InverseTransformDirection(in<Vector2F> direction) const noexcept 
 	{ return GetPose().InverseTransformDirection(direction); }
+
 	float Transform::InverseTransformRotation(in<float> rotation) const noexcept 
 	{ return GetPose().InverseTransformRotation(rotation); }
 }

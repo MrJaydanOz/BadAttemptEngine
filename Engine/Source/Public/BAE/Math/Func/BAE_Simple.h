@@ -1,8 +1,10 @@
 #pragma once
+#include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_Simple.h"))
+#endif
 #include <type_traits>
 #include <cmath>
-#include "BAE_Def.h"
-#include "BAE_FOR.h"
 
 namespace bae
 {
@@ -18,9 +20,9 @@ namespace bae
 	_NODISCARD constexpr T Cube(in<T> v) noexcept(noexcept(v * v * v))
 	{ return v * v * v; }
 
-	_NODISCARD float32 Sqrt(in<float32> v) noexcept(noexcept(sqrt(v)));
-	_NODISCARD float64 Sqrt(in<float64> v) noexcept(noexcept(sqrt(v)));
-	_NODISCARD float128 Sqrt(in<float128> v) noexcept(noexcept(sqrt(v)));
+	_NODISCARD float Sqrt(in<float> v) noexcept(noexcept(sqrt(v)));
+	_NODISCARD double Sqrt(in<double> v) noexcept(noexcept(sqrt(v)));
+	_NODISCARD long double Sqrt(in<long double> v) noexcept(noexcept(sqrt(v)));
 
 	template<typename T>
 	constexpr void Swap(ref<T> a, ref<T> b) noexcept(noexcept(std::swap(a, b)))

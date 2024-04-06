@@ -1,10 +1,16 @@
 #pragma once
 #include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_Color.h"))
+#endif
 
 namespace bae
 {
 	struct ColorF;
 
+#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+#pragma message(MESSAGE_WHEN_CLASS_DEFINED(struct Color))
+#endif
 	struct Color
 	{
 	public:
@@ -16,9 +22,21 @@ namespace bae
 
 		constexpr Color& operator=(in<bae::uintx_t<8 * 4>> hex) noexcept;
 
+		friend std::ostream& operator<<(ref<std::ostream> stream, in<Color> color)
+		{
+			return stream <<
+				 "(r:" << color.r <<
+				", g:" << color.g <<
+				", b:" << color.b <<
+				", a:" << color.a << ')';
+		}
+
 		constexpr operator ColorF() const noexcept;
 	};
 
+#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+#pragma message(MESSAGE_WHEN_CLASS_DEFINED(struct ColorF))
+#endif
 	struct ColorF
 	{
 	public:
@@ -29,6 +47,15 @@ namespace bae
 		constexpr ColorF(in<bae::uintx_t<8 * 4>> hex) noexcept;
 
 		constexpr ColorF& operator=(in<bae::uintx_t<8 * 4>> hex) noexcept;
+		
+		friend std::ostream& operator<<(ref<std::ostream> stream, in<ColorF> color)
+		{ 
+			return stream << 
+				 "(r:" << std::setprecision(2) << std::fixed << color.r << 
+				", g:" << std::setprecision(2) << std::fixed << color.g << 
+				", b:" << std::setprecision(2) << std::fixed << color.b << 
+				", a:" << std::setprecision(2) << std::fixed << color.a << ')';
+		}
 
 		constexpr explicit operator Color() const noexcept;
 	};

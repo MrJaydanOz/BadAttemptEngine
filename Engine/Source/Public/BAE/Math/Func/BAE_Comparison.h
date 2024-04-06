@@ -1,7 +1,10 @@
 #pragma once
+#include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_Comparison.h"))
+#endif
 #include <type_traits>
 #include <cmath>
-#include "BAE_Def.h"
 
 namespace bae
 {

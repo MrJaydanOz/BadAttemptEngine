@@ -1,20 +1,38 @@
 ﻿#pragma once
+#include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_Game.h"))
+#endif
 #include <vector>
-
-class Graphics;
+#include "BAE_Graphics.h"
+#include "BAE_Scene.h"
+#include "BAE_Physics.h"
+#include "BAE_Input.h"
 
 namespace bae
 {
+#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Game))
+#endif
 	class Game
 	{
 	private:
 		bool _isRunning;
 		Graphics* _graphics;
+		Scene* _scene;
+		Physics* _physics;
+		Input* _input;
 
 	public:
 		static Game* GetGame() noexcept;
 
 		static Graphics* GetGraphics() noexcept;
+
+		static Scene* GetScene() noexcept;
+
+		static Physics* GetPhysics() noexcept;
+
+		static Input* GetInput() noexcept;
 
 		static void DestroyGame();
 
@@ -56,5 +74,3 @@ namespace bae
 		*/
 	};
 }
-
-#include "BAE_Graphics.h"

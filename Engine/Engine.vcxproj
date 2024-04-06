@@ -98,8 +98,10 @@
   <ItemGroup>
     <ClCompile Include="Source\Private\BAE\BAE_Game.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Graphics.cpp" />
+    <ClCompile Include="Source\Private\BAE\BAE_Input.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Scene.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Image.cpp" />
+    <ClCompile Include="Source\Private\BAE\Math\BAE_Constants.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Behaviour.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Sprite.cpp" />
     <ClCompile Include="Source\Private\BAE\Math\Func\BAE_Simple.cpp" />
@@ -110,7 +112,7 @@
     <ClCompile Include="Source\Private\BAE\BAE_Engine.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Visual.cpp" />
     <ClCompile Include="Source\Private\Game\Source.cpp" />
-    <ClCompile Include="Source\Public\BAE\BAE_GameScene.h" />
+    <ClCompile Include="Source\Public\BAE\BAE_Scene.h" />
     <ClCompile Include="Source\Private\BAE\BAE_Source.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -198,6 +200,7 @@
     <ClInclude Include="Source\Public\BAE\BAE_Engine.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Graphics.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Math.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Nodes.h" />
     <ClInclude Include="Source\Public\BAE\Math\BAE_Color.h" />
     <ClInclude Include="Source\Public\BAE\Math\BAE_Constants.h" />
     <ClInclude Include="Source\Public\BAE\Math\Func\BAE_Comparison.h" />
@@ -213,8 +216,9 @@
     <ClInclude Include="Source\Public\BAE\BAE_For.h" />
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Transform.h" />
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Node.h" />
-    <ClInclude Include="Source\Public\BAE\BAE_GamePhysics.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Physics.h" />
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Visual.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Input.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="ExternalLibs\StaticLibs\SDL2.lib" />

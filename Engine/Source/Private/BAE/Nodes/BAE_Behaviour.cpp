@@ -10,6 +10,15 @@ namespace bae
 	Behaviour::Behaviour(in<bool> enabled) noexcept :
 		Behaviour::Behaviour("", enabled) { }
 
+	Behaviour* Behaviour::CloneInto(Node* parent) noexcept
+	{ return CloneIntoBegin<Behaviour>(parent, GetName(), IsEnabledSelf()); }
+
+	void Behaviour::OnLoad()
+	{
+		if (IsEnabled())
+			NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnEnabled);
+	}
+
 	Behaviour::~Behaviour() noexcept
 	{
 		if (IsEnabled())
@@ -29,10 +38,14 @@ namespace bae
 			if (_IsEnabledInHierarchy())
 			{
 				if (enabled)
-					NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnEnabled)
+				{
+					NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnEnabled);
+				}
 				else
-					NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnDisabled)
-					_SetEnabledInHierarchyToSurfaceBehaviours(this, enabled);
+				{
+					NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnDisabled);
+				}
+				_SetEnabledInHierarchyToSurfaceBehaviours(this, enabled);
 			}
 		}
 	}
@@ -50,15 +63,19 @@ namespace bae
 			bool enabledInHierarchy = !TryFindParentThatRecursive<Behaviour>([](Behaviour* behaviour) -> bool 
 				{ return !behaviour->IsEnabledSelf(); }, discard);
 
-			BitSet(_enabledState, 1, enabledInHierarchy);
-
-			if (IsEnabledSelf())
+			if (BitGet(_enabledState, 1) != enabledInHierarchy)
 			{
+				BitSet(_enabledState, 1, enabledInHierarchy);
+
 				if (enabledInHierarchy)
-					NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnEnabled)
+				{
+					NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnEnabled);
+				}
 				else
-					NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnDisabled)
-					_SetEnabledInHierarchyToSurfaceBehaviours(this, enabledInHierarchy);
+				{
+					NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnDisabled);
+				}
+				_SetEnabledInHierarchyToSurfaceBehaviours(this, enabledInHierarchy);
 			}
 		}
 	}
@@ -74,41 +91,15 @@ namespace bae
 			if (IsEnabledSelf())
 			{
 				if (enabled)
-					NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnEnabled)
+				{
+					NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnEnabled);
+				}
 				else
-					NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnDisabled)
-					_SetEnabledInHierarchyToSurfaceBehaviours(this, enabled);
+				{
+					NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnDisabled);
+				}
+				_SetEnabledInHierarchyToSurfaceBehaviours(this, enabled);
 			}
 		}
 	}
 }
-
-/*
-
-	bool Behaviour::IsEnabledSelf() const noexcept
-	{ return _enabledSelf; }
-	void Behaviour::SetEnabledSelf(in<bool> enabled) noexcept
-	{
-		_enabledSelf = enabled;
-
-		Behaviour
-	}
-	bool Behaviour::IsEnabled() const noexcept
-	{
-		if (!_enabledSelf)
-			return false;
-
-		Node* parent = GetParent();
-
-		while (parent != nullptr)
-		{
-			Behaviour* castedParent = dynamic_cast<Behaviour*>(parent);
-			if (castedParent != nullptr && !castedParent->_enabledSelf)
-				return false;
-
-			parent = parent->GetParent();
-		}
-
-		return true;
-	}
-	*/

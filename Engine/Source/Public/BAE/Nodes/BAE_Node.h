@@ -1,8 +1,11 @@
 #pragma once
+#include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_Node.h"))
+#endif
 #include <string>
 #include <vector>
 #include "BAE_Debug.h"
-#include "BAE_Def.h"
 
 #define NODE_TRIGGER_EVENT_WITH_TRY_CATCH(nodePointer, functionName, ...) \
 try { nodePointer->functionName(__VA_ARGS__); } \
@@ -11,29 +14,52 @@ catch (in<std::exception> exception) \
 
 namespace bae
 {
+	class Scene;
+
+#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Node))
+#endif
 	class Node
 	{
+		friend class Scene;
+
+	private:
+		enum class _Node_Location_Type : bae::int_fit_t<4>
+		{
+			_NODE_LOCATION_INVALID,
+			_NODE_LOCATION_SCENE_ROOT,
+			_NODE_LOCATION_SCENE_PREFAB,
+			_NODE_LOCATION_CHILD_IN_ROOT,
+			_NODE_LOCATION_CHILD_IN_PREFAB
+		};
+
 	private:
 		std::string _name;
 		std::vector<Node*> _children;
 		Node* _parent;
 		bool _active;
+		_Node_Location_Type _location_type;
 
 	public:
 		virtual ~Node() noexcept;
+
+		virtual Node* CloneInto(Node* parent) noexcept;
 
 		_NODISCARD bool HasName() const noexcept;
 		_NODISCARD const std::string& GetName() const noexcept;
 		void SetName(in<std::string> name) noexcept;
 
-		_NODISCARD bool HasParent() const noexcept;
-		_NODISCARD Node* GetParent() const noexcept;
-		void SetParent(Node* parent) noexcept;
+		_NODISCARD bool HasParentNode() const noexcept;
+		_NODISCARD Node* GetParentNode() const noexcept;
+		bool SetParentNode(Node* parent) noexcept;
+
+		_NODISCARD bool IsPrefab() const noexcept;
+		_NODISCARD bool IsUpMostNode() const noexcept;
 
 		_NODISCARD const std::vector<Node*>& GetChildren() const noexcept;
 
-		template<typename T, typename TNodePredicate>
-		_NODISCARD T* FindChildThat(delegate<TNodePredicate> predicate) const noexcept
+		template<typename T, typename TNodePredicate = bool(T*)>
+		_NODISCARD T* FindChildThat(in_delegate<TNodePredicate> predicate) const noexcept
 		{
 			static_assert(std::is_base_of<Node, T>::value);
 
@@ -50,8 +76,8 @@ namespace bae
 			return nullptr;
 		}
 
-		template<typename T, typename TNodePredicate>
-		_NODISCARD T* FindChildThatRecursive(delegate<TNodePredicate> predicate) const noexcept
+		template<typename T, typename TNodePredicate = bool(T*)>
+		_NODISCARD T* FindChildThatRecursive(in_delegate<TNodePredicate> predicate) const noexcept
 		{
 			static_assert(std::is_base_of<Node, T>::value);
 
@@ -74,25 +100,19 @@ namespace bae
 			return nullptr;
 		}
 
-		template<typename T, typename TNodePredicate>
-		bool TryFindChildThat(delegate<TNodePredicate> predicate, out<T*> result) const noexcept
+		template<typename T, typename TNodePredicate = bool(T*)>
+		bool TryFindChildThat(in_delegate<TNodePredicate> predicate, out<T*> result) const noexcept
 		{ return (result = FindChildThat<T, TNodePredicate>(predicate)) != nullptr; }
 
-		template<typename T, typename TNodePredicate>
-		bool TryFindChildThatRecursive(delegate<TNodePredicate> predicate, out<T*> result) const noexcept
+		template<typename T, typename TNodePredicate = bool(T*)>
+		bool TryFindChildThatRecursive(in_delegate<TNodePredicate> predicate, out<T*> result) const noexcept
 		{ return (result = FindChildThatRecursive<T, TNodePredicate>(predicate)) != nullptr; }
 
-		template<typename T, typename TNodePredicate, typename TResultCollection>
-		size_t FindChildrenThat(delegate<TNodePredicate> predicate, ref_nullable<TResultCollection> results) const noexcept
+		template<typename T, typename TNodePredicate = bool(T*), typename TResultCollection = std::vector<T*>>
+		size_t FindChildrenThat(in_delegate<TNodePredicate> predicate, ref<TResultCollection> results) const noexcept
 		{
 			static_assert(std::is_base_of<Node, T>::value);
 			size_t foundCount = 0;
-
-			if (results == nullptr)
-			{
-				DEBUG_LOG_ERROR_CONTEXTED(BAE_LOG_CONTEXT, "Result collection in '" << DEBUG_NODE_NAME(this) << "'.FindChildrenThatRecursive() is null.");
-				return;
-			}
 
 			for (Node* child : GetChildren())
 				if (child != nullptr)
@@ -100,7 +120,7 @@ namespace bae
 					T* castedChild = dynamic_cast<T*>(child);
 					if (castedChild != nullptr && predicate(castedChild))
 					{
-						results->push_back(castedChild);
+						results.push_back(castedChild);
 						foundCount++;
 					}
 				}
@@ -110,17 +130,11 @@ namespace bae
 			return foundCount;
 		}
 
-		template<typename T, typename TNodePredicate, typename TResultCollection>
-		size_t FindChildrenThatRecursive(delegate<TNodePredicate> predicate, ref_nullable<TResultCollection> results) const noexcept
+		template<typename T, typename TNodePredicate = bool(T*), typename TResultCollection = std::vector<T*>>
+		size_t FindChildrenThatRecursive(in_delegate<TNodePredicate> predicate, ref<TResultCollection> results) const noexcept
 		{
 			static_assert(std::is_base_of<Node, T>::value);
 			size_t foundCount = 0;
-
-			if (results == nullptr)
-			{
-				DEBUG_LOG_ERROR_CONTEXTED(BAE_LOG_CONTEXT, "Result collection in '" << DEBUG_NODE_NAME(this) << "'.FindChildrenThatRecursive() is null.");
-				return;
-			}
 
 			for (Node* child : GetChildren())
 				if (child != nullptr)
@@ -128,12 +142,12 @@ namespace bae
 					T* castedChild = dynamic_cast<T*>(child);
 					if (castedChild != nullptr && predicate(castedChild))
 					{
-						results->push_back(castedChild);
+						results.push_back(castedChild);
 						foundCount++;
 					}
 					else
 					{
-						foundCount += child->FindChildrenThatRecursive<T, TNodePredicate>(results, predicate);
+						foundCount += child->FindChildrenThatRecursive<T, TNodePredicate, TResultCollection>(predicate, results);
 					}
 				}
 				else
@@ -142,12 +156,12 @@ namespace bae
 			return foundCount;
 		}
 
-		template<typename T, typename TNodePredicate>
-		_NODISCARD T* FindParentThatRecursive(delegate<TNodePredicate> predicate) const noexcept
+		template<typename T, typename TNodePredicate = bool(T*)>
+		_NODISCARD T* FindParentThatRecursive(in_delegate<TNodePredicate> predicate) const noexcept
 		{
 			static_assert(std::is_base_of<Node, T>::value);
 
-			Node* parent = GetParent();
+			Node* parent = GetParentNode();
 
 			while (parent != nullptr)
 			{
@@ -155,14 +169,14 @@ namespace bae
 				if (castedParent != nullptr && predicate(castedParent))
 					return castedParent;
 
-				parent = parent->GetParent();
+				parent = parent->GetParentNode();
 			}
 
 			return nullptr;
 		}
 		
-		template<typename T, typename TNodePredicate>
-		bool TryFindParentThatRecursive(delegate<TNodePredicate> predicate, out<T*> result) const noexcept
+		template<typename T, typename TNodePredicate = bool(T*)>
+		bool TryFindParentThatRecursive(in_delegate<TNodePredicate> predicate, out<T*> result) const noexcept
 		{ return (result = FindParentThatRecursive<T, TNodePredicate>(predicate)) != nullptr; }
 
 		template<typename T>
@@ -181,12 +195,12 @@ namespace bae
 		bool TryFindChildOfTypeRecursive(out<T*> result) const noexcept
 		{ return TryFindChildThatRecursive<T>([](T*) -> bool { return true; }, result); }
 
-		template<typename T, typename TResultCollection>
-		size_t FindChildrenOfType(ref_nullable<TResultCollection> results) const noexcept
+		template<typename T, typename TResultCollection = std::vector<T*>>
+		size_t FindChildrenOfType(ref<TResultCollection> results) const noexcept
 		{ return FindChildrenThat<T>([](T*) -> bool { return true; }, results); }
 
-		template<typename T, typename TResultCollection>
-		size_t FindChildrenOfTypeRecursive(ref_nullable<TResultCollection> results) const noexcept
+		template<typename T, typename TResultCollection = std::vector<T*>>
+		size_t FindChildrenOfTypeRecursive(ref<TResultCollection> results) const noexcept
 		{ return FindChildrenThatRecursive<T>([](T*) -> bool { return true; }, results); }
 		
 		template<typename T>
@@ -213,12 +227,12 @@ namespace bae
 		bool TryFindChildWithNameRecursive(in<std::string> name, out<T*> result) const noexcept
 		{ return TryFindChildThatRecursive<T>([&](T* node) -> bool { return node->GetName() == name; }, result); }
 
-		template<typename T, typename TResultCollection>
-		size_t FindChildrenWithName(in<std::string> name, ref_nullable<TResultCollection> results) const noexcept
+		template<typename T, typename TResultCollection = std::vector<T*>>
+		size_t FindChildrenWithName(in<std::string> name, ref<TResultCollection> results) const noexcept
 		{ return FindChildrenThat<T>([&](T* node) -> bool { return node->GetName() == name; }); }
 
-		template<typename T, typename TResultCollection>
-		size_t FindChildrenWithNameRecursive(in<std::string> name, ref_nullable<TResultCollection> results) const noexcept
+		template<typename T, typename TResultCollection = std::vector<T*>>
+		size_t FindChildrenWithNameRecursive(in<std::string> name, ref<TResultCollection> results) const noexcept
 		{ return FindChildrenThatRecursive<T>([&](T* node) -> bool { return node->GetName() == name; }); }
 		
 		template<typename T>
@@ -230,12 +244,17 @@ namespace bae
 		{ return TryFindParentThatRecursive<T>([&](T* node) -> bool { return node->GetName() == name; }, result); }
 
 		template<typename T, typename... TConstructorArguments>
-		T* AddChild(TConstructorArguments... arguments)
+		T* AddChild(TConstructorArguments... constructorArguments)
+		{ return AddChildIn<T, TConstructorArguments...>(this, constructorArguments...); }
+
+		template<typename T, typename... TConstructorArguments>
+		static T* AddChildIn(Node* parent, TConstructorArguments... constructorArguments)
 		{
 			static_assert(std::is_base_of<Node, T>::value);
-			T* newNode = new T(arguments...);
-			_AddAsChild(newNode);
-			return nullptr;
+			T* newNode = new T(constructorArguments...);
+			newNode->_SetAsParent(parent);
+			NODE_TRIGGER_EVENT_WITH_TRY_CATCH(newNode, OnLoad);
+			return newNode;
 		}
 
 	protected:
@@ -247,9 +266,23 @@ namespace bae
 
 		virtual void OnDestroy() { };
 
+		template<typename T, typename... TConstructorArguments>
+		T* CloneIntoBegin(in<Node*> parent, TConstructorArguments... constructorArguments)
+		{
+			T* newNode = AddChildIn<T>(parent, constructorArguments...);
+
+			for (Node* child : GetChildren())
+				if (child != nullptr)
+					child->CloneInto(this);
+				else
+					DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, DEBUG_NODE_NAME(this) << " has a null child.");
+
+			return newNode;
+		}
+
 	private:
 		void _RemoveThisFromParent() noexcept;
 
-		void _AddAsChild(Node* childNode) noexcept;
+		void _SetAsParent(Node* parentNode) noexcept;
 	};	
 }

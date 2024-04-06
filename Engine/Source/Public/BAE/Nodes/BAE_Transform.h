@@ -1,5 +1,8 @@
 #pragma once
 #include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_Transform.h"))
+#endif
 #include <string.h>
 #include "Nodes/BAE_Node.h"
 #include "Math/BAE_PoseT.h"
@@ -7,16 +10,25 @@
 
 namespace bae
 {
+	class Scene;
+
+#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Transform))
+#endif
 	class Transform : public Node
 	{
+		friend class Node;
+		friend class Scene;
+
 	private:
 		PoseF _pose;
 		PoseF* _cachedWorldPose;
 		bool _hasModified;
 
 	public:
-		Transform(in<std::string> name = "") noexcept;
 		virtual ~Transform() noexcept override;
+
+		virtual Transform* CloneInto(Node* parent) noexcept override;
 
 		PoseF GetLocalPose() const noexcept;
 		void SetLocalPose(in<PoseF> pose) noexcept;
@@ -54,5 +66,8 @@ namespace bae
 		Vector2F InverseTransformDirection(in<Vector2F> direction) const noexcept;
 
 		float InverseTransformRotation(in<float> rotation) const noexcept;
+
+	protected:
+		Transform(in<std::string> name = "") noexcept;
 	};
 }

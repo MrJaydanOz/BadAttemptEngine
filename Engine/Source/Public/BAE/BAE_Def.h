@@ -1,7 +1,18 @@
 #pragma once
+#include <iostream>
+#include <iomanip>
 #include <vcruntime.h> // gets "_NODISCARD"
 #include <type_traits>
 #include <limits>
+#include <optional>
+
+// I had to debug the compiler at one point because of the order of the #includes.
+#if false
+#define MESSAGE_WHEN_INCLUDED(...) " --[ Compiling '" __VA_ARGS__ "' ]--"
+#endif
+#if false
+#define MESSAGE_WHEN_CLASS_DEFINED(...) " --[ Compiling '" #__VA_ARGS__ "' ]--"
+#endif
 
 typedef signed char            int8;
 typedef unsigned char          uint8;
@@ -13,10 +24,6 @@ typedef signed long int        int64;
 typedef unsigned long int      uint64;
 typedef signed long long int   int128;
 typedef unsigned long long int uint128;
-
-typedef float                  float32;
-typedef double                 float64;
-typedef long double            float128;
 
 namespace bae
 {
@@ -77,26 +84,22 @@ namespace bae
 template<typename T> 
 using in = const T&;
 template<typename T> 
-using in_nullable = const T*;
+using in_value = const T;
 template<typename T>
-using in_array = const T*;
+using in_delegate = T;
+template<typename T>
+using in_optional = in<std::optional<T>>;
 
 template<typename T>
 using out = T&;
-template<typename T>
-using out_nullable = T*;
 
 template<typename T>
 using ref = T&;
 template<typename T>
-using ref_nullable = T*;
-template<typename T>
-using ref_optional = T*;
+using ref_optional = std::optional<T*>;
 
 template<typename T>
 using value = T;
-template<typename T>
-using delegate = T;
 
 #define COMMA ,
 #define COMMA2 COMMA_ BRACKET_OPEN2 BRACKET_CLOSE2

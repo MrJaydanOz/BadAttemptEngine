@@ -18,7 +18,13 @@ namespace bae
 		return gameSingleton;
 	}
 
-	Graphics* Game::GetGraphics() noexcept  { return GetGame()->_graphics; }
+	Graphics* Game::GetGraphics() noexcept { return GetGame()->_graphics; }
+
+	Scene* Game::GetScene() noexcept { return GetGame()->_scene; }
+
+	Physics* Game::GetPhysics() noexcept { return GetGame()->_physics; }
+
+	Input* Game::GetInput() noexcept { return GetGame()->_input; }
 
 	void Game::DestroyGame()
 	{
@@ -32,7 +38,12 @@ namespace bae
 		_isRunning = false;
 	}
 
-	Game::Game() : _isRunning(true)
+	Game::Game() : 
+		_graphics(nullptr),
+		_scene(nullptr),
+		_physics(nullptr),
+		_input(nullptr),
+		_isRunning(true)
 	{
 		DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game created.");
 	}
@@ -52,6 +63,18 @@ namespace bae
 
 		_graphics = new Graphics();
 		if (!_graphics->_isWorking)
+			return;
+
+		_scene = new Scene();
+		if (!_scene->_isWorking)
+			return;
+
+		_physics = new Physics();
+		if (!_physics->_isWorking)
+			return;
+
+		_input = new Input();
+		if (!_input->_isWorking)
 			return;
 
 		DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game initialised.");
@@ -83,9 +106,9 @@ namespace bae
 
 			BAE_LateUpdate();
 
-			Render();
+			_graphics->Render();
 
-			CollectGarbage();
+			_scene->ClearWorldPositionCaches();
 
 			std::this_thread::sleep_until(nextFrameTime);
 		}

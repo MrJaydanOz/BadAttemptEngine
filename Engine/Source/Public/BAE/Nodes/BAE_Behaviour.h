@@ -1,21 +1,40 @@
 #pragma once
+#include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_Behaviour.h"))
+#endif
 #include "Nodes/BAE_Node.h"
 
 namespace bae
 {
+	class Scene;
+
+#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Behaviour))
+#endif
 	class Behaviour : public Node
 	{
+		friend class Node;
+		friend class Scene;
+
 	private:
 		bae::uintx_t<2> _enabledState;
 
 	public:
-		virtual ~Behaviour() noexcept;
+		virtual ~Behaviour() noexcept override;
 
-		bool IsEnabledSelf() const noexcept;
+		virtual Behaviour* CloneInto(Node* parent) noexcept override;
+
+		_NODISCARD bool IsEnabledSelf() const noexcept;
 		void SetEnabledSelf(in<bool> enabled) noexcept;
-		bool IsEnabled() const noexcept;
+		_NODISCARD bool IsEnabled() const noexcept;
 
 	protected:
+		Behaviour(in<std::string> name = "", in<bool> enabled = true) noexcept;
+		Behaviour(in<bool> enabled) noexcept;
+
+		virtual void OnLoad() override;
+
 		virtual void OnParentChanged() override;
 
 		virtual void OnEnabled() { }
@@ -23,10 +42,7 @@ namespace bae
 		virtual void OnDisabled() { }
 
 	private:
-		Behaviour(in<std::string> name = "", in<bool> enabled = true) noexcept;
-		Behaviour(in<bool> enabled) noexcept;
-
-		bool _IsEnabledInHierarchy() const noexcept;
+		_NODISCARD bool _IsEnabledInHierarchy() const noexcept;
 		void _SetEnabledInHierarchy(in<bool> enabled) noexcept;
 
 		void _SetEnabledInHierarchyToSurfaceBehaviours(in<Node*> node, in<bool> enabled) const noexcept

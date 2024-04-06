@@ -39,7 +39,7 @@
     <ClCompile Include="Source\Private\BAE\BAE_Physics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Public\BAE\BAE_GameScene.h">
+    <ClCompile Include="Source\Public\BAE\BAE_Scene.h">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Private\BAE\BAE_Scene.cpp">
@@ -61,6 +61,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Behaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\BAE\BAE_Input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\BAE\Math\BAE_Constants.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -104,7 +110,7 @@
     <ClInclude Include="Source\Public\BAE\Math\BAE_Color.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\BAE_GamePhysics.h">
+    <ClInclude Include="Source\Public\BAE\BAE_Physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Public\BAE\Math\Func\BAE_Comparison.h">
@@ -366,6 +372,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Behaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\BAE\BAE_Nodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\BAE\BAE_Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,9 +1,15 @@
 #pragma once
-#include "Math/BAE_VectorT.h"
 #include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_PoseT.h"))
+#endif
+#include "Math/BAE_VectorT.h"
 
 namespace bae
 {
+#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Pose<typename, typename>))
+#endif
 	template<typename TPosition, typename TRotation = TPosition>
 	class Pose
 	{
@@ -14,6 +20,8 @@ namespace bae
 		TRotation rotation;
 
 	public:
+		constexpr Pose() :
+			position(0.0f, 0.0f), rotation(0.0f) { }
 		constexpr Pose(in<TPositionVector> position, in<TRotation> rotation) :
 			position(position), rotation(rotation) { }
 
@@ -40,6 +48,14 @@ namespace bae
 
 		Pose InverseTransformPose(in<Pose> pose) const noexcept(noexcept(Pose(InverseTransformPoint(pose.position), InverseTransformRotation(pose.rotation)))) 
 		{ return Pose(InverseTransformPoint(pose.position), InverseTransformRotation(pose.rotation)); }
+
+		friend std::ostream& operator<<(ref<std::ostream> stream, in<Pose> pose)
+		{
+			return stream <<
+				 "(x:" << std::setprecision(2) << std::fixed << pose.position.x <<
+				", y:" << std::setprecision(2) << std::fixed << pose.position.y <<
+				", r:" << std::setprecision(2) << std::fixed << pose.rotation << ')';
+		}
 	};
 
 	typedef Pose<float> PoseF;

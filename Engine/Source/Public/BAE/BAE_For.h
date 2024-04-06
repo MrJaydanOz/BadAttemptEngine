@@ -1,5 +1,8 @@
 #pragma once
 #include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_For.h"))
+#endif
 
 /* 
 * For each loops in #defines:

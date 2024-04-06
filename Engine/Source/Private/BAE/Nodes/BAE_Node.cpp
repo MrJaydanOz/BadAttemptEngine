@@ -1,5 +1,7 @@
 #include "Nodes/BAE_Node.h"
 #include <algorithm>
+#include "BAE_Scene.h"
+#include "BAE_Game.h"
 
 namespace bae
 {
@@ -7,10 +9,8 @@ namespace bae
 		_name(name),
 		_children(),
 		_parent(nullptr),
-		_active(true)
-	{
-		NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnLoad);
-	}
+		_active(true),
+		_location_type(_Node_Location_Type::_NODE_LOCATION_INVALID) { }
 
 	Node::~Node() noexcept
 	{
@@ -18,11 +18,14 @@ namespace bae
 
 		_active = false;
 
-		for (auto i = _children.rbegin(); i != _children.rend(); ++i)
-			delete* i;
+		for (auto i = _children.begin(); i != _children.end(); i++)
+			delete *i;
 
 		_RemoveThisFromParent();
 	}
+
+	Node* Node::CloneInto(Node* parent) noexcept
+	{ return CloneIntoBegin<Node>(parent, GetName()); }
 
 	bool Node::HasName() const noexcept 
 	{ return _name.length() > 0u; }
@@ -31,47 +34,115 @@ namespace bae
 	void Node::SetName(in<std::string> name) noexcept
 	{ _name = name; }
 
-	bool Node::HasParent() const noexcept 
-	{ return GetParent() != nullptr; }
-	Node* Node::GetParent() const noexcept
+	bool Node::HasParentNode() const noexcept 
+	{ return GetParentNode() != nullptr; }
+	Node* Node::GetParentNode() const noexcept
 	{ return _parent; }
-	void Node::SetParent(Node* parent) noexcept
+	bool Node::SetParentNode(Node* parent) noexcept
 	{
 		if (_parent == parent)
-			return;
+			return false;
 
 		_RemoveThisFromParent();
+		_SetAsParent(_parent);
 
-		if (parent == nullptr)
-			_parent = nullptr;
-		else
-			parent->_AddAsChild(this);
+		NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnParentChanged);
 
-		NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnParentChanged)
+		return true;
 	}
+
+	bool Node::IsPrefab() const noexcept 
+	{ return _location_type == _Node_Location_Type::_NODE_LOCATION_CHILD_IN_PREFAB || _location_type == _Node_Location_Type::_NODE_LOCATION_SCENE_PREFAB; }
+
+	bool Node::IsUpMostNode() const noexcept
+	{ return _location_type == _Node_Location_Type::_NODE_LOCATION_SCENE_ROOT || _location_type == _Node_Location_Type::_NODE_LOCATION_SCENE_PREFAB; }
 
 	const std::vector<Node*>& Node::GetChildren() const noexcept 
 	{ return _children; }
 
 	void Node::_RemoveThisFromParent() noexcept
 	{
-		if (!HasParent())
-			return;
+		if (_parent != nullptr)
+		{
+			if (_parent->_active)
+			{
+				std::vector<Node*>& siblings = _parent->_children;
 
-		std::vector<Node*>& siblings = _parent->_children;
+				auto removeIndex = std::find(siblings.begin(), siblings.end(), this);
 
-		auto removeIndex = std::find(siblings.begin(), siblings.end(), this);
+				if (removeIndex != siblings.end())
+					siblings.erase(removeIndex);
+			}
+			_parent = nullptr;
+		}
+		else
+		{
+			switch (_location_type)
+			{
+				case _Node_Location_Type::_NODE_LOCATION_SCENE_ROOT:
+				{
+					auto& rootCollection = Game::GetScene()->_rootNodes;
 
-		if (removeIndex != siblings.end())
-			siblings.erase(removeIndex);
+					auto removeIndex = std::find(rootCollection.begin(), rootCollection.end(), this);
 
-		_parent = nullptr;
+					if (removeIndex != rootCollection.end())
+						rootCollection.erase(removeIndex);
+
+					break;
+				}
+				case _Node_Location_Type::_NODE_LOCATION_SCENE_PREFAB:
+				{
+					auto& rootCollection = Game::GetScene()->_prefabs;
+
+					auto removeIndex = std::find(rootCollection.begin(), rootCollection.end(), this);
+
+					if (removeIndex != rootCollection.end())
+						rootCollection.erase(removeIndex);
+
+					break;
+				}
+			}
+		}
 	}
 
-	void Node::_AddAsChild(Node* childNode) noexcept
+	void Node::_SetAsParent(Node* parentNode) noexcept
 	{
-		_children.push_back(childNode);
-		childNode->_parent = this;
-		NODE_TRIGGER_EVENT_WITH_TRY_CATCH(childNode, OnParentChanged)
+		if (parentNode != nullptr)
+		{
+			parentNode->_children.push_back(this);
+			this->_parent = parentNode;
+			switch (_location_type)
+			{
+			case _Node_Location_Type::_NODE_LOCATION_INVALID:
+			case _Node_Location_Type::_NODE_LOCATION_SCENE_ROOT: 
+			case _Node_Location_Type::_NODE_LOCATION_CHILD_IN_ROOT:
+				_location_type = _Node_Location_Type::_NODE_LOCATION_CHILD_IN_ROOT;
+				break;
+			case _Node_Location_Type::_NODE_LOCATION_SCENE_PREFAB: 
+			case _Node_Location_Type::_NODE_LOCATION_CHILD_IN_PREFAB:
+				_location_type = _Node_Location_Type::_NODE_LOCATION_CHILD_IN_PREFAB;
+				break;
+			}
+		}
+		else
+		{
+			this->_parent = nullptr;
+			switch (_location_type)
+			{
+			case _Node_Location_Type::_NODE_LOCATION_INVALID:
+			case _Node_Location_Type::_NODE_LOCATION_SCENE_ROOT: 
+			case _Node_Location_Type::_NODE_LOCATION_CHILD_IN_ROOT:
+				_location_type = _Node_Location_Type::_NODE_LOCATION_SCENE_ROOT;
+				Game::GetScene()->_rootNodes.push_back(this);
+				break;
+			case _Node_Location_Type::_NODE_LOCATION_SCENE_PREFAB: 
+			case _Node_Location_Type::_NODE_LOCATION_CHILD_IN_PREFAB:
+				_location_type = _Node_Location_Type::_NODE_LOCATION_SCENE_PREFAB;
+				Game::GetScene()->_prefabs.push_back(this);
+				break;
+			}
+		}
+
+		NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnParentChanged);
 	}
 }

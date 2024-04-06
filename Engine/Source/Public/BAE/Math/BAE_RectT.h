@@ -1,9 +1,15 @@
 #pragma once
-#include "Math/BAE_VectorT.h"
 #include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_RectT.h"))
+#endif
+#include "Math/BAE_VectorT.h"
 
 namespace bae
 {
+#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Rect<typename>))
+#endif
     template<typename T>
     class Rect
     {
@@ -14,6 +20,8 @@ namespace bae
     public:
         constexpr Rect(in<Vector<2, T>> position, in<Vector<2, T>> size) noexcept : 
             position(position), size(size) { }
+        constexpr Rect(in<T> positionX, in<T> positionY, in<T> sizeX, in<T> sizeY) noexcept :
+            position(positionX, positionY), size(sizeX, sizeY) { }
         static constexpr Rect AsPositionSize(in<Vector<2, T>> position, in<Vector<2, T>> size) noexcept(noexcept(Rect<T>(position, size)))
         { return Rect(position, size); }
         static constexpr Rect AsMinMax(in<Vector<2, T>> min, in<Vector<2, T>> max) noexcept(noexcept(Rect<T>(min, max - min)))
@@ -56,6 +64,15 @@ namespace bae
                 position.y += size.y;
                 size.y = -size.y;
             }
+        }
+
+        friend std::ostream& operator<<(ref<std::ostream> stream, in<Rect> rect)
+        {
+            return stream <<
+                 "(x:" << std::setprecision(2) << std::fixed << rect.position.x <<
+                ", y:" << std::setprecision(2) << std::fixed << rect.position.y <<
+                ", w:" << std::setprecision(2) << std::fixed << rect.size.x <<
+                ", h:" << std::setprecision(2) << std::fixed << rect.size.y << ')';
         }
     };
 
@@ -106,6 +123,15 @@ namespace bae
                 Swap(min.x, max.x);
             if (min.y > max.y)
                 Swap(min.y, max.y);
+        }
+
+        friend std::ostream& operator<<(ref<std::ostream> stream, in<Bounds> bounds)
+        {
+            return stream <<
+                 "(-x:" << std::setprecision(2) << std::fixed << bounds.min.x <<
+                ", -y:" << std::setprecision(2) << std::fixed << bounds.min.y <<
+                ", +x:" << std::setprecision(2) << std::fixed << bounds.max.x <<
+                ", +y:" << std::setprecision(2) << std::fixed << bounds.max.y << ')';
         }
     };
 

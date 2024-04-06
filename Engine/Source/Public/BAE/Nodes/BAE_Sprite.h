@@ -1,33 +1,47 @@
 #pragma once
+#include "BAE_Sprite.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_Sprite.h"))
+#endif
+
 #include "Nodes/BAE_Transform.h"
-#include "BAE_Image.h"
+#include "Nodes/BAE_Visual.h"
+#include "Math/BAE_RectT.h"
 #include "Math/BAE_Color.h"
 #include "BAE_Def.h"
+#include "BAE_Image.h"
 
-/*
 namespace bae
 {
-	enum SpriteBlendingMode : std::int_fit_t<5>
-	{
-		None,
-		Alpha,
-		Add,
-		Modulate,
-		Multiply
-	};
+	class Scene;
 
-	class Sprite : public Transform
+	#if defined(MESSAGE_WHEN_CLASS_DEFINED)
+	#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Sprite))
+	#endif
+	class Sprite : public Visual
 	{
+		friend class Node;
+		friend class Scene;
+
 	public:
-		bool enabled;
 		Image* image;
+		std::optional<RectI> clipRect;
 		Color color;
-		SpriteBlendingMode blendingMode;
-
-	private:
-		int _renderLayer;
-		int _zIndex;
+		ImageFlipMode flipMode;
+		ImageBlendMode blendingMode;
+		PoseF offset;
+		Vector2F pivot;
+		Vector2F scale;
 
 	public:
+		virtual ~Sprite() noexcept override;
+
+		virtual Sprite* CloneInto(Node* parent) noexcept override;
+
+	protected:
+		Sprite(in<std::string> name = "", in<bool> enabled = true) noexcept;
+		Sprite(in<bool> enabled) noexcept;
+
+		virtual void Render() override;
 	};
-}*/
+}
