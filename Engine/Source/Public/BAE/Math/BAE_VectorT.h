@@ -33,6 +33,8 @@ namespace bae
 		{ return (x * x) + (y * y); }
 		_NODISCARD T Magnitude() const noexcept(noexcept(Sqrt(SqrMagnitude())))
 		{ return Sqrt(SqrMagnitude()); }
+		_NODISCARD Vector Normalized() const noexcept(noexcept(SqrMagnitude() < BIG_EPSILON) && noexcept(Vector()) && noexcept(*this / Magnitude()))
+		{ return SqrMagnitude() < BIG_EPSILON ? Vector() : *this / Magnitude(); }
 
 		_NODISCARD constexpr T SqrDistance(in<Vector> other) const noexcept(noexcept((*this - other).SqrMagnitude()))
 		{ return (*this - other).SqrMagnitude(); }
@@ -103,6 +105,15 @@ namespace bae
 	_NODISCARD static T Distance(in<Vector<2, T>> a, in<Vector<2, T>> b) noexcept(noexcept(a.Distance(b)))
 	{ return a.Distance(b); }
 
+	template<typename T>
+	_NODISCARD static Vector<2, T> MoveTowards(in<Vector<2, T>> current, in<Vector<2, T>> target, T maxDelta) noexcept(noexcept(current.SqrDistance(target) < maxDelta * maxDelta) && noexcept(current + ((target - current).Normalized() * maxDelta)))
+	{
+		if (current.SqrDistance(target) < maxDelta * maxDelta)
+			return target;
+		else
+			return current + ((target - current).Normalized() * maxDelta);
+	}
+
 	typedef Vector<2, float> Vector2F;
 	typedef Vector<2, double> Vector2D;
 	typedef Vector<2, int> Vector2I;
@@ -125,6 +136,8 @@ namespace bae
 		{ return (x * x) + (y * y) + (z * z); }
 		_NODISCARD T Magnitude() const noexcept(noexcept(Sqrt(SqrMagnitude())))
 		{ return Sqrt(SqrMagnitude()); }
+		_NODISCARD Vector Normalized() const noexcept(noexcept(SqrMagnitude() < BIG_EPSILON) && noexcept(Vector()) && noexcept(*this / Magnitude()))
+		{ return SqrMagnitude() < BIG_EPSILON ? Vector() : *this / Magnitude(); }
 		
 		_NODISCARD constexpr T SqrDistance(in<Vector> other) const noexcept(noexcept((*this - other).SqrMagnitude()))
 		{ return (*this - other).SqrMagnitude(); }
@@ -182,6 +195,15 @@ namespace bae
 	_NODISCARD static T Distance(in<Vector<3, T>> a, in<Vector<3, T>> b) noexcept(noexcept(a.Distance(b)))
 	{ return a.Distance(b); }
 
+	template<typename T>
+	_NODISCARD static Vector<3, T> MoveTowards(in<Vector<3, T>> current, in<Vector<3, T>> target, T maxDelta) noexcept(noexcept(current.SqrDistance(target) < maxDelta * maxDelta) && noexcept(current + ((target - current).Normalized() * maxDelta)))
+	{
+		if (current.SqrDistance(target) < maxDelta * maxDelta)
+			return target;
+		else
+			return current + ((target - current).Normalized() * maxDelta);
+	}
+
 	typedef Vector<3, float> Vector3F;
 	typedef Vector<3, double> Vector3D;
 	typedef Vector<3, int> Vector3I;
@@ -204,6 +226,8 @@ namespace bae
 		{ return (x * x) + (y * y) + (z * z) + (w * w); }
 		_NODISCARD T Magnitude() const noexcept(noexcept(Sqrt(SqrMagnitude())))
 		{ return Sqrt(SqrMagnitude()); }
+		_NODISCARD Vector Normalized() const noexcept(noexcept(SqrMagnitude() < BIG_EPSILON) && noexcept(Vector()) && noexcept(*this / Magnitude()))
+		{ return SqrMagnitude() < BIG_EPSILON ? Vector() : *this / Magnitude(); }
 		
 		_NODISCARD constexpr T SqrDistance(in<Vector> other) const noexcept(noexcept((*this - other).SqrMagnitude()))
 		{ return (*this - other).SqrMagnitude(); }
@@ -254,6 +278,15 @@ namespace bae
 	template<typename T>
 	_NODISCARD static T Distance(in<Vector<4, T>> a, in<Vector<4, T>> b) noexcept(noexcept(a.Distance(b)))
 	{ return a.Distance(b); }
+
+	template<typename T>
+	_NODISCARD static Vector<4, T> MoveTowards(in<Vector<4, T>> current, in<Vector<4, T>> target, T maxDelta) noexcept(noexcept(current.SqrDistance(target) < maxDelta* maxDelta) && noexcept(current + ((target - current).Normalized() * maxDelta)))
+	{ 
+		if (current.SqrDistance(target) < maxDelta * maxDelta)
+			return target;
+		else
+			return current + ((target - current).Normalized() * maxDelta);
+	}
 
 	typedef Vector<4, float> Vector4F;
 	typedef Vector<4, double> Vector4D;

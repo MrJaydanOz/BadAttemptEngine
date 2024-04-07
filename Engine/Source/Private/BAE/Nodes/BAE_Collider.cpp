@@ -14,7 +14,6 @@ namespace bae
 
 	void Collider::OnLoad() noexcept
 	{
-		Game::GetPhysics()->_AddCollider(this);
 		Transform::OnLoad();
 	}
 

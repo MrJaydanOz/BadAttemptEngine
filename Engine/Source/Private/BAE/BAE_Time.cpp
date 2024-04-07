@@ -10,9 +10,9 @@ namespace bae
 	Time::Time() :
 		_timeScale(1.0f),
 		_useFixedTimeForPhysics(true),
-		_minTimestep(1.0f / 30.0f),
+		_minTimestep(1.0f / 60.0f),
 		_maxTimestep(1.0f / 5.0f),
-		_fixedTimestep(1.0f / 30.0f),
+		_fixedTimestep(1.0f / 60.0f),
 		_unscaledCurrentTimeCount(0.0),
 		_unscaledLastTimeCount(_unscaledCurrentTimeCount),
 		_unscaledFixedTimeCount(0.0),

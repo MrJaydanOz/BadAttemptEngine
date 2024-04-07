@@ -28,7 +28,7 @@ namespace bae
 	{ return _collisionLog; }
 
 	void Physics::_AddPhysicsBody(in<PhysicsBody*> physicsBody) noexcept
-	{ 
+	{
 		if (physicsBody != nullptr)
 			_physicsBodies.push_back(physicsBody);
 	}
@@ -84,37 +84,23 @@ namespace bae
 			physicsBody->_velocity += gravity;
 			physicsBody->Translate(physicsBody->_velocity * deltaTime);
 			physicsBody->Rotate(physicsBody->_angularVelocity * deltaTime);
-			physicsBody->CacheWorldPose();
 		}
 
 		for (auto& [collider, physicsBody] : _collidersWithConnectedBody)
 		{
-			if (physicsBody == nullptr)
-				collider->CacheWorldPose();
 		}
 
 		bool didCollide;
 		PhysicsCollision collision;
 
-		for (auto i1 = _physicsBodies.begin(); i1 < _physicsBodies.end(); i1++)
-			for (auto i2 = i1 + 0; i2 < _physicsBodies.end(); i2++)
+		auto processCollisionForPair = [&](PhysicsBody* physicsBody1, PhysicsBody* physicsBody2) -> void
 			{
-				DEBUG_LOG_INFO(DEBUG_NODE_NAME(*i1) << " & " << DEBUG_NODE_NAME(*i2));
-
-				for (auto& [collider1, physicsBody1] : _collidersWithConnectedBody)
-					if (collider1 != nullptr && physicsBody1 == *i1)
+				for (auto& [collider2, collider2physicsBody] : _collidersWithConnectedBody)
+					if (collider2 != nullptr && collider2physicsBody == physicsBody2 && !collider2->isTrigger)
 					{
-						DEBUG_LOG_INFO("collider1: " << DEBUG_NODE_NAME(collider1) << " at " << collider1->GetPosition());
-						if (physicsBody1 != nullptr)
-							DEBUG_LOG_INFO("physicsBody1: " << DEBUG_NODE_NAME(physicsBody1) << " at " << physicsBody1->GetPosition());
-
-						for (auto& [collider2, physicsBody2] : _collidersWithConnectedBody)
-							if (collider2 != nullptr && (i1 == i2 ? physicsBody2 == nullptr : physicsBody2 == *i2) && !collider2->isTrigger)
+						for (auto& [collider1, collider1physicsBody] : _collidersWithConnectedBody)
+							if (collider1 != nullptr && collider1physicsBody == physicsBody1)
 							{
-								DEBUG_LOG_INFO("collider2: " << DEBUG_NODE_NAME(collider2) << " at " << collider2->GetPosition());
-								if (physicsBody2 != nullptr)
-									DEBUG_LOG_INFO("physicsBody2: " << DEBUG_NODE_NAME(physicsBody2) << " at " << physicsBody2->GetPosition());
-
 								didCollide = false;
 
 								ColliderAxisBox* collider1AsAxisBox = dynamic_cast<ColliderAxisBox*>(collider1);
@@ -127,12 +113,8 @@ namespace bae
 										BoundsF combinedBounds = BoundsF::AsCenterSize(collider1AsAxisBox->TransformPoint(collider1AsAxisBox->center), combinedBoundsSize);
 										Vector2F otherCenter = collider2AsAxisBox->TransformPoint(collider2AsAxisBox->center);
 
-										DEBUG_LOG_INFO("collider1AsAxisBox: " << DEBUG_NODE_NAME(collider1AsAxisBox) << " & " << "collider2AsAxisBox: " << DEBUG_NODE_NAME(collider2AsAxisBox) << ", combinedBounds:" << combinedBounds << ", otherCenter:" << otherCenter);
-
 										if (combinedBounds.Contains(otherCenter))
 										{
-											DEBUG_LOG_INFO("contains");
-
 											Vector2F combinedBoundsExtent = combinedBoundsSize * 0.5f;
 
 											collision.physicsBody1 = physicsBody1;
@@ -147,22 +129,20 @@ namespace bae
 											Vector<4, std::pair<uint8, float>> distancesFromEdges;
 											distancesFromEdges.x = { 0, combinedBoundsExtent.x - deltaOtherCenter.x };
 											distancesFromEdges.y = { 1, combinedBoundsExtent.y - deltaOtherCenter.y };
-											distancesFromEdges.z = { 2, deltaOtherCenter.x - combinedBoundsExtent.x };
-											distancesFromEdges.w = { 3, deltaOtherCenter.y - combinedBoundsExtent.y };
+											distancesFromEdges.z = { 2, combinedBoundsExtent.x + deltaOtherCenter.x };
+											distancesFromEdges.w = { 3, combinedBoundsExtent.y + deltaOtherCenter.y };
 
 											const auto distanceComparison = [](in<std::pair<uint8, float>> a, in<std::pair<uint8, float>> b) noexcept -> bool { return a.second < b.second; };
 
-											std::pair<uint8, float> maxDistanceFromEdge = Max(Max(Max(
+											std::pair<uint8, float> minDistanceFromEdge = Min(Min(Min(
 												distancesFromEdges.x,
 												distancesFromEdges.y, distanceComparison),
 												distancesFromEdges.z, distanceComparison),
 												distancesFromEdges.w, distanceComparison);
 
-											DEBUG_LOG_INFO(maxDistanceFromEdge.first << " : " << maxDistanceFromEdge.second);
+											collision.contactOverlap = minDistanceFromEdge.second;
 
-											collision.contactOverlap = maxDistanceFromEdge.second;
-
-											switch (maxDistanceFromEdge.first)
+											switch (minDistanceFromEdge.first)
 											{
 											case 0: collision.contactNormal = Vector2F(+1.0f, 0.0f); break;
 											case 1: collision.contactNormal = Vector2F(0.0f, +1.0f); break;
@@ -198,6 +178,13 @@ namespace bae
 								}
 							}
 					}
-			}
+			};
+
+		for (auto i1 = _physicsBodies.begin(); i1 < _physicsBodies.end(); i1++)
+		{
+			for (auto i2 = i1 + 1; i2 < _physicsBodies.end(); i2++)
+				processCollisionForPair(*i1, *i2);
+			processCollisionForPair(*i1, nullptr);
+		}
 	}
 }

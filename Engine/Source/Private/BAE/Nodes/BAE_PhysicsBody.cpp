@@ -28,7 +28,6 @@ namespace bae
 
 	void PhysicsBody::OnLoad() noexcept
 	{
-		Game::GetPhysics()->_AddPhysicsBody(this);
 		Transform::OnLoad();
 	}
 

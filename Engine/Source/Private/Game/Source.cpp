@@ -10,6 +10,8 @@ Animation* enemyAnimation;
 PhysicsBody* playerBody;
 PhysicsBody* enemyBody;
 
+Vector2I lastWalkInput;
+
 void BAE_Start()
 {
 	// Load images.
@@ -79,16 +81,12 @@ void BAE_Start()
 
 void BAE_Update()
 {
-	DEBUG_LOG_INFO("----------------------------");
+	lastWalkInput = Vector2I(0, 0);
 
-	Vector2I input = Vector2I(0, 0);
-
-	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_W)) input.y++;
-	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_S)) input.y--;
-	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_A)) input.x--;
-	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_D)) input.x++;
-
-	playerBody->AddAcceleration(((Vector2F)input) * 100.0f);
+	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_W)) lastWalkInput.y++;
+	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_S)) lastWalkInput.y--;
+	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_A)) lastWalkInput.x--;
+	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_D)) lastWalkInput.x++;
 }
 
 void BAE_LateUpdate()
@@ -103,7 +101,7 @@ void BAE_FixedUpdate()
 
 void BAE_PhysicsUpdate()
 {
-
+	playerBody->SetVelocity(MoveTowards(playerBody->GetVelocity(), ((Vector2F)lastWalkInput).Normalized() * 500.0f, 5000.0f * Game::GetTime()->DeltaTime()));
 }
 
 void BAE_End()
