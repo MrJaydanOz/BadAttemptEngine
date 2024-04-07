@@ -107,7 +107,7 @@ namespace bae
 					}
 					else
 					{
-						foundCount += child->FindChildrenThatRecursive<T, TNodePredicate>(results, predicate);
+						foundCount += child->FindChildrenThatRecursive<T, TNodePredicate, TResultCollection>(predicate, results);
 					}
 				}
 				else
@@ -118,41 +118,41 @@ namespace bae
 
 		template<typename T>
 		_NODISCARD T* FindRootNodeOfType()
-		{ return FindRootNodeThat<T, auto>([](T*) -> bool { return true; }); }
+		{ return FindRootNodeThat<T>([](T*) -> bool { return true; }); }
 
 		template<typename T>
 		_NODISCARD T* FindNodeOfType()
-		{ return FindNodeThat<T, auto>([](T*) -> bool { return true; }); }
+		{ return FindNodeThat<T>([](T*) -> bool { return true; }); }
 
 		template<typename T, typename TResultCollection = std::vector<T*>>
 		size_t FindCRootNodesOfType(ref<TResultCollection> results)
-		{ return FindRootNodesThat<T, auto, TResultCollection>([](T*) -> bool { return true; }, results); }
+		{ return FindRootNodesThat<T, TResultCollection>([](T*) -> bool { return true; }, results); }
 
 		template<typename T, typename TResultCollection = std::vector<T*>>
 		size_t FindNodesOfType(ref<TResultCollection> results)
-		{ return FindNodesThat<T, auto>([](T*) -> bool { return true; }, results); }
+		{ return FindNodesThat<T>([](T*) -> bool { return true; }, results); }
 
 		template<typename T>
 		_NODISCARD T* FindRootNodeWithName(in<std::string> name)
-		{ return FindRootNodeThat<T>([&](T* node) -> bool { return node->GetName().compare(name) == 0; }); }
+		{ return FindRootNodeThat<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
 
 		template<typename T>
 		_NODISCARD T* FindNodeWithName(in<std::string> name)
-		{ return FindNodeThat<T>([&](T* node) -> bool { return node->GetName().compare(name) == 0; }); }
+		{ return FindNodeThat<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
 
 		template<typename T, typename TResultCollection = std::vector<T*>>
 		size_t FindRootNodesWithName(in<std::string> name, ref<TResultCollection> results)
-		{ return FindRootNodesThat<T>([&](T* node) -> bool { return node->GetName().compare(name) == 0; }); }
+		{ return FindRootNodesThat<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
 
 		template<typename T, typename TResultCollection = std::vector<T*>>
 		size_t FindNodesWithName(in<std::string> name, ref<TResultCollection> results)
-		{ return FindNodesThat<T>([&](T* node) -> bool { return node->GetName().compare(name) == 0; }); }
+		{ return FindNodesThat<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
 
 		template<typename T, typename... TConstructorArguments>
-		T* AddNode(TConstructorArguments... arguments)
+		T* AddNode(TConstructorArguments... constructorArguments)
 		{
 			static_assert(std::is_base_of<Node, T>::value);
-			T* newNode = new T(arguments...);
+			T* newNode = new T(constructorArguments...);
 			newNode->_location_type = Node::_Node_Location_Type::_NODE_LOCATION_SCENE_ROOT;
 			newNode->_SetAsParent(nullptr);
 			NODE_TRIGGER_EVENT_WITH_TRY_CATCH(newNode, OnLoad);
@@ -192,6 +192,8 @@ namespace bae
 		Scene();
 		~Scene();
 
-		void ClearWorldPositionCaches() const noexcept;
+		void _ProcessAnimation() noexcept;
+
+		void _ClearWorldPositionCaches() const noexcept;
 	};
 }

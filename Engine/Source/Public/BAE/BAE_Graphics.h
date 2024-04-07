@@ -8,6 +8,7 @@
 #include <SDL2/SDL_image.h>
 #include <deque>
 #include "Math/BAE_VectorT.h"
+#include "Math/BAE_Color.h"
 
 // !! TEMPORARY SOLUTION !!
 #include "Nodes/BAE_Node.h"
@@ -34,15 +35,19 @@ namespace bae
 		//std::deque<Visual*> _visualsInZOrder;
 		std::deque<Visual*>* _visualsInZOrder;
 		bool _isWorking;
+		Color _backgroundColor;
 
 	public:
-		_NODISCARD Vector2I GetScreenSize();
+		_NODISCARD Vector2I GetScreenSize() const noexcept;
+
+		_NODISCARD Color GetBackgroundColor() const noexcept;
+		void SetBackgroundColor(in<Color> color) noexcept;
 
 	private:
 		Graphics();
 		~Graphics();
 
-		void Render();
+		void _Render();
 
 		void _MarkVisualHasBeenModified(Visual* visual) noexcept;
 
@@ -52,6 +57,9 @@ namespace bae
 		template<typename T, typename TDelegate>
 		void _ForeachVisualAndChildren(Node* node, in_delegate<TDelegate> action) const noexcept
 		{
+			if (node == nullptr)
+				return;
+
 			T* castedNode = dynamic_cast<T*>(node);
 			if (castedNode != nullptr)
 				action(castedNode);

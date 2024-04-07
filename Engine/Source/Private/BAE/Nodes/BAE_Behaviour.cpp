@@ -10,7 +10,7 @@ namespace bae
 	Behaviour::Behaviour(in<bool> enabled) noexcept :
 		Behaviour::Behaviour("", enabled) { }
 
-	Behaviour* Behaviour::CloneInto(Node* parent) noexcept
+	Behaviour* Behaviour::CloneInto(in<Node*> parent) noexcept
 	{ return CloneIntoBegin<Behaviour>(parent, GetName(), IsEnabledSelf()); }
 
 	void Behaviour::OnLoad()

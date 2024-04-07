@@ -1,6 +1,7 @@
 #include "BAE_Scene.h"
 #include "Nodes/BAE_Transform.h"
 #include <deque>
+#include "Nodes/BAE_Animator.h"
 
 namespace bae
 {
@@ -21,21 +22,31 @@ namespace bae
 			delete* i;
 	}
 
-	void Scene::ClearWorldPositionCaches() const noexcept
+	void Scene::_ProcessAnimation() noexcept
 	{
-		std::vector<Transform*> transformBuffer;
+		std::deque<Animator*> animatorBuffer;
+		FindNodesThat<Animator>([](in<Animator*> animator) -> bool { return animator->IsEnabled(); }, animatorBuffer);
 
-		for (Node* node : GetRootNodes())
-			if (node != nullptr)
+		for (Animator* animator : animatorBuffer)
+			animator->_Process(false);
+	}
+
+	void Scene::_ClearWorldPositionCaches() const noexcept
+	{
+		std::deque<Transform*> transformBuffer;
+		for (Node* child : GetRootNodes())
+			if (child != nullptr)
 			{
-				transformBuffer.clear();
-				node->FindChildrenOfTypeRecursive<Transform>(transformBuffer);
-				for (Transform* transform : transformBuffer)
-				{
-					transform->ClearWorldPoseCache(false);
-				}
+				Transform* castedChild = dynamic_cast<Transform*>(child);
+				if (castedChild != nullptr)
+					transformBuffer.push_back(castedChild);
+				
+				child->FindChildrenOfTypeRecursive<Transform>(transformBuffer);
 			}
 			else
 				DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, "The scene has a null root node.");
+
+		for (Transform* transform : transformBuffer)
+			transform->ClearWorldPoseCache(false);
 	}
 }

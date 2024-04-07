@@ -31,15 +31,15 @@ namespace bae
         static constexpr Rect AsCenterSize(in<Vector<2, T>> center, in<Vector<2, T>> size) noexcept(noexcept(AsCenterExtents(center, size * 0.5f)))
         { return AsCenterExtents(center, size * 0.5f); }
 
-        static constexpr Vector<2, T> GetMin() noexcept
+        constexpr Vector<2, T> GetMin() noexcept
         { return position; }
-        static constexpr Vector<2, T> GetMax() noexcept(noexcept(position + size))
+        constexpr Vector<2, T> GetMax() noexcept(noexcept(position + size))
         { return position + size; }
-        static constexpr Vector<2, T> GetCenter() noexcept(noexcept(position + (size * 0.5f)))
+        constexpr Vector<2, T> GetCenter() noexcept(noexcept(position + (size * 0.5f)))
         { return position - (size * 0.5f); }
-        static constexpr Vector<2, T> GetSize() noexcept
+        constexpr Vector<2, T> GetSize() noexcept
         { return size; }
-        static constexpr Vector<2, T> GetExtent() noexcept
+        constexpr Vector<2, T> GetExtent() noexcept
         { return size * 0.5f; }
 
         constexpr bool Contains(in<Vector<2, T>> point) const noexcept(noexcept(point.x <= (position + size).x && point.x >= position.x && point.y <= (position + size).y && point.y >= position.y))
@@ -74,6 +74,8 @@ namespace bae
                 ", w:" << std::setprecision(2) << std::fixed << rect.size.x <<
                 ", h:" << std::setprecision(2) << std::fixed << rect.size.y << ')';
         }
+
+        constexpr Rect& operator=(in<Rect> other) noexcept(noexcept(position = other.position) && noexcept(size = other.size)) { position = other.position; size = other.size; return *this; }
     };
 
     typedef Rect<float> RectF;
@@ -99,15 +101,15 @@ namespace bae
         static constexpr Bounds AsCenterSize(in<Vector<2, T>> center, in<Vector<2, T>> size) noexcept(noexcept(AsCenterExtents(center, size * 0.5f)))
         { return AsCenterExtents(center, size * 0.5f); }
         
-        static constexpr Vector<2, T> GetMin() noexcept
+        constexpr Vector<2, T> GetMin() noexcept
         { return min; }
-        static constexpr Vector<2, T> GetMax() noexcept
+        constexpr Vector<2, T> GetMax() noexcept
         { return max; }
-        static constexpr Vector<2, T> GetCenter() noexcept(noexcept((min + max) * 0.5f))
+        constexpr Vector<2, T> GetCenter() noexcept(noexcept((min + max) * 0.5f))
         { return (min + max) * 0.5f; }
-        static constexpr Vector<2, T> GetSize() noexcept(noexcept(max - min))
+        constexpr Vector<2, T> GetSize() noexcept(noexcept(max - min))
         { return max - min; }
-        static constexpr Vector<2, T> GetExtent() noexcept(noexcept((max - min) * 0.5f))
+        constexpr Vector<2, T> GetExtent() noexcept(noexcept((max - min) * 0.5f))
         { return (max - min) * 0.5f; }
 
         constexpr bool Contains(in<Vector<2, T>> point) const noexcept(noexcept(point.x <= max.x && point.x >= min.x && point.y <= max.y && point.y >= min.y))
@@ -133,6 +135,8 @@ namespace bae
                 ", +x:" << std::setprecision(2) << std::fixed << bounds.max.x <<
                 ", +y:" << std::setprecision(2) << std::fixed << bounds.max.y << ')';
         }
+
+        constexpr Bounds& operator=(in<Bounds> other) noexcept(noexcept(min = other.min) && noexcept(max = other.max)) { min = other.min; max = other.max; return *this; }
     };
 
     typedef Bounds<float> BoundsF;

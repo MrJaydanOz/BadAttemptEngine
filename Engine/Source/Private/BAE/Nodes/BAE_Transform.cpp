@@ -20,7 +20,7 @@ namespace bae
 		Node::~Node();
 	}
 
-	Transform* Transform::CloneInto(Node* parent) noexcept
+	Transform* Transform::CloneInto(in<Node*> parent) noexcept
 	{
 		Transform* newNode = CloneIntoBegin<Transform>(parent, GetName());
 		newNode->SetPose(GetPose());
@@ -101,6 +101,15 @@ namespace bae
 		else
 			SetLocalRotation(rotation);
 	}
+
+	void Transform::Translate(in<Vector2F> deltaPosition) noexcept
+	{ SetLocalPosition(GetLocalPosition() + InverseTransformDirection(deltaPosition)); }
+
+	void Transform::TranslateLocal(in<Vector2F> deltaPosition) noexcept
+	{ SetLocalPosition(GetLocalPosition() + deltaPosition); }
+
+	void Transform::Rotate(in<float> deltaRotation) noexcept
+	{ SetLocalRotation(GetLocalRotation() + deltaRotation); }
 
 	void Transform::CacheWorldPose(in<bool> recalculateIfAlreadyCached) noexcept
 	{

@@ -21,6 +21,8 @@ namespace bae
 	Graphics* Game::GetGraphics() noexcept { return GetGame()->_graphics; }
 
 	Scene* Game::GetScene() noexcept { return GetGame()->_scene; }
+	
+	Time* Game::GetTime() noexcept { return GetGame()->_time; }
 
 	Physics* Game::GetPhysics() noexcept { return GetGame()->_physics; }
 
@@ -31,7 +33,13 @@ namespace bae
 		delete GetGame();
 	}
 
-	void Game::Run() { Initialize(); }
+	void Game::Run() 
+	{ 
+		if (!_isRunning)
+		{
+			Initialize();
+		}
+	}
 
 	void Game::Quit()
 	{
@@ -41,9 +49,10 @@ namespace bae
 	Game::Game() : 
 		_graphics(nullptr),
 		_scene(nullptr),
+		_time(nullptr),
 		_physics(nullptr),
 		_input(nullptr),
-		_isRunning(true)
+		_isRunning(false)
 	{
 		DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game created.");
 	}
@@ -69,6 +78,10 @@ namespace bae
 		if (!_scene->_isWorking)
 			return;
 
+		_time = new Time();
+		if (!_time->_isWorking)
+			return;
+
 		_physics = new Physics();
 		if (!_physics->_isWorking)
 			return;
@@ -76,6 +89,8 @@ namespace bae
 		_input = new Input();
 		if (!_input->_isWorking)
 			return;
+
+		_isRunning = true;
 
 		DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game initialised.");
 
@@ -91,219 +106,53 @@ namespace bae
 
 	void Game::GameLoop()
 	{
-		const float framesPerSecond = 60.0f;
-		const unsigned long millisecondsPerFrame = std::lroundf(1000.0f / framesPerSecond);
-
 		while (_isRunning)
 		{
-			auto nextFrameTime = std::chrono::system_clock::now() + std::chrono::milliseconds(millisecondsPerFrame);
-
-			ProcessInput();
+			_input->_ProcessInput();
 
 			BAE_Update();
 
-			Update();
+			bool useFixedTimeForPhysics = _time->GetUseFixedTimeForPhysics();
+
+			while (_time->_IsFixedUpdateQueued())
+			{
+				if (useFixedTimeForPhysics)
+				{
+					_scene->_ClearWorldPositionCaches();
+					_physics->_Simulate(_time->FixedDeltaTime());
+
+					_scene->_ClearWorldPositionCaches();
+					BAE_PhysicsUpdate();
+				}
+
+				BAE_FixedUpdate();
+			}
+
+			if (!useFixedTimeForPhysics)
+			{
+				_scene->_ClearWorldPositionCaches();
+				_physics->_Simulate(_time->DeltaTime());
+
+				_scene->_ClearWorldPositionCaches();
+				BAE_PhysicsUpdate();
+			}
+
+			_scene->_ProcessAnimation();
 
 			BAE_LateUpdate();
 
-			_graphics->Render();
+			_scene->_ClearWorldPositionCaches();
+			_graphics->_Render();
 
-			_scene->ClearWorldPositionCaches();
-
-			std::this_thread::sleep_until(nextFrameTime);
+			_time->_SleepUntilNextFrame();
 		}
 
 		Dispose();
 	}
 
-	void Game::ProcessInput()
-	{
-		SDL_Event inputEvent;
-
-		while (SDL_PollEvent(&inputEvent))
-		{
-			if (inputEvent.type == SDL_QUIT)
-			{
-				Quit();
-			}
-		}
-	}
-
-	void Game::Update()
-	{
-	}
-
-	void Game::Render()
-	{
-		/*SDL_SetRenderDrawColor(_rendererReference, 0x00, 0x00, 0x00, 0xFF);
-
-		SDL_RenderClear(_rendererReference);
-
-		SDL_Rect rectS = SDL_Rect();
-		SDL_FRect rectD = SDL_FRect();
-
-		// SDL_Rect why no constructer wtf?
-
-		const float framesPerSecond = 12.0f;
-		const unsigned long millisecondsPerFrame = std::lroundf(1000.0f / framesPerSecond);
-
-		unsigned long time = SDL_GetTicks64();
-
-		// We're graphics before functionality. But I'm not so here's some spaghetti.
-		// Btw the sprites are made in my little sprite sheet generator I made in Unity during off time.
-
-		rectS.x = (int)((time / millisecondsPerFrame) % 12) * 32;
-		rectS.y = 0;
-		rectS.w = 32;
-		rectS.h = 32;
-
-		rectD.x = 50.0f;
-		rectD.y = 50.0f;
-		rectD.w = (float)rectS.w * 3.0f;
-		rectD.h = (float)rectS.h * 3.0f;
-
-		if (SDL_RenderCopyF(_rendererReference, _cube1Texture, &rectS, &rectD) < 0)
-			DEBUG_LOG_SDL_ERROR("");
-
-		rectS.x = (int)((time / millisecondsPerFrame) % 10) * 32;
-		rectS.y = 0;
-		rectS.w = 32;
-		rectS.h = 32;
-
-		rectD.x = 200.0f;
-		rectD.y = 50.0f;
-		rectD.w = (float)rectS.w * 3.0f;
-		rectD.h = (float)rectS.h * 3.0f;
-
-		if (SDL_RenderCopyF(_rendererReference, _cube2Texture, &rectS, &rectD) < 0)
-			DEBUG_LOG_SDL_ERROR("");
-
-		rectS.x = (int)((time / millisecondsPerFrame) % 20) * 32;
-		rectS.y = 0;
-		rectS.w = 32;
-		rectS.h = 32;
-
-		rectD.x = 350.0f;
-		rectD.y = 50.0f;
-		rectD.w = (float)rectS.w * 3.0f;
-		rectD.h = (float)rectS.h * 3.0f;
-
-		if (SDL_RenderCopyF(_rendererReference, _cube3Texture, &rectS, &rectD) < 0)
-			DEBUG_LOG_SDL_ERROR("");
-
-		rectS.x = (int)((time / millisecondsPerFrame) % 10) * 32;
-		rectS.y = 0;
-		rectS.w = 32;
-		rectS.h = 32;
-
-		rectD.x = 500.0f;
-		rectD.y = 50.0f;
-		rectD.w = (float)rectS.w * 3.0f;
-		rectD.h = (float)rectS.h * 3.0f;
-
-		if (SDL_RenderCopyF(_rendererReference, _cube4Texture, &rectS, &rectD) < 0)
-			DEBUG_LOG_SDL_ERROR("");
-
-		rectS.x = (int)((time / millisecondsPerFrame) % 12) * 32;
-		rectS.y = 0;
-		rectS.w = 32;
-		rectS.h = 32;
-
-		rectD.x = 650.0f;
-		rectD.y = 50.0f;
-		rectD.w = (float)rectS.w * 3.0f;
-		rectD.h = (float)rectS.h * 3.0f;
-
-		if (SDL_RenderCopyF(_rendererReference, _cube5Texture, &rectS, &rectD) < 0)
-			DEBUG_LOG_SDL_ERROR("");
-
-		SDL_RenderPresent(_rendererReference);
-
-		rectS.x = (int)((time / millisecondsPerFrame) % 40) * 192;
-		rectS.y = 0;
-		rectS.w = 192;
-		rectS.h = 192;
-
-		rectD.x = 50.0f;
-		rectD.y = 200.0f;
-		rectD.w = (float)rectS.w * 3.0f;
-		rectD.h = (float)rectS.h * 3.0f;
-
-		if (SDL_RenderCopyF(_rendererReference, _fireRingTexture, &rectS, &rectD) < 0)
-			DEBUG_LOG_SDL_ERROR("");
-
-		SDL_RenderPresent(_rendererReference);*/
-	}
-
-	void Game::CollectGarbage()
-	{
-
-	}
-
 	void Game::Dispose()
 	{
 		BAE_End();
-
-		/*if (_rendererReference != nullptr)
-		{
-			SDL_DestroyRenderer(_rendererReference);
-			_rendererReference = nullptr;
-		}
-
-		if (_windowReference != nullptr)
-		{
-			SDL_DestroyWindow(_windowReference);
-			_windowReference = nullptr;
-		}
-
-		if (_cube1Texture != nullptr)
-		{
-			SDL_DestroyTexture(_cube1Texture);
-			_cube1Texture = nullptr;
-		}
-		delete _cube1Image;
-
-		if (_cube2Texture != nullptr)
-		{
-			SDL_DestroyTexture(_cube2Texture);
-			_cube2Texture = nullptr;
-		}
-		delete _cube2Image;
-
-		if (_cube3Texture != nullptr)
-		{
-			SDL_DestroyTexture(_cube3Texture);
-			_cube3Texture = nullptr;
-		}
-		delete _cube3Image;
-
-		if (_cube4Texture != nullptr)
-		{
-			SDL_DestroyTexture(_cube4Texture);
-			_cube4Texture = nullptr;
-		}
-		delete _cube4Image;
-
-		if (_cube5Texture != nullptr)
-		{
-			SDL_DestroyTexture(_cube5Texture);
-			_cube5Texture = nullptr;
-		}
-		delete _cube5Image;
-
-		if (_fireRingTexture != nullptr)
-		{
-			SDL_DestroyTexture(_fireRingTexture);
-			_fireRingTexture = nullptr;
-		}
-		delete _fireRingImage;
-
-		if (_fireSmallTexture != nullptr)
-		{
-			SDL_DestroyTexture(_fireSmallTexture);
-			_fireSmallTexture = nullptr;
-		}
-		delete _fireSmallImage;*/
 
 		SDL_Quit();
 

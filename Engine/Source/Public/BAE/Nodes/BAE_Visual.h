@@ -18,8 +18,7 @@ namespace bae
 #endif
 	class Visual : public Behaviour
 	{
-		friend class Node;
-		friend class Scene;
+		NODE_BEGIN;
 		friend class Graphics;
 
 	private:
@@ -28,7 +27,7 @@ namespace bae
 	public:
 		virtual ~Visual() noexcept override;
 
-		virtual Visual* CloneInto(Node* parent) noexcept override = 0;
+		virtual Visual* CloneInto(in<Node*> parent) noexcept override = 0;
 
 		_NODISCARD int GetZIndex() const noexcept;
 		void SetZIndex(in<int> index) noexcept;

@@ -12,6 +12,10 @@ try { nodePointer->functionName(__VA_ARGS__); } \
 catch (in<std::exception> exception) \
 { DEBUG_LOG_EXCEPTION_CONTEXTED(DEBUG_NODE_NAME(nodePointer) << '.' << #functionName << "()", exception); }
 
+#define NODE_BEGIN \
+friend class Node;  /* This allows for Node::AddChild() and Scene::AddNode() to access the node's */\
+friend class Scene  /* constructor which should be protected. */
+
 namespace bae
 {
 	class Scene;
@@ -43,7 +47,7 @@ namespace bae
 	public:
 		virtual ~Node() noexcept;
 
-		virtual Node* CloneInto(Node* parent) noexcept;
+		virtual Node* CloneInto(in<Node*> parent) noexcept;
 
 		_NODISCARD bool HasName() const noexcept;
 		_NODISCARD const std::string& GetName() const noexcept;
@@ -51,7 +55,7 @@ namespace bae
 
 		_NODISCARD bool HasParentNode() const noexcept;
 		_NODISCARD Node* GetParentNode() const noexcept;
-		bool SetParentNode(Node* parent) noexcept;
+		bool SetParentNode(in<Node*> parent) noexcept;
 
 		_NODISCARD bool IsPrefab() const noexcept;
 		_NODISCARD bool IsUpMostNode() const noexcept;
@@ -213,11 +217,11 @@ namespace bae
 
 		template<typename T>
 		_NODISCARD T* FindChildWithName(in<std::string> name) const noexcept
-		{ return FindChildThat<T>([&](T* node) -> bool { return node->GetName() == name; }); }
+		{ return FindChildThat<T>([&](in<T*> node) -> bool { return node->GetName() == name; }); }
 
 		template<typename T>
 		_NODISCARD T* FindChildWithNameRecursive(in<std::string> name) const noexcept
-		{ return FindChildThatRecursive<T>([&](T* node) -> bool { return node->GetName() == name; }); }
+		{ return FindChildThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName() == name; }); }
 		
 		template<typename T>
 		bool TryFindChildWithName(in<std::string> name, out<T*> result) const noexcept
@@ -225,30 +229,30 @@ namespace bae
 
 		template<typename T>
 		bool TryFindChildWithNameRecursive(in<std::string> name, out<T*> result) const noexcept
-		{ return TryFindChildThatRecursive<T>([&](T* node) -> bool { return node->GetName() == name; }, result); }
+		{ return TryFindChildThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName() == name; }, result); }
 
 		template<typename T, typename TResultCollection = std::vector<T*>>
 		size_t FindChildrenWithName(in<std::string> name, ref<TResultCollection> results) const noexcept
-		{ return FindChildrenThat<T>([&](T* node) -> bool { return node->GetName() == name; }); }
+		{ return FindChildrenThat<T>([&](in<T*> node) -> bool { return node->GetName() == name; }); }
 
 		template<typename T, typename TResultCollection = std::vector<T*>>
 		size_t FindChildrenWithNameRecursive(in<std::string> name, ref<TResultCollection> results) const noexcept
-		{ return FindChildrenThatRecursive<T>([&](T* node) -> bool { return node->GetName() == name; }); }
+		{ return FindChildrenThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName() == name; }); }
 		
 		template<typename T>
 		_NODISCARD T* FindParentWithNameRecursive(in<std::string> name) const noexcept
-		{ return FindParentThatRecursive<T>([&](T* node) -> bool { return node->GetName() == name; }); }
+		{ return FindParentThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName() == name; }); }
 		
 		template<typename T>
 		bool TryFindParentWithNameRecursive(in<std::string> name, out<T*> result) const noexcept
-		{ return TryFindParentThatRecursive<T>([&](T* node) -> bool { return node->GetName() == name; }, result); }
+		{ return TryFindParentThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName() == name; }, result); }
 
 		template<typename T, typename... TConstructorArguments>
 		T* AddChild(TConstructorArguments... constructorArguments)
 		{ return AddChildIn<T, TConstructorArguments...>(this, constructorArguments...); }
 
 		template<typename T, typename... TConstructorArguments>
-		static T* AddChildIn(Node* parent, TConstructorArguments... constructorArguments)
+		static T* AddChildIn(in<Node*> parent, TConstructorArguments... constructorArguments)
 		{
 			static_assert(std::is_base_of<Node, T>::value);
 			T* newNode = new T(constructorArguments...);
@@ -283,6 +287,6 @@ namespace bae
 	private:
 		void _RemoveThisFromParent() noexcept;
 
-		void _SetAsParent(Node* parentNode) noexcept;
+		void _SetAsParent(in<Node*> parentNode) noexcept;
 	};	
 }

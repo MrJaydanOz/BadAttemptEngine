@@ -75,11 +75,11 @@ namespace bae
 		_NODISCARD constexpr Vector operator*(in<T> scaler) const noexcept(noexcept(Vector(x * scaler, y * scaler))) { return Vector(x * scaler, y * scaler); }
 		_NODISCARD constexpr Vector operator/(in<T> scaler) const noexcept(noexcept(Vector(x / scaler, y / scaler))) { return Vector(x / scaler, y / scaler); }
 
-		_NODISCARD constexpr Vector& operator+=(in<Vector> other) noexcept(noexcept(x += other.x) && noexcept(y += other.y)) { x += other.x; y += other.y; return *this; }
-		_NODISCARD constexpr Vector& operator-=(in<Vector> other) noexcept(noexcept(x -= other.x) && noexcept(y -= other.y)) { x -= other.x; y -= other.y; return *this; }
-		_NODISCARD constexpr Vector& operator*=(in<Vector> other) noexcept(noexcept(x *= other.x) && noexcept(y *= other.y)) { x *= other.x; y *= other.y; return *this; }
-		_NODISCARD constexpr Vector& operator*=(in<T> scaler) noexcept(noexcept(x *= scaler) && noexcept(y *= scaler)) { x *= scaler; y *= scaler; return *this; }
-		_NODISCARD constexpr Vector& operator/=(in<T> scaler) noexcept(noexcept(x /= scaler) && noexcept(y /= scaler)) { x /= scaler; y /= scaler; return *this; }
+		constexpr Vector& operator+=(in<Vector> other) noexcept(noexcept(x += other.x) && noexcept(y += other.y)) { x += other.x; y += other.y; return *this; }
+		constexpr Vector& operator-=(in<Vector> other) noexcept(noexcept(x -= other.x) && noexcept(y -= other.y)) { x -= other.x; y -= other.y; return *this; }
+		constexpr Vector& operator*=(in<Vector> other) noexcept(noexcept(x *= other.x) && noexcept(y *= other.y)) { x *= other.x; y *= other.y; return *this; }
+		constexpr Vector& operator*=(in<T> scaler) noexcept(noexcept(x *= scaler) && noexcept(y *= scaler)) { x *= scaler; y *= scaler; return *this; }
+		constexpr Vector& operator/=(in<T> scaler) noexcept(noexcept(x /= scaler) && noexcept(y /= scaler)) { x /= scaler; y /= scaler; return *this; }
 
 		_NODISCARD constexpr bool operator==(in<Vector> other) const noexcept(noexcept(x == other.x) && noexcept(y == other.y)) { return x == other.x && y == other.y; }
 		_NODISCARD constexpr bool operator!=(in<Vector> other) const noexcept(noexcept(x != other.x) && noexcept(y != other.y)) { return x != other.x || y != other.y; }
@@ -154,11 +154,11 @@ namespace bae
 		_NODISCARD constexpr Vector operator*(in<T> scaler) const noexcept(noexcept(Vector(x * scaler, y * scaler, z * scaler))) { return Vector(x * scaler, y * scaler, z * scaler); }
 		_NODISCARD constexpr Vector operator/(in<T> scaler) const noexcept(noexcept(Vector(x / scaler, y / scaler, z / scaler))) { return Vector(x / scaler, y / scaler, z / scaler); }
 
-		_NODISCARD constexpr Vector& operator+=(in<Vector> other) noexcept(noexcept(x += other.x) && noexcept(y += other.y) && noexcept(z += other.z)) { x += other.x; y += other.y; z += other.z; return *this; }
-		_NODISCARD constexpr Vector& operator-=(in<Vector> other) noexcept(noexcept(x -= other.x) && noexcept(y -= other.y) && noexcept(z -= other.z)) { x -= other.x; y -= other.y; z -= other.z; return *this; }
-		_NODISCARD constexpr Vector& operator*=(in<Vector> other) noexcept(noexcept(x *= other.x) && noexcept(y *= other.y) && noexcept(z *= other.z)) { x *= other.x; y *= other.y; z *= other.z; return *this; }
-		_NODISCARD constexpr Vector& operator*=(in<T> scaler) noexcept(noexcept(x *= scaler) && noexcept(y *= scaler) && noexcept(z *= scaler)) { x *= scaler; y *= scaler; z *= scaler; return *this; }
-		_NODISCARD constexpr Vector& operator/=(in<T> scaler) noexcept(noexcept(x /= scaler) && noexcept(y /= scaler) && noexcept(z /= scaler)) { x /= scaler; y /= scaler; z /= scaler; return *this; }
+		constexpr Vector& operator+=(in<Vector> other) noexcept(noexcept(x += other.x) && noexcept(y += other.y) && noexcept(z += other.z)) { x += other.x; y += other.y; z += other.z; return *this; }
+		constexpr Vector& operator-=(in<Vector> other) noexcept(noexcept(x -= other.x) && noexcept(y -= other.y) && noexcept(z -= other.z)) { x -= other.x; y -= other.y; z -= other.z; return *this; }
+		constexpr Vector& operator*=(in<Vector> other) noexcept(noexcept(x *= other.x) && noexcept(y *= other.y) && noexcept(z *= other.z)) { x *= other.x; y *= other.y; z *= other.z; return *this; }
+		constexpr Vector& operator*=(in<T> scaler) noexcept(noexcept(x *= scaler) && noexcept(y *= scaler) && noexcept(z *= scaler)) { x *= scaler; y *= scaler; z *= scaler; return *this; }
+		constexpr Vector& operator/=(in<T> scaler) noexcept(noexcept(x /= scaler) && noexcept(y /= scaler) && noexcept(z /= scaler)) { x /= scaler; y /= scaler; z /= scaler; return *this; }
 
 		_NODISCARD constexpr bool operator==(in<Vector> other) const noexcept(noexcept(x == other.x) && noexcept(y == other.y) && noexcept(z == other.z)) { return x == other.x && y == other.y && z == other.z; }
 		_NODISCARD constexpr bool operator!=(in<Vector> other) const noexcept(noexcept(x != other.x) && noexcept(y != other.y) && noexcept(z != other.z)) { return x != other.x || y != other.y || z != other.z; }
@@ -231,11 +231,11 @@ namespace bae
 		_NODISCARD constexpr Vector operator*(in<T> scaler) const noexcept(noexcept(Vector(x * scaler, y * scaler, z * scaler, w * scaler))) { return Vector(x * scaler, y * scaler, z * scaler, w * scaler); }
 		_NODISCARD constexpr Vector operator/(in<T> scaler) const noexcept(noexcept(Vector(x / scaler, y / scaler, z / scaler, w / scaler))) { return Vector(x / scaler, y / scaler, z / scaler, w / scaler); }
 
-		_NODISCARD constexpr Vector& operator+=(in<Vector> other) noexcept(noexcept(x += other.x) && noexcept(y += other.y) && noexcept(z += other.z) && noexcept(w += other.w)) { x += other.x; y += other.y; z += other.z; w += other.w; return *this; }
-		_NODISCARD constexpr Vector& operator-=(in<Vector> other) noexcept(noexcept(x -= other.x) && noexcept(y -= other.y) && noexcept(z -= other.z) && noexcept(w -= other.w)) { x -= other.x; y -= other.y; z -= other.z; w -= other.w; return *this; }
-		_NODISCARD constexpr Vector& operator*=(in<Vector> other) noexcept(noexcept(x *= other.x) && noexcept(y *= other.y) && noexcept(z *= other.z) && noexcept(w *= other.w)) { x *= other.x; y *= other.y; z *= other.z; w *= other.w; return *this; }
-		_NODISCARD constexpr Vector& operator*=(in<T> scaler) noexcept(noexcept(x *= scaler) && noexcept(y *= scaler) && noexcept(z *= scaler) && noexcept(w *= scaler)) { x *= scaler; y *= scaler; z *= scaler; w *= scaler; return *this; }
-		_NODISCARD constexpr Vector& operator/=(in<T> scaler) noexcept(noexcept(x /= scaler) && noexcept(y /= scaler) && noexcept(z /= scaler) && noexcept(w /= scaler)) { x /= scaler; y /= scaler; z /= scaler; w /= scaler; return *this; }
+		constexpr Vector& operator+=(in<Vector> other) noexcept(noexcept(x += other.x) && noexcept(y += other.y) && noexcept(z += other.z) && noexcept(w += other.w)) { x += other.x; y += other.y; z += other.z; w += other.w; return *this; }
+		constexpr Vector& operator-=(in<Vector> other) noexcept(noexcept(x -= other.x) && noexcept(y -= other.y) && noexcept(z -= other.z) && noexcept(w -= other.w)) { x -= other.x; y -= other.y; z -= other.z; w -= other.w; return *this; }
+		constexpr Vector& operator*=(in<Vector> other) noexcept(noexcept(x *= other.x) && noexcept(y *= other.y) && noexcept(z *= other.z) && noexcept(w *= other.w)) { x *= other.x; y *= other.y; z *= other.z; w *= other.w; return *this; }
+		constexpr Vector& operator*=(in<T> scaler) noexcept(noexcept(x *= scaler) && noexcept(y *= scaler) && noexcept(z *= scaler) && noexcept(w *= scaler)) { x *= scaler; y *= scaler; z *= scaler; w *= scaler; return *this; }
+		constexpr Vector& operator/=(in<T> scaler) noexcept(noexcept(x /= scaler) && noexcept(y /= scaler) && noexcept(z /= scaler) && noexcept(w /= scaler)) { x /= scaler; y /= scaler; z /= scaler; w /= scaler; return *this; }
 
 		_NODISCARD constexpr bool operator==(in<Vector> other) const noexcept(noexcept(x == other.x) && noexcept(y == other.y) && noexcept(z == other.z) && noexcept(w == other.w)) { return x == other.x && y == other.y && z == other.z && w == other.w; }
 		_NODISCARD constexpr bool operator!=(in<Vector> other) const noexcept(noexcept(x != other.x) && noexcept(y != other.y) && noexcept(z != other.z) && noexcept(w != other.w)) { return x != other.x || y != other.y || z != other.z || w != other.w; }

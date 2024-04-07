@@ -17,7 +17,7 @@ namespace bae
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
 #pragma message(MESSAGE_WHEN_CLASS_DEFINED(enum class ImageFlipMode))
 #endif
-	enum class ImageFlipMode : bae::int_fit_t<2>
+	enum class ImageFlipMode : int_fit_t<2>
 	{
 		FLIP_NONE,
 		FLIP_HORIZONTAL,
@@ -27,7 +27,7 @@ namespace bae
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
 #pragma message(MESSAGE_WHEN_CLASS_DEFINED(enum class ImageBlendMode))
 #endif
-	enum class ImageBlendMode
+	enum class ImageBlendMode : int_fit_t<4>
 	{
 		/// <summary>No blending</summary>
 		/// <param name="dst.RGBA">= src.RGBA</param>

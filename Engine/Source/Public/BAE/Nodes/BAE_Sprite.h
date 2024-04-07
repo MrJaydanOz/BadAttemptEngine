@@ -20,8 +20,7 @@ namespace bae
 	#endif
 	class Sprite : public Visual
 	{
-		friend class Node;
-		friend class Scene;
+		NODE_BEGIN;
 
 	public:
 		Image* image;
@@ -36,7 +35,7 @@ namespace bae
 	public:
 		virtual ~Sprite() noexcept override;
 
-		virtual Sprite* CloneInto(Node* parent) noexcept override;
+		virtual Sprite* CloneInto(in<Node*> parent) noexcept override;
 
 	protected:
 		Sprite(in<std::string> name = "", in<bool> enabled = true) noexcept;

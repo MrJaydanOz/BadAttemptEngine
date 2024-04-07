@@ -45,4 +45,4 @@
 #define DEBUG_LOG_EXCEPTION_CONTEXTED(context, exception)					DEBUG_LOG_CONTEXTED_COLOURED("EXCEPTION", context, exception.what(), CONSOLE_COLORID_RED    )
 #define DEBUG_LOG_SDL_ERROR(message)                                        DEBUG_LOG_ERROR_CONTEXTED(SDL_LOG_CONTEXT, message << SDL_GetError());
 
-#define DEBUG_NODE_NAME(nodePointer) "\'" << nodePointer->GetName() << "'(" << typeid(nodePointer).name() << ')'
+#define DEBUG_NODE_NAME(nodePointer) "\'" << (nodePointer)->GetName() << "'(" << typeid(nodePointer).name() << ')'

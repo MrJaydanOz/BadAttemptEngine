@@ -24,7 +24,7 @@ namespace bae
 		_RemoveThisFromParent();
 	}
 
-	Node* Node::CloneInto(Node* parent) noexcept
+	Node* Node::CloneInto(in<Node*> parent) noexcept
 	{ return CloneIntoBegin<Node>(parent, GetName()); }
 
 	bool Node::HasName() const noexcept 
@@ -38,7 +38,7 @@ namespace bae
 	{ return GetParentNode() != nullptr; }
 	Node* Node::GetParentNode() const noexcept
 	{ return _parent; }
-	bool Node::SetParentNode(Node* parent) noexcept
+	bool Node::SetParentNode(in<Node*> parent) noexcept
 	{
 		if (_parent == parent)
 			return false;
@@ -105,7 +105,7 @@ namespace bae
 		}
 	}
 
-	void Node::_SetAsParent(Node* parentNode) noexcept
+	void Node::_SetAsParent(in<Node*> parentNode) noexcept
 	{
 		if (parentNode != nullptr)
 		{

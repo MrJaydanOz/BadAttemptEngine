@@ -7,17 +7,24 @@
 
 namespace bae
 {
-	Vector2I Graphics::GetScreenSize()
+	Vector2I Graphics::GetScreenSize() const noexcept
 	{
 		Vector2I size;
 		SDL_GetRendererOutputSize(_sdlRenderer, &size.x, &size.y);
 		return size;
 	}
 
+	Color Graphics::GetBackgroundColor() const noexcept
+	{ return _backgroundColor; }
+
+	void Graphics::SetBackgroundColor(in<Color> color) noexcept
+	{ _backgroundColor = color; }
+
 	Graphics::Graphics() :
 		_sdlWindow(nullptr), 
 		_sdlRenderer(nullptr),
-		_visualsInZOrder(nullptr)
+		_visualsInZOrder(nullptr),
+		_backgroundColor(COLOR_BLACK)
 	{
 		_isWorking = false;
 
@@ -61,7 +68,7 @@ namespace bae
 		}
 	}
 
-	void Graphics::Render()
+	void Graphics::_Render()
 	{
 		// !! TEMPORARY SOLUTION !!
 		if (_visualsInZOrder == nullptr)
@@ -80,9 +87,15 @@ namespace bae
 			}
 		}
 
+		SDL_SetRenderDrawBlendMode(_sdlRenderer, SDL_BLENDMODE_NONE);
+		SDL_SetRenderDrawColor(_sdlRenderer, _backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a);
+		SDL_RenderFillRect(_sdlRenderer, nullptr);
+
 		auto end = _visualsInZOrder->end();
 		for (auto i = _visualsInZOrder->begin(); i < end; i++)
 			(*i)->Render();
+
+		SDL_RenderPresent(_sdlRenderer);
 	}
 
 	void Graphics::_MarkVisualHasBeenModified(Visual* visual) noexcept

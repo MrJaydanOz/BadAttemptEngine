@@ -56,6 +56,8 @@ namespace bae
 				", y:" << std::setprecision(2) << std::fixed << pose.position.y <<
 				", r:" << std::setprecision(2) << std::fixed << pose.rotation << ')';
 		}
+
+		constexpr Pose& operator=(in<Pose> other) noexcept(noexcept(position = other.position) && noexcept(rotation = other.rotation)) { position = other.position; rotation = other.rotation; return *this; }
 	};
 
 	typedef Pose<float> PoseF;

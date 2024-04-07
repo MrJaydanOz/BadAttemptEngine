@@ -25,10 +25,10 @@ namespace bae
 		friend std::ostream& operator<<(ref<std::ostream> stream, in<Color> color)
 		{
 			return stream <<
-				 "(r:" << color.r <<
-				", g:" << color.g <<
-				", b:" << color.b <<
-				", a:" << color.a << ')';
+				 "(r:" << (int)color.r <<
+				", g:" << (int)color.g <<
+				", b:" << (int)color.b <<
+				", a:" << (int)color.a << ')';
 		}
 
 		constexpr operator ColorF() const noexcept;

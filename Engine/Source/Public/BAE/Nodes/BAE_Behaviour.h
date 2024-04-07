@@ -14,8 +14,7 @@ namespace bae
 #endif
 	class Behaviour : public Node
 	{
-		friend class Node;
-		friend class Scene;
+		NODE_BEGIN;
 
 	private:
 		bae::uintx_t<2> _enabledState;
@@ -23,7 +22,7 @@ namespace bae
 	public:
 		virtual ~Behaviour() noexcept override;
 
-		virtual Behaviour* CloneInto(Node* parent) noexcept override;
+		virtual Behaviour* CloneInto(in<Node*> parent) noexcept override;
 
 		_NODISCARD bool IsEnabledSelf() const noexcept;
 		void SetEnabledSelf(in<bool> enabled) noexcept;

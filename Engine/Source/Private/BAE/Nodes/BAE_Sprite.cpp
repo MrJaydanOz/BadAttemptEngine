@@ -27,7 +27,7 @@ namespace bae
 		Visual::~Visual();
 	}
 
-	Sprite* Sprite::CloneInto(Node* parent) noexcept
+	Sprite* Sprite::CloneInto(in<Node*> parent) noexcept
 	{
 		Sprite* newNode = CloneIntoBegin<Sprite>(parent, GetName(), IsEnabledSelf());
 		newNode->image = image;

@@ -17,8 +17,7 @@ namespace bae
 #endif
 	class Transform : public Node
 	{
-		friend class Node;
-		friend class Scene;
+		NODE_BEGIN;
 
 	private:
 		PoseF _pose;
@@ -28,7 +27,7 @@ namespace bae
 	public:
 		virtual ~Transform() noexcept override;
 
-		virtual Transform* CloneInto(Node* parent) noexcept override;
+		virtual Transform* CloneInto(in<Node*> parent) noexcept override;
 
 		PoseF GetLocalPose() const noexcept;
 		void SetLocalPose(in<PoseF> pose) noexcept;
@@ -47,6 +46,11 @@ namespace bae
 
 		float GetRotation() const noexcept;
 		void SetRotation(in<float> rotation) noexcept;
+
+		void Translate(in<Vector2F> deltaPosition) noexcept;
+		void TranslateLocal(in<Vector2F> deltaPosition) noexcept;
+
+		void Rotate(in<float> deltaRotation) noexcept;
 
 		void CacheWorldPose(in<bool> recalculateIfAlreadyCached = false) noexcept;
 		void ClearWorldPoseCache(in<bool> includeChildren = true) noexcept;

@@ -6,6 +6,7 @@
 #include <vector>
 #include "BAE_Graphics.h"
 #include "BAE_Scene.h"
+#include "BAE_Time.h"
 #include "BAE_Physics.h"
 #include "BAE_Input.h"
 
@@ -20,6 +21,7 @@ namespace bae
 		bool _isRunning;
 		Graphics* _graphics;
 		Scene* _scene;
+		Time* _time;
 		Physics* _physics;
 		Input* _input;
 
@@ -29,6 +31,8 @@ namespace bae
 		static Graphics* GetGraphics() noexcept;
 
 		static Scene* GetScene() noexcept;
+
+		static Time* GetTime() noexcept;
 
 		static Physics* GetPhysics() noexcept;
 
@@ -53,19 +57,10 @@ namespace bae
 		┃  */void Start();/*                                    ┃
 		┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 									↓
-		┏[*/void GameLoop();/*]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-		┃  Process game functionality for one frame.            ┃ <─┐
-		┃  */void ProcessInput();/*                             ┃   │
-		┃                                                       ┃   │
-		┃  Render frame to the game window.                     ┃   │
-		┃  */void Update();/*                                   ┃   │
-		┃                                                       ┃   │
-		┃  Deallocate data marked for deletion.                 ┃   │
-		┃  */void Render();/*                                   ┃   │
-		┃                                                       ┃   │
-		┃  Listen for user input and process it.                ┃   │
-		┃  */void CollectGarbage();/*                           ┃ ──┘
-		┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+		┏[Loop]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ <─┐
+		┃  Process game functionality for one frame.            ┃   │
+		┃  */void GameLoop();/*                                 ┃   │
+		┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ──┘
 									↓
 		┏[Exit]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 		┃  Deallocate all memory associated with the game.      ┃

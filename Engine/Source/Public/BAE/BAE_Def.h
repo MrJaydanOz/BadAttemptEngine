@@ -28,9 +28,8 @@ typedef unsigned long long int uint128;
 namespace bae
 {
 	template<size_t bitCount>
-	class intx
+	struct intx
 	{
-	public:
 		using type = 
 			std::conditional_t<(bitCount > 128), void, 
 			std::conditional_t<(bitCount > 64), int128, 
@@ -44,9 +43,8 @@ namespace bae
 	using intx_t = typename bae::intx<bitCount>::type;
 
 	template<size_t bitCount>
-	class uintx
+	struct uintx
 	{
-	public:
 		using type =
 			std::conditional_t<(bitCount > 128), void,
 			std::conditional_t<(bitCount > 64), uint128,
@@ -60,9 +58,8 @@ namespace bae
 	using uintx_t = typename bae::uintx<bitCount>::type;
 
 	template<long long int limit>
-	class int_fit
+	struct int_fit
 	{
-	public:
 		using type =
 			std::conditional_t<(limit > 0),
 			std::conditional_t<(limit > std::numeric_limits<uint64>::max()), uint128,
@@ -84,7 +81,7 @@ namespace bae
 template<typename T> 
 using in = const T&;
 template<typename T> 
-using in_value = const T;
+using in_value = std::conditional_t<std::is_same_v<std::remove_pointer_t<T>, T>, const T, const std::remove_pointer_t<T>*>;
 template<typename T>
 using in_delegate = T;
 template<typename T>
