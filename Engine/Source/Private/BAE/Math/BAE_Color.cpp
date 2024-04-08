@@ -22,6 +22,15 @@ namespace bae
 		return *this;
 	}
 
+	std::ostream& operator<<(ref<std::ostream> stream, in<Color> color)
+	{
+		return stream <<
+			 "(r:" << (int)color.r <<
+			", g:" << (int)color.g <<
+			", b:" << (int)color.b <<
+			", a:" << (int)color.a << ')';
+	}
+
 	constexpr Color::operator ColorF() const noexcept
 	{
 		const float reciprocal = 1.0f / 255.0f;
@@ -45,6 +54,15 @@ namespace bae
 		a = ((hex & 0x000000FFu) >> (0 * 4)) * (1.0f / 255.0f);
 
 		return *this;
+	}
+
+	std::ostream& operator<<(ref<std::ostream> stream, in<ColorF> color)
+	{
+		return stream <<
+			 "(r:" << std::setprecision(2) << std::fixed << color.r <<
+			", g:" << std::setprecision(2) << std::fixed << color.g <<
+			", b:" << std::setprecision(2) << std::fixed << color.b <<
+			", a:" << std::setprecision(2) << std::fixed << color.a << ')';
 	}
 
 	constexpr ColorF::operator Color() const noexcept

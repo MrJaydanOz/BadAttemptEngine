@@ -22,13 +22,13 @@ namespace bae
 			delete* i;
 	}
 
-	void Scene::_ProcessAnimation() noexcept
+	void Scene::_ProcessAnimation(in<float> deltaTime) noexcept
 	{
 		std::deque<Animator*> animatorBuffer;
 		FindNodesThat<Animator>([](in<Animator*> animator) -> bool { return animator->IsEnabled(); }, animatorBuffer);
 
 		for (Animator* animator : animatorBuffer)
-			animator->_Process(false);
+			animator->_Process(deltaTime);
 	}
 
 	void Scene::_ClearWorldPositionCaches() const noexcept

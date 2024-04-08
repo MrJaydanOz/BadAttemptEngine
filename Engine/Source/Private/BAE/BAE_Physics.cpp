@@ -48,15 +48,10 @@ namespace bae
 		{
 			std::deque<Collider*> collidersConnectedToGivenBody;
 
-			for (auto i = _collidersWithConnectedBody.begin(); i != _collidersWithConnectedBody.end();)
+			for (auto& pair : _collidersWithConnectedBody)
 			{
-				if (i->second == physicsBody)
-				{
-					collidersConnectedToGivenBody.push_back(i->first);
-					_collidersWithConnectedBody.erase(i);
-				}
-				else
-					i++;
+				if (pair.second == physicsBody)
+					pair.second = physicsBody->FindParentOfTypeRecursive<PhysicsBody>();
 			}
 
 			auto found = std::find(_physicsBodies.begin(), _physicsBodies.end(), physicsBody);

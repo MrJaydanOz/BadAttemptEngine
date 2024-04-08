@@ -103,7 +103,6 @@ namespace bae
 		// !! TEMPORARY SOLUTION !!
 		if (_visualsInZOrder != nullptr)
 		{
-			_visualsInZOrder->clear();
 			delete _visualsInZOrder;
 		}
 

@@ -22,14 +22,7 @@ namespace bae
 
 		constexpr Color& operator=(in<bae::uintx_t<8 * 4>> hex) noexcept;
 
-		friend std::ostream& operator<<(ref<std::ostream> stream, in<Color> color)
-		{
-			return stream <<
-				 "(r:" << (int)color.r <<
-				", g:" << (int)color.g <<
-				", b:" << (int)color.b <<
-				", a:" << (int)color.a << ')';
-		}
+		friend std::ostream& operator<<(ref<std::ostream> stream, in<Color> color);
 
 		constexpr operator ColorF() const noexcept;
 	};
@@ -48,14 +41,7 @@ namespace bae
 
 		constexpr ColorF& operator=(in<bae::uintx_t<8 * 4>> hex) noexcept;
 		
-		friend std::ostream& operator<<(ref<std::ostream> stream, in<ColorF> color)
-		{ 
-			return stream << 
-				 "(r:" << std::setprecision(2) << std::fixed << color.r << 
-				", g:" << std::setprecision(2) << std::fixed << color.g << 
-				", b:" << std::setprecision(2) << std::fixed << color.b << 
-				", a:" << std::setprecision(2) << std::fixed << color.a << ')';
-		}
+		friend std::ostream& operator<<(ref<std::ostream> stream, in<ColorF> color);
 
 		constexpr explicit operator Color() const noexcept;
 	};

@@ -215,35 +215,35 @@ namespace bae
 
 		template<typename T>
 		_NODISCARD T* FindChildWithName(in<std::string> name) const noexcept
-		{ return FindChildThat<T>([&](in<T*> node) -> bool { return node->GetName() == name; }); }
+		{ return FindChildThat<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
 
 		template<typename T>
 		_NODISCARD T* FindChildWithNameRecursive(in<std::string> name) const noexcept
-		{ return FindChildThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName() == name; }); }
+		{ return FindChildThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
 		
 		template<typename T>
 		bool TryFindChildWithName(in<std::string> name, out<T*> result) const noexcept
-		{ return TryFindChildThat<T>([&](T* node) -> bool { return node->GetName() == name; }, result); }
+		{ return TryFindChildThat<T>([&](T* node) -> bool { return node->GetName().compare(name) == 0; }, result); }
 
 		template<typename T>
 		bool TryFindChildWithNameRecursive(in<std::string> name, out<T*> result) const noexcept
-		{ return TryFindChildThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName() == name; }, result); }
+		{ return TryFindChildThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }, result); }
 
 		template<typename T, typename TResultCollection = std::vector<T*>>
 		size_t FindChildrenWithName(in<std::string> name, ref<TResultCollection> results) const noexcept
-		{ return FindChildrenThat<T>([&](in<T*> node) -> bool { return node->GetName() == name; }); }
+		{ return FindChildrenThat<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
 
 		template<typename T, typename TResultCollection = std::vector<T*>>
 		size_t FindChildrenWithNameRecursive(in<std::string> name, ref<TResultCollection> results) const noexcept
-		{ return FindChildrenThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName() == name; }); }
+		{ return FindChildrenThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
 		
 		template<typename T>
 		_NODISCARD T* FindParentWithNameRecursive(in<std::string> name) const noexcept
-		{ return FindParentThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName() == name; }); }
+		{ return FindParentThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
 		
 		template<typename T>
 		bool TryFindParentWithNameRecursive(in<std::string> name, out<T*> result) const noexcept
-		{ return TryFindParentThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName() == name; }, result); }
+		{ return TryFindParentThatRecursive<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }, result); }
 
 		template<typename T, typename... TConstructorArguments>
 		T* AddChild(TConstructorArguments... constructorArguments)

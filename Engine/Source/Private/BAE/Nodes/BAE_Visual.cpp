@@ -10,6 +10,20 @@ namespace bae
 	Visual::Visual(in<bool> enabled) noexcept : 
 		Visual::Visual("", enabled) { }
 
+	void Visual::OnEnabled()
+	{
+		Behaviour::OnEnabled();
+
+		Game::GetGraphics()->_MarkVisualHasBeenModified(this);
+	}
+
+	void Visual::OnDisabled()
+	{
+		Behaviour::OnDisabled();
+	
+		Game::GetGraphics()->_MarkVisualHasBeenDeleted(this);
+	}
+
 	Visual::~Visual() noexcept
 	{
 		Behaviour::~Behaviour();

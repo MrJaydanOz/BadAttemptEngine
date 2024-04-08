@@ -144,7 +144,7 @@ namespace bae
 				_physics->_Simulate(_time->DeltaTime());
 			}
 
-			_scene->_ProcessAnimation();
+			_scene->_ProcessAnimation(_time->DeltaTime());
 
 			BAE_LateUpdate();
 

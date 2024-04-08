@@ -38,6 +38,7 @@ namespace bae
 
 	public:
 		AnimationControlSpriteImage(std::initializer_list<std::string> nodePath) noexcept;
+		virtual ~AnimationControlSpriteImage() noexcept { }
 
 	protected:
 		virtual void Process(in<Node*> targetNode, in<float> animationTime) noexcept override;
@@ -48,11 +49,11 @@ namespace bae
 		friend class Animator;
 
 	private:
-		std::vector<AnimationControl> _controls;
+		std::vector<AnimationControl*> _controls;
 
 	public:
 		AnimationState() noexcept;
-		AnimationState(std::initializer_list<AnimationControl> controls) noexcept;
+		AnimationState(std::initializer_list<AnimationControl*> controls) noexcept;
 
 	private:
 		void _Process(in<Animator*> animator, in<float> animationTime) noexcept;

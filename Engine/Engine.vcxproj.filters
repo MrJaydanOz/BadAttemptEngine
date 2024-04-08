@@ -407,7 +407,7 @@
     <ClInclude Include="Source\Public\BAE\BAE_Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE_Time.h">
+    <ClInclude Include="Source\Public\BAE\BAE_Time.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Animator.h">
@@ -429,6 +429,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Text.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\BAE\Math\BAE_List.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

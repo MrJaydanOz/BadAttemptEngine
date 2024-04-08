@@ -214,6 +214,7 @@
     <ClInclude Include="Source\Public\BAE\BAE_Nodes.h" />
     <ClInclude Include="Source\Public\BAE\Math\BAE_Color.h" />
     <ClInclude Include="Source\Public\BAE\Math\BAE_Constants.h" />
+    <ClInclude Include="Source\Public\BAE\Math\BAE_List.h" />
     <ClInclude Include="Source\Public\BAE\Math\Func\BAE_Comparison.h" />
     <ClInclude Include="Source\Public\BAE\Math\Func\BAE_Simple.h" />
     <ClInclude Include="Source\Public\BAE\Math\BAE_PoseT.h" />
@@ -235,7 +236,7 @@
     <ClInclude Include="Source\Public\BAE\BAE_Physics.h" />
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Visual.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Input.h" />
-    <ClInclude Include="Source\Public\BAE_Time.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Time.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="ExternalLibs\StaticLibs\SDL2.lib" />

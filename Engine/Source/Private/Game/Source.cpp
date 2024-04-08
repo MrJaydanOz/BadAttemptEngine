@@ -12,31 +12,44 @@ public:
 	float acceleration;
 	Animator* animator;
 	Sprite* sprite;
-	ColliderAxisBox* colldier;
+	ColliderAxisBox* collider;
 	float maxHealth;
 	float health;
+
 private:
 	int _lastAnimationDirection;
+	bool _lastIsWalking;
+	float _hurtAnimationTimer;
 
 public:
 	virtual ~Character() noexcept override { PhysicsBody::~PhysicsBody(); }
 
 	void UpdateAnimation()
 	{
+		if (_hurtAnimationTimer >= 0.0f)
+		{
+			const float notRed = Min(1.0f, _hurtAnimationTimer);
+
+			//sprite->color = (Color)ColorF(1.0f, notRed, notRed);
+			sprite->offset.rotation = 15.0f / ((20.0f * _hurtAnimationTimer) + 1);
+
+			_hurtAnimationTimer += Game::GetTime()->DeltaTime();
+		}
+
 		Vector2F velocity = GetVelocity();
 
-		if (velocity.SqrMagnitude() < 1.0f)
+		if (velocity.SqrMagnitude() > 1.0f)
 		{
 			std::pair<uint8, Vector2F> pointsAroundAnimations[8]
 			{
-				{ 0, Vector2F(-1.0f  , +0.0f  ) },
-				{ 1, Vector2F(-SQRT_2, -SQRT_2) },
-				{ 2, Vector2F(+0.0f  , -1.0f  ) },
-				{ 3, Vector2F(+SQRT_2, -SQRT_2) },
-				{ 4, Vector2F(+1.0f  , +0.0f  ) },
-				{ 5, Vector2F(+SQRT_2, +SQRT_2) },
-				{ 6, Vector2F(+0.0f  , +1.0f  ) },
-				{ 7, Vector2F(-SQRT_2, +SQRT_2) }
+				{ 0, Vector2F(-1.0f    , +0.0f    ) },
+				{ 1, Vector2F(-R_SQRT_2, -R_SQRT_2) },
+				{ 2, Vector2F(+0.0f    , -1.0f    ) },
+				{ 3, Vector2F(+R_SQRT_2, -R_SQRT_2) },
+				{ 4, Vector2F(+1.0f    , +0.0f    ) },
+				{ 5, Vector2F(+R_SQRT_2, +R_SQRT_2) },
+				{ 6, Vector2F(+0.0f    , +1.0f    ) },
+				{ 7, Vector2F(-R_SQRT_2, +R_SQRT_2) }
 			};
 
 			const auto distanceComparison = [&](in<std::pair<uint8, Vector2F>> a, in<std::pair<uint8, Vector2F>> b) noexcept -> bool 
@@ -52,24 +65,31 @@ public:
 				pointsAroundAnimations[6], distanceComparison),
 				pointsAroundAnimations[7], distanceComparison);
 
-			_lastAnimationDirection = pointAroundAnimation.first;
-
-			switch (_lastAnimationDirection)
+			if (!_lastIsWalking || _lastAnimationDirection != pointAroundAnimation.first)
 			{
-			case 0: animator->Play("walking -x"); break;
-			case 1: animator->Play("walking -x-y"); break;
-			case 2: animator->Play("walking -y"); break;
-			case 3: animator->Play("walking +x-y"); break;
-			case 4: animator->Play("walking +x"); break;
-			case 5: animator->Play("walking +x+y"); break;
-			case 6: animator->Play("walking +y"); break;
-			case 7: animator->Play("walking -x+y"); break;
+				_lastAnimationDirection = pointAroundAnimation.first;
+
+				switch (_lastAnimationDirection)
+				{
+				case 0: animator->Play("walking -x"); break;
+				case 1: animator->Play("walking -x-y"); break;
+				case 2: animator->Play("walking -y"); break;
+				case 3: animator->Play("walking +x-y"); break;
+				case 4: animator->Play("walking +x"); break;
+				case 5: animator->Play("walking +x+y"); break;
+				case 6: animator->Play("walking +y"); break;
+				case 7: animator->Play("walking -x+y"); break;
+				}
+
+				_lastIsWalking = true;
 			}
 		}
 		else
 		{
-			switch (_lastAnimationDirection)
+			if (_lastIsWalking)
 			{
+				switch (_lastAnimationDirection)
+				{
 				case 0: animator->Play("idle -x"); break;
 				case 1: animator->Play("idle -x-y"); break;
 				case 2: animator->Play("idle -y"); break;
@@ -78,8 +98,17 @@ public:
 				case 5: animator->Play("idle +x+y"); break;
 				case 6: animator->Play("idle +y"); break;
 				case 7: animator->Play("idle -x+y"); break;
+				}
+
+				_lastIsWalking = false;
 			}
 		}
+	}
+
+	void Damage(in<float> amount)
+	{
+		_hurtAnimationTimer = 0.0f;
+		health -= amount;
 	}
 
 	void MoveWithInput(in<Vector2F> input)
@@ -94,12 +123,14 @@ protected:
 	{
 		speed = 0.0f;
 		acceleration = 0.0f;
-		animator = AddChild<Animator>("Animator");
-		sprite = animator->AddChild<Sprite>("Sprite");
-		colldier = AddChild<ColliderAxisBox>("Collider");
+		animator = AddChild<Animator>(std::string("Animator"));
+		sprite = animator->AddChild<Sprite>(std::string("Sprite"));
+		collider = AddChild<ColliderAxisBox>(std::string("Collider"));
 		maxHealth = 100.0f;
 		health = maxHealth;
 		_lastAnimationDirection = 0;
+		_lastIsWalking = false;
+		_hurtAnimationTimer = -1.0f;
 	}
 };
 
@@ -127,6 +158,8 @@ public:
 	void MoveTowardsPlayer(in<PlayerCharacter*> player)
 	{
 		Vector2F deltaPosition = player->GetPosition() - GetPosition();
+
+		MoveWithInput(deltaPosition);
 	}
 
 protected:
@@ -141,13 +174,17 @@ Image* enemySprites;
 Animation* playerAnimation;
 Animation* enemyAnimation;
 PlayerCharacter* playerCharacter;
-EnemyCharacter* enemyCharacter;
+std::deque<EnemyCharacter*> enemyCharacters;
 
 Vector2I lastWalkInput;
 
 Font* testFont;
 
 bool isGameOver;
+
+float spawnTimer = 3.0f;
+
+void SpawnEnemy();
 
 void BAE_Start()
 {
@@ -168,118 +205,96 @@ void BAE_Start()
 	animationControl.image = playerSprites;
 	// Add an AnimationState with the AnimationControl in it.
 	animationControl.clipStartPosition = Vector2I(0, 0);
-	playerAnimation->AddAnimationState("idle -x", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("idle -x", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("idle -x-y", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("idle -x-y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("idle -y", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("idle -y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("idle +x-y", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("idle +x-y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("idle +x", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("idle +x", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("idle +x+y", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("idle +x+y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("idle +y", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("idle +y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("idle -x+y", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("idle -x+y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 
 	animationControl.clipSize = Vector2I(32, 32);
 	animationControl.frameCount = 12;
 	animationControl.frameRate = 24.0f;
 	animationControl.image = playerSprites;
 	animationControl.clipStartPosition = Vector2I(0, 0);
-	playerAnimation->AddAnimationState("walking -x", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("walking -x", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("walking -x-y", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("walking -x-y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("walking -y", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("walking -y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("walking +x-y", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("walking +x-y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("walking +x", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("walking +x", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("walking +x+y", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("walking +x+y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("walking +y", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("walking +y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	playerAnimation->AddAnimationState("walking -x+y", AnimationState({ animationControl }));
+	playerAnimation->AddAnimationState("walking -x+y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 
 	enemyAnimation = new Animation({});
 
 	animationControl.clipSize = Vector2I(32, 32);
 	animationControl.frameCount = 12;
 	animationControl.frameRate = 8.0f;
-	animationControl.image = playerSprites;
+	animationControl.image = enemySprites;
 	animationControl.clipStartPosition = Vector2I(0, 0);
-	enemyAnimation->AddAnimationState("idle -x", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("idle -x", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("idle -x-y", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("idle -x-y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("idle -y", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("idle -y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("idle +x-y", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("idle +x-y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("idle +x", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("idle +x", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("idle +x+y", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("idle +x+y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("idle +y", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("idle +y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("idle -x+y", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("idle -x+y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 
 	animationControl.clipSize = Vector2I(32, 32);
 	animationControl.frameCount = 12;
 	animationControl.frameRate = 24.0f;
-	animationControl.image = playerSprites;
+	animationControl.image = enemySprites;
 	animationControl.clipStartPosition = Vector2I(0, 0);
-	enemyAnimation->AddAnimationState("walking -x", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("walking -x", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("walking -x-y", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("walking -x-y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("walking -y", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("walking -y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("walking +x-y", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("walking +x-y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("walking +x", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("walking +x", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("walking +x+y", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("walking +x+y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("walking +y", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("walking +y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->AddAnimationState("walking -x+y", AnimationState({ animationControl }));
+	enemyAnimation->AddAnimationState("walking -x+y", AnimationState({ new AnimationControlSpriteImage(animationControl) }));
 
 	// Create Objects.
-	playerCharacter = Game::GetScene()->AddNode<PlayerCharacter>("Player");
+	playerCharacter = Game::GetScene()->AddNode<PlayerCharacter>(std::string("Player"));
 	playerCharacter->SetPosition(Vector2F(100.0f, 100.0f));
-	playerCharacter->speed = 500.0f;
+	playerCharacter->speed = 300.0f;
 	playerCharacter->acceleration = 5000.0f;
 	playerCharacter->animator->animation = playerAnimation;
+	playerCharacter->animator->Play("idle +y");
 	playerCharacter->sprite->scale = Vector2F(3.0f, 3.0f);
-	playerCharacter->colldier->size = Vector2F(50.0f, 50.0f);
-
-	for (int i = 0; i < 5; i++)
-	{
-		PhysicsBody* obstacle1Body = Game::GetScene()->AddNode<PhysicsBody>("Obstacle");
-		obstacle1Body->SetMass(10.0f);
-
-		ColliderAxisBox* obstacle1 = obstacle1Body->AddChild<ColliderAxisBox>("Obstacle");
-		obstacle1->size = Vector2F(100.0f, 100.0f);
-		obstacle1->SetPosition(Vector2F(300.0f, 300.0f));
-
-		Sprite* enemySprite = obstacle1->AddChild<Sprite>("Sprite");
-		enemySprite->image = enemySprites;
-		enemySprite->clipRect = RectI(0, 0, 32, 32);
-		enemySprite->scale = Vector2F(3.0f, 3.0f);
-	}
-
-	enemyCharacter = Game::GetScene()->AddNode<EnemyCharacter>("Enemy");
-	enemyCharacter->SetPosition(Vector2F(100.0f, 100.0f));
-	enemyCharacter->speed = 500.0f;
-	enemyCharacter->acceleration = 5000.0f;
-	enemyCharacter->animator->animation = enemyAnimation;
-	enemyCharacter->sprite->scale = Vector2F(3.0f, 3.0f);
-	enemyCharacter->colldier->size = Vector2F(50.0f, 50.0f);
+	playerCharacter->collider->size = Vector2F(50.0f, 50.0f);
 }
 
 void BAE_Update()
@@ -292,6 +307,23 @@ void BAE_Update()
 	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_D)) lastWalkInput.x++;
 
 	playerCharacter->UpdateAnimation();
+
+	for (EnemyCharacter*& enemy : enemyCharacters)
+	{
+		enemy->UpdateAnimation();
+
+		/*if (Game::GetInput()->KeyPressed(KeyCode::KEYCODE_LMB) && ((Vector2F)Game::GetInput()->GetMousePosition()).SqrDistance(enemy->GetPosition()) < 80.0f)
+		{
+			enemy->Damage(50.0f);
+			if (enemy->health <= 0.0f)
+				delete enemy;
+
+			enemy = nullptr;
+		}*/
+	}
+
+	std::erase_if(enemyCharacters, [](in<EnemyCharacter*> enemy) -> bool 
+		{ return enemy == nullptr; });
 }
 
 void BAE_LateUpdate()
@@ -307,6 +339,19 @@ void BAE_FixedUpdate()
 void BAE_PhysicsUpdate()
 {
 	playerCharacter->MoveWithInput((Vector2F)lastWalkInput);
+
+	for (EnemyCharacter*& enemy : enemyCharacters)
+	{
+		enemy->MoveTowardsPlayer(playerCharacter);
+	}
+
+	spawnTimer -= Game::GetTime()->PhysicsDeltaTime();
+	if (spawnTimer < 0.0f)
+	{
+		spawnTimer = 2.0f;
+
+		SpawnEnemy();
+	}
 }
 
 void BAE_End()
@@ -317,4 +362,18 @@ void BAE_End()
 	delete enemySprites;
 
 	DEBUG_LOG_INFO("Bye");
+}
+
+void SpawnEnemy()
+{
+	EnemyCharacter* enemyCharacter = Game::GetScene()->AddNode<EnemyCharacter>(std::string("Enemy"));
+	enemyCharacter->SetPosition(Vector2F(100.0f, 100.0f));
+	enemyCharacter->speed = 200.0f;
+	enemyCharacter->acceleration = 1000.0f;
+	enemyCharacter->animator->animation = enemyAnimation;
+	enemyCharacter->animator->Play("idle +y");
+	enemyCharacter->sprite->scale = Vector2F(3.0f, 3.0f);
+	enemyCharacter->collider->size = Vector2F(50.0f, 50.0f);
+
+	enemyCharacters.push_back(enemyCharacter);
 }

@@ -192,7 +192,7 @@ namespace bae
 		Scene();
 		~Scene();
 
-		void _ProcessAnimation() noexcept;
+		void _ProcessAnimation(in<float> deltaTime) noexcept;
 
 		void _ClearWorldPositionCaches() const noexcept;
 	};

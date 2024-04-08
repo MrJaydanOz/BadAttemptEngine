@@ -36,11 +36,13 @@ namespace bae
 			clipStartPosition + (clipFrameDelta.value_or(Vector2I(clipSize.x, 0)) * frame), 
 			clipSize
 		);
+
+		DEBUG_LOG_INFO("control in " << DEBUG_NODE_NAME(targetNode->GetParentNode()->GetParentNode()) << " " << (targetSprite->image->GetSize()) << " - " << targetSprite->clipRect.value());
 	}
 
 	AnimationState::AnimationState() noexcept :
 		_controls() { }
-	AnimationState::AnimationState(std::initializer_list<AnimationControl> controls) noexcept :
+	AnimationState::AnimationState(std::initializer_list<AnimationControl*> controls) noexcept :
 		_controls(controls) { }
 
 	void AnimationState::_Process(in<Animator*> animator, in<float> animationTime) noexcept
@@ -48,10 +50,14 @@ namespace bae
 		for (auto& control : _controls)
 		{
 			Node* foundNode = animator;
-			for (const std::string& name : control.nodePath)
+			for (const std::string& name : control->nodePath)
 			{
-				if (foundNode->TryFindChildWithName<Node>(name, foundNode))
+				Node* resultNode;
+				if (foundNode->TryFindChildWithName<Node>(name, resultNode))
+				{
+					foundNode = resultNode;
 					continue;
+				}
 				else
 				{
 					DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT << " (AnimationControl)", "Path does point to an existing node.");
@@ -59,7 +65,7 @@ namespace bae
 				}
 			}
 
-			control.Process(foundNode, animationTime);
+			control->Process(foundNode, animationTime);
 		}
 	}
 

@@ -34,6 +34,10 @@ namespace bae
 		Visual(in<std::string> name = "", in<bool> enabled = true) noexcept;
 		Visual(in<bool> enabled) noexcept;
 
+		virtual void OnEnabled() override;
+
+		virtual void OnDisabled() override;
+
 		virtual void Render() = 0;
 	};
 }

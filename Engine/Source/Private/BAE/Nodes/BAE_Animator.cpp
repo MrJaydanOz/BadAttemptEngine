@@ -65,7 +65,7 @@ namespace bae
 	{
 		if (_animationState != nullptr)
 		{
-			_animationTime += deltaTime;
+			_animationTime += deltaTime * animationSpeed;
 
 			_animationState->_Process(this, _animationTime);
 		}
