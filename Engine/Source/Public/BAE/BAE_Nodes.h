@@ -9,3 +9,4 @@
 #include "Nodes/BAE_Behaviour.h"
 #include "Nodes/BAE_Visual.h"
 #include "Nodes/BAE_Sprite.h"
+#include "Nodes/BAE_Text.h"

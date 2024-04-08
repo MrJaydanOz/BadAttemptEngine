@@ -90,6 +90,12 @@
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_ColliderAxisBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Private\BAE\BAE_Font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\BAE\Nodes\BAE_Text.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\BAE\BAE_Game.h">
@@ -416,14 +422,25 @@
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_ColliderAxisBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Public\BAE\BAE_Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_ttf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\BAE\Nodes\BAE_Text.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="ExternalLibs\StaticLibs\SDL2.lib" />
     <Library Include="ExternalLibs\StaticLibs\SDL2_image.lib" />
     <Library Include="ExternalLibs\StaticLibs\SDL2main.lib" />
+    <Library Include="ExternalLibs\StaticLibs\SDL2_ttf.lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ExternalLibs\DynamicLibs\SDL2_image.dll" />
     <None Include="ExternalLibs\DynamicLibs\SDL2.dll" />
+    <None Include="ExternalLibs\DynamicLibs\SDL2_ttf.dll" />
   </ItemGroup>
 </Project>

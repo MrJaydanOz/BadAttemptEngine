@@ -11,35 +11,39 @@
 
 namespace bae
 {
-	Image::Image(in_value<char*> path, in<SDL_Surface*> surfaceData, in<SDL_Texture*> textureData) noexcept : 
+	Image::Image(in_value<char*> path, in<SDL_Surface*> sdlSurface, in<SDL_Texture*> sdlTexture) noexcept : 
 		_path(path), 
-		_sdlSurface(surfaceData), 
-		_sdlTexture(textureData) { }
+		_sdlSurface(sdlSurface), 
+		_sdlTexture(sdlTexture) { }
 
 	Image::~Image() noexcept
 	{
-		SDL_FreeSurface(_sdlSurface);
+		if (_sdlTexture != nullptr)
+			SDL_DestroyTexture(_sdlTexture);
+
+		if (_sdlSurface != nullptr)
+			SDL_FreeSurface(_sdlSurface);
 	}
 
 	Image* Image::Load(in_value<char*> path) noexcept
 	{
-		SDL_Surface* surfaceData = IMG_Load(path);
+		SDL_Surface* sdlSurface = IMG_Load(path);
 
-		if (surfaceData == nullptr)
+		if (sdlSurface == nullptr)
 		{
 			DEBUG_LOG_SDL_ERROR("Image failed to load: ");
 			return nullptr;
 		}
 
-		SDL_Texture* textureData = SDL_CreateTextureFromSurface(Game::GetGraphics()->_sdlRenderer, surfaceData);
+		SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(Game::GetGraphics()->_sdlRenderer, sdlSurface);
 
-		if (textureData == nullptr)
+		if (sdlTexture == nullptr)
 		{
 			DEBUG_LOG_SDL_ERROR("Image failed to load: ");
 			return nullptr;
 		}
 
-		return new Image(path, surfaceData, textureData);
+		return new Image(path, sdlSurface, sdlTexture);
 	}
 
 	bool Image::TryLoad(in_value<char*> path, out<Image*> image) noexcept
@@ -108,8 +112,8 @@ namespace bae
 		case ImageBlendMode::BLENDMODE_MUL:   blendMode = SDL_BlendMode::SDL_BLENDMODE_MUL;   break;
 		}
 
-		if (SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a) != 0)
-			DEBUG_LOG_SDL_ERROR("Failed to set renderer color: ");
+		SDL_SetTextureColorMod(_sdlTexture, color.r, color.g, color.b);
+		SDL_SetTextureAlphaMod(_sdlTexture, color.a);
 		if (SDL_SetRenderDrawBlendMode(renderer, blendMode) != 0)
 			DEBUG_LOG_SDL_ERROR("Failed to set renderer blend mode: ");
 		if (SDL_RenderCopyExF(renderer, _sdlTexture, srcRect, dstRect, rotationClockwise, center, (SDL_RendererFlip)flipMode) != 0)
@@ -122,7 +126,7 @@ namespace bae
 
 		destinationRect = RectF(
 			pose.position.x - (resultSize.x * pivot.x), 
-			screenSize.y - pose.position.y - (resultSize.y * pivot.y),
+			screenSize.y - pose.position.y - (resultSize.y * (1.0f - pivot.y)),
 			resultSize.x,
 			resultSize.y);
 

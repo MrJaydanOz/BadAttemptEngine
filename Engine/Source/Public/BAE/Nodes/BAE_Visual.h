@@ -27,8 +27,6 @@ namespace bae
 	public:
 		virtual ~Visual() noexcept override;
 
-		virtual Visual* CloneInto(in<Node*> parent) noexcept override = 0;
-
 		_NODISCARD int GetZIndex() const noexcept;
 		void SetZIndex(in<int> index) noexcept;
 

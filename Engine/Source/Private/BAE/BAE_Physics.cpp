@@ -17,7 +17,10 @@ namespace bae
 		contactOverlap(0.0f) { }
 
 	Physics::Physics() :
-		_isWorking(true) { }
+		_isWorking(true),
+		_physicsBodies(),
+		_collidersWithConnectedBody(),
+		_collisionLog() { }
 
 	Physics::~Physics()
 	{
@@ -49,7 +52,7 @@ namespace bae
 			{
 				if (i->second == physicsBody)
 				{
-					collidersConnectedToGivenBody.push_front(i->first);
+					collidersConnectedToGivenBody.push_back(i->first);
 					_collidersWithConnectedBody.erase(i);
 				}
 				else
@@ -126,19 +129,21 @@ namespace bae
 
 											collision.contactPoint = otherCenter + (deltaOtherCenter * -0.5f);
 
-											Vector<4, std::pair<uint8, float>> distancesFromEdges;
-											distancesFromEdges.x = { 0, combinedBoundsExtent.x - deltaOtherCenter.x };
-											distancesFromEdges.y = { 1, combinedBoundsExtent.y - deltaOtherCenter.y };
-											distancesFromEdges.z = { 2, combinedBoundsExtent.x + deltaOtherCenter.x };
-											distancesFromEdges.w = { 3, combinedBoundsExtent.y + deltaOtherCenter.y };
+											std::pair<uint8, float> distancesFromEdges[4]
+											{
+												{ 0, combinedBoundsExtent.x - deltaOtherCenter.x },
+												{ 1, combinedBoundsExtent.y - deltaOtherCenter.y },
+												{ 2, combinedBoundsExtent.x + deltaOtherCenter.x },
+												{ 3, combinedBoundsExtent.y + deltaOtherCenter.y }
+											};
 
 											const auto distanceComparison = [](in<std::pair<uint8, float>> a, in<std::pair<uint8, float>> b) noexcept -> bool { return a.second < b.second; };
 
 											std::pair<uint8, float> minDistanceFromEdge = Min(Min(Min(
-												distancesFromEdges.x,
-												distancesFromEdges.y, distanceComparison),
-												distancesFromEdges.z, distanceComparison),
-												distancesFromEdges.w, distanceComparison);
+												distancesFromEdges[0],
+												distancesFromEdges[1], distanceComparison),
+												distancesFromEdges[2], distanceComparison),
+												distancesFromEdges[3], distanceComparison);
 
 											collision.contactOverlap = minDistanceFromEdge.second;
 
@@ -170,7 +175,19 @@ namespace bae
 										}
 										else
 										{
-											// collision between two bodies
+											Vector2F deltaVelocity = physicsBody1->_velocity - physicsBody2->_velocity;
+											float massRatio = physicsBody1->_mass / (physicsBody2->_mass + physicsBody1->_mass);
+											Vector2F combinedVelocity = Lerp(physicsBody2->_velocity, physicsBody1->_velocity, massRatio);
+
+											float deltaVelocity_Dot_collision_contactNormal = deltaVelocity.Dot(collision.contactNormal);
+											if (deltaVelocity_Dot_collision_contactNormal > 0.0f)
+											{
+												physicsBody1->_velocity -= collision.contactNormal * ((1.0f - massRatio) * deltaVelocity_Dot_collision_contactNormal);
+												physicsBody2->_velocity += collision.contactNormal * (massRatio * deltaVelocity_Dot_collision_contactNormal);
+											}
+
+											physicsBody1->Translate(collision.contactNormal * ((1.0f - massRatio) * -collision.contactOverlap));
+											physicsBody2->Translate(collision.contactNormal * (massRatio * collision.contactOverlap));
 										}
 									}
 

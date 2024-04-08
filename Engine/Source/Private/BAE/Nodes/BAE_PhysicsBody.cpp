@@ -16,16 +16,6 @@ namespace bae
 		Transform::~Transform();
 	}
 
-	PhysicsBody* PhysicsBody::CloneInto(in<Node*> parent) noexcept
-	{
-		PhysicsBody* newNode = Node::CloneIntoBegin<PhysicsBody>(parent, GetName());
-		newNode->_velocity = _velocity;
-		newNode->_angularVelocity = _angularVelocity;
-		newNode->_localCenterOfMass = _localCenterOfMass;
-		newNode->_mass = _mass;
-		return newNode;
-	}
-
 	void PhysicsBody::OnLoad() noexcept
 	{
 		Transform::OnLoad();

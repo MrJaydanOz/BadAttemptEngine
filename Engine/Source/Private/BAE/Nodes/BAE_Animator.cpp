@@ -18,16 +18,6 @@ namespace bae
 
 	}
 
-	Animator* Animator::CloneInto(in<Node*> parent) noexcept
-	{
-		Animator* newNode = Node::CloneIntoBegin<Animator>(parent, GetName(), IsEnabledSelf());
-		newNode->animation = animation;
-		newNode->animationSpeed = animationSpeed;
-		newNode->_animationState = _animationState;
-		newNode->_animationTime = _animationTime;
-		return newNode;
-	}
-
 	void Animator::Play(in<std::string> stateName) noexcept
 	{
 		if (animation == nullptr)

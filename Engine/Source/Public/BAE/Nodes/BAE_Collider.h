@@ -24,8 +24,6 @@ namespace bae
 	public:
 		virtual ~Collider() noexcept override;
 
-		virtual Collider* CloneInto(in<Node*> parent) noexcept override = 0;
-
 	protected:
 		Collider(in<std::string> name = "") noexcept;
 

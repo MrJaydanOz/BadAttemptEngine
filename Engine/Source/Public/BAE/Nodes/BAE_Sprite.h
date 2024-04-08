@@ -1,5 +1,5 @@
 #pragma once
-#include "BAE_Sprite.h"
+#include "BAE_Def.h"
 #if defined(MESSAGE_WHEN_INCLUDED)
 #pragma message(MESSAGE_WHEN_INCLUDED("BAE_Sprite.h"))
 #endif
@@ -8,7 +8,6 @@
 #include "Nodes/BAE_Visual.h"
 #include "Math/BAE_RectT.h"
 #include "Math/BAE_Color.h"
-#include "BAE_Def.h"
 #include "BAE_Image.h"
 
 namespace bae
@@ -34,8 +33,6 @@ namespace bae
 
 	public:
 		virtual ~Sprite() noexcept override;
-
-		virtual Sprite* CloneInto(in<Node*> parent) noexcept override;
 
 	protected:
 		Sprite(in<std::string> name = "", in<bool> enabled = true) noexcept;

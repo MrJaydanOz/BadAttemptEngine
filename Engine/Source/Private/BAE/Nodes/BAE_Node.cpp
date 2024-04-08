@@ -24,9 +24,6 @@ namespace bae
 		_RemoveThisFromParent();
 	}
 
-	Node* Node::CloneInto(in<Node*> parent) noexcept
-	{ return CloneIntoBegin<Node>(parent, GetName()); }
-
 	bool Node::HasName() const noexcept 
 	{ return _name.length() > 0u; }
 	const std::string& Node::GetName() const noexcept 

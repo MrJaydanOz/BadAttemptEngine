@@ -25,8 +25,6 @@ namespace bae
 	public:
 		virtual ~ColliderAxisBox() noexcept override;
 
-		virtual ColliderAxisBox* CloneInto(in<Node*> parent) noexcept override;
-
 	protected:
 		ColliderAxisBox(in<std::string> name = "") noexcept;
 	};

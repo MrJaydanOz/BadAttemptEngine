@@ -20,13 +20,6 @@ namespace bae
 		Node::~Node();
 	}
 
-	Transform* Transform::CloneInto(in<Node*> parent) noexcept
-	{
-		Transform* newNode = CloneIntoBegin<Transform>(parent, GetName());
-		newNode->SetPose(GetPose());
-		return newNode;
-	}
-
 	PoseF Transform::GetLocalPose() const noexcept { return _pose; }
 	void Transform::SetLocalPose(in<PoseF> pose) noexcept { _pose = pose; _hasModified = true; }
 

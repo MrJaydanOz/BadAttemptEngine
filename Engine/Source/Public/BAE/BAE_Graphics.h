@@ -18,6 +18,7 @@ namespace bae
 	class Game;
 	class Visual;
 	struct Image;
+	struct Font;
 
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
 #pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Graphics))
@@ -27,6 +28,7 @@ namespace bae
 		friend class Game;
 		friend class Visual;
 		friend struct Image;
+		friend struct Font;
 
 	private:
 		SDL_Window* _sdlWindow;

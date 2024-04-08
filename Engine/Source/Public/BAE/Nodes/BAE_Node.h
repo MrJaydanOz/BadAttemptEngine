@@ -47,8 +47,6 @@ namespace bae
 	public:
 		virtual ~Node() noexcept;
 
-		virtual Node* CloneInto(in<Node*> parent) noexcept;
-
 		_NODISCARD bool HasName() const noexcept;
 		_NODISCARD const std::string& GetName() const noexcept;
 		void SetName(in<std::string> name) noexcept;
@@ -269,20 +267,6 @@ namespace bae
 		virtual void OnParentChanged() { };
 
 		virtual void OnDestroy() { };
-
-		template<typename T, typename... TConstructorArguments>
-		T* CloneIntoBegin(in<Node*> parent, TConstructorArguments... constructorArguments)
-		{
-			T* newNode = AddChildIn<T>(parent, constructorArguments...);
-
-			for (Node* child : GetChildren())
-				if (child != nullptr)
-					child->CloneInto(this);
-				else
-					DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, DEBUG_NODE_NAME(this) << " has a null child.");
-
-			return newNode;
-		}
 
 	private:
 		void _RemoveThisFromParent() noexcept;

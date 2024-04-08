@@ -23,6 +23,13 @@ namespace bae
 	_NODISCARD float Sqrt(in<float> v) noexcept(noexcept(sqrt(v)));
 	_NODISCARD double Sqrt(in<double> v) noexcept(noexcept(sqrt(v)));
 	_NODISCARD long double Sqrt(in<long double> v) noexcept(noexcept(sqrt(v)));
+	
+	template<typename TValue, typename TProgress>
+	_NODISCARD constexpr TValue Lerp(in<TValue> a, in<TValue> b, in<TProgress> t) noexcept(noexcept(a + ((b - a) * t)))
+	{ return a + ((b - a) * t); }
+	template<typename T>
+	_NODISCARD constexpr T InverseLerp(in<T> a, in<T> b, in<T> v) noexcept(noexcept((v - a) / (b - a)))
+	{ return (v - a) / (b - a); }
 
 	template<typename T>
 	constexpr void Swap(ref<T> a, ref<T> b) noexcept(noexcept(std::swap(a, b)))

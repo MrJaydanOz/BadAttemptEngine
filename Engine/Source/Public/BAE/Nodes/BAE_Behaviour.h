@@ -22,8 +22,6 @@ namespace bae
 	public:
 		virtual ~Behaviour() noexcept override;
 
-		virtual Behaviour* CloneInto(in<Node*> parent) noexcept override;
-
 		_NODISCARD bool IsEnabledSelf() const noexcept;
 		void SetEnabledSelf(in<bool> enabled) noexcept;
 		_NODISCARD bool IsEnabled() const noexcept;

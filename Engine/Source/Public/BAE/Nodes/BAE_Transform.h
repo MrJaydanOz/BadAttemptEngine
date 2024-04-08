@@ -27,8 +27,6 @@ namespace bae
 	public:
 		virtual ~Transform() noexcept override;
 
-		virtual Transform* CloneInto(in<Node*> parent) noexcept override;
-
 		PoseF GetLocalPose() const noexcept;
 		void SetLocalPose(in<PoseF> pose) noexcept;
 

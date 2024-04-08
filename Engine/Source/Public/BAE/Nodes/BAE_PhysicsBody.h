@@ -27,8 +27,6 @@ namespace bae
 	public:
 		virtual ~PhysicsBody() noexcept override;
 
-		virtual PhysicsBody* CloneInto(in<Node*> parent) noexcept override;
-
 		_NODISCARD Vector2F GetVelocity() const noexcept;
 		void SetVelocity(in<Vector2F> velocity) noexcept;
 
@@ -44,13 +42,12 @@ namespace bae
 		void SetMass(in<float> mass) noexcept;
 
 	protected:
+		PhysicsBody(in<std::string> name = "") noexcept;
+
 		virtual void OnLoad() noexcept override;
 
 		virtual void OnParentChanged() noexcept override;
 
 		virtual void OnDestroy() noexcept override;
-
-	private:
-		PhysicsBody(in<std::string> name = "") noexcept;
 	};
 }

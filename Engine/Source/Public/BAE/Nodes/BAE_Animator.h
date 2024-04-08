@@ -28,8 +28,6 @@ namespace bae
 	public:
 		virtual ~Animator() noexcept override;
 
-		virtual Animator* CloneInto(in<Node*> parent) noexcept override;
-
 		void Play(in<std::string> stateName) noexcept;
 		void Play(in<AnimationState*> state) noexcept;
 

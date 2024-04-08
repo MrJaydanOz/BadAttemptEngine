@@ -65,7 +65,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)ExternalLibs/StaticLibs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)ExternalLibs\DynamicLibs\*.dll" "$(SolutionDir)Build\$(Configuration)"</Command>
@@ -89,7 +89,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)ExternalLibs/StaticLibs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)ExternalLibs\DynamicLibs\*.dll" "$(SolutionDir)Build\$(Configuration)"</Command>
@@ -97,6 +97,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Private\BAE\BAE_Animation.cpp" />
+    <ClCompile Include="Source\Private\BAE\BAE_Font.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Game.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Graphics.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Input.cpp" />
@@ -108,6 +109,7 @@
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_PhysicsBody.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Sprite.cpp" />
     <ClCompile Include="Source\Private\BAE\Math\Func\BAE_Simple.cpp" />
+    <ClCompile Include="Source\Private\BAE\Nodes\BAE_Text.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Transform.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Node.cpp" />
     <ClCompile Include="Source\Private\BAE\Math\BAE_Color.cpp" />
@@ -198,6 +200,7 @@
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_thread.h" />
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_timer.h" />
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_touch.h" />
+    <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_ttf.h" />
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_types.h" />
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_version.h" />
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_video.h" />
@@ -205,6 +208,7 @@
     <ClInclude Include="Source\Public\BAE\BAE.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Def.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Engine.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Font.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Graphics.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Math.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Nodes.h" />
@@ -225,6 +229,7 @@
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Sprite.h" />
     <ClInclude Include="Source\Public\BAE\Math\BAE_VectorT.h" />
     <ClInclude Include="Source\Public\BAE\BAE_For.h" />
+    <ClInclude Include="Source\Public\BAE\Nodes\BAE_Text.h" />
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Transform.h" />
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Node.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Physics.h" />
@@ -236,10 +241,12 @@
     <Library Include="ExternalLibs\StaticLibs\SDL2.lib" />
     <Library Include="ExternalLibs\StaticLibs\SDL2main.lib" />
     <Library Include="ExternalLibs\StaticLibs\SDL2_image.lib" />
+    <Library Include="ExternalLibs\StaticLibs\SDL2_ttf.lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ExternalLibs\DynamicLibs\SDL2.dll" />
     <None Include="ExternalLibs\DynamicLibs\SDL2_image.dll" />
+    <None Include="ExternalLibs\DynamicLibs\SDL2_ttf.dll" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

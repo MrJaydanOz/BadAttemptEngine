@@ -27,21 +27,6 @@ namespace bae
 		Visual::~Visual();
 	}
 
-	Sprite* Sprite::CloneInto(in<Node*> parent) noexcept
-	{
-		Sprite* newNode = CloneIntoBegin<Sprite>(parent, GetName(), IsEnabledSelf());
-		newNode->image = image;
-		newNode->clipRect = clipRect;
-		newNode->color = color;
-		newNode->flipMode = flipMode;
-		newNode->blendingMode = blendingMode;
-		newNode->offset = offset;
-		newNode->pivot = pivot;
-		newNode->scale = scale;
-
-		return newNode;
-	}
-
 	void Sprite::Render()
 	{
 		if (image != nullptr)

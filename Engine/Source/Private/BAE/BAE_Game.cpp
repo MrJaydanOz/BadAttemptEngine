@@ -8,6 +8,7 @@
 #include "SDL2/SDL.h"
 #include "BAE_Debug.h"
 #include "BAE_Engine.h"
+#include <SDL2/SDL_ttf.h>
 
 namespace bae
 {
@@ -65,6 +66,12 @@ namespace bae
 	void Game::Initialize()
 	{
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+		{
+			DEBUG_LOG_SDL_ERROR("");
+			return;
+		}
+
+		if (TTF_Init())
 		{
 			DEBUG_LOG_SDL_ERROR("");
 			return;

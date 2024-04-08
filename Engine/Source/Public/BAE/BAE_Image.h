@@ -3,17 +3,17 @@
 #if defined(MESSAGE_WHEN_INCLUDED)
 #pragma message(MESSAGE_WHEN_INCLUDED("BAE_Image.h"))
 #endif
-#include <SDL2/SDL_image.h>
 #include "Math/BAE_RectT.h"
 #include "Math/BAE_VectorT.h"
 #include "Math/BAE_Color.h"
 #include "Math/BAE_PoseT.h"
 #include "BAE_Game.h"
 
+struct SDL_Surface;
+struct SDL_Texture;
+
 namespace bae
 {
-	class Visual;
-
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
 #pragma message(MESSAGE_WHEN_CLASS_DEFINED(enum class ImageFlipMode))
 #endif
@@ -55,8 +55,6 @@ namespace bae
 #endif
 	struct Image
 	{
-		friend class Visual;
-
 	private:
 		SDL_Surface* _sdlSurface;
 		SDL_Texture* _sdlTexture;
@@ -95,7 +93,7 @@ namespace bae
 		void RenderAsDefault(in_optional<RectI> sourceRect, in_optional<RectF> destinationRect, in<double> rotation = 0.0, in_optional<Vector2F> rotationCenter = {}, in<ImageFlipMode> flipMode = ImageFlipMode::FLIP_NONE, in<Color> color = COLOR_WHITE, ImageBlendMode blendingMode = ImageBlendMode::BLENDMODE_NONE);
 
 	private:
-		Image(in_value<char*> path, in<SDL_Surface*> surfaceData, in<SDL_Texture*> textureData) noexcept;
+		Image(in_value<char*> path, in<SDL_Surface*> sdlSurface, in<SDL_Texture*> sdlTexture) noexcept;
 	
 		static void _ObjectParamsToDefaultParams(in<PoseF> pose, in<Vector2F> pivot, in<Vector2F> resultSize, ref<RectF> destinationRect, ref<double> rotation, ref<Vector2F> rotationCenter);
 	};

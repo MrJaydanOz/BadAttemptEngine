@@ -9,12 +9,4 @@ namespace bae
 	{
 		Collider::~Collider();
 	}
-
-	ColliderAxisBox* ColliderAxisBox::CloneInto(in<Node*> parent) noexcept
-	{
-		ColliderAxisBox* newNode = CloneIntoBegin<ColliderAxisBox>(parent, GetName());
-		newNode->center = center;
-		newNode->size = size;
-		return newNode;
-	}
 }

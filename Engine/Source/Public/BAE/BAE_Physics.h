@@ -49,6 +49,94 @@ namespace bae
 	public:
 		const std::deque<PhysicsCollision>& GetCollisionLog() const noexcept;
 
+		template<typename TResultCollection = std::vector<PhysicsCollision>>
+		size_t FindCollisionsOf(in<PhysicsBody*> physicsBody, ref<TResultCollection> results)
+		{
+			for (const PhysicsCollision& collision : _collisionLog)
+			{
+				if (collision.physicsBody1 == physicsBody)
+					results.push_back(collision);
+				else if (collision.physicsBody2 == physicsBody)
+				{
+					PhysicsCollision flippedCollision = collision;
+					Swap(flippedCollision.physicsBody1, flippedCollision.physicsBody2);
+					Swap(flippedCollision.collider1, flippedCollision.collider2);
+					flippedCollision.contactNormal = -flippedCollision.contactNormal;
+
+					results.push_back(flippedCollision);
+				}
+			}
+		}
+
+		template<typename TResultCollection = std::vector<PhysicsCollision>>
+		size_t FindCollisionsOf(in<Collider*> collider, ref<TResultCollection> results)
+		{
+			for (const PhysicsCollision& collision : _collisionLog)
+			{
+				if (collision.collider1 == collider)
+					results.push_back(collision);
+				else if (collision.collider2 == collider)
+				{
+					PhysicsCollision flippedCollision = collision;
+					Swap(flippedCollision.physicsBody1, flippedCollision.physicsBody2);
+					Swap(flippedCollision.collider1, flippedCollision.collider2);
+					flippedCollision.contactNormal = -flippedCollision.contactNormal;
+
+					results.push_back(flippedCollision);
+				}
+			}
+		}
+
+		template<typename TPredicate = bool(in<PhysicsCollision>)>
+		bool CollisionExistsWithWhere(in<PhysicsBody*> physicsBody, in_delegate<TPredicate> predicate)
+		{
+			for (const PhysicsCollision& collision : _collisionLog)
+			{
+				if (collision.physicsBody1 == physicsBody)
+				{
+					if (predicate(collision))
+						return true;
+				}
+				else if (collision.physicsBody2 == physicsBody)
+				{
+					PhysicsCollision flippedCollision = collision;
+					Swap(flippedCollision.physicsBody1, flippedCollision.physicsBody2);
+					Swap(flippedCollision.collider1, flippedCollision.collider2);
+					flippedCollision.contactNormal = -flippedCollision.contactNormal;
+
+					if (predicate(flippedCollision))
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		template<typename TPredicate = bool(in<PhysicsCollision>)>
+		bool CollisionExistsWithWhere(in<Collider*> collider, in_delegate<TPredicate> predicate)
+		{
+			for (const PhysicsCollision& collision : _collisionLog)
+			{
+				if (collision.collider1 == collider)
+				{
+					if (predicate(collision))
+						return true;
+				}
+				else if (collision.collider2 == collider)
+				{
+					PhysicsCollision flippedCollision = collision;
+					Swap(flippedCollision.physicsBody1, flippedCollision.physicsBody2);
+					Swap(flippedCollision.collider1, flippedCollision.collider2);
+					flippedCollision.contactNormal = -flippedCollision.contactNormal;
+
+					if (predicate(flippedCollision))
+						return true;
+				}
+			}
+
+			return false;
+		}
+
 	private:
 		Physics();
 		~Physics();
