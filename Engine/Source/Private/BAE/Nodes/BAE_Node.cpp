@@ -30,6 +30,13 @@ namespace bae
 	{ return _name; }
 	void Node::SetName(in<std::string> name) noexcept
 	{ _name = name; }
+	bool Node::NameIs(in<std::string> name) const noexcept
+	{
+		// Jesus christ, C++. Why can't I just safely equate empty strings?
+		return _name.size() == 0
+			? name.size() == 0
+			: name.size() != 0 && _name.compare(name) == 0;
+	}
 
 	bool Node::HasParentNode() const noexcept 
 	{ return GetParentNode() != nullptr; }
@@ -54,7 +61,7 @@ namespace bae
 	bool Node::IsUpMostNode() const noexcept
 	{ return _location_type == _Node_Location_Type::_NODE_LOCATION_SCENE_ROOT || _location_type == _Node_Location_Type::_NODE_LOCATION_SCENE_PREFAB; }
 
-	const std::vector<Node*>& Node::GetChildren() const noexcept 
+	const bae::List<Node*>& Node::GetChildren() const noexcept 
 	{ return _children; }
 
 	void Node::_RemoveThisFromParent() noexcept
@@ -62,41 +69,27 @@ namespace bae
 		if (_parent != nullptr)
 		{
 			if (_parent->_active)
-			{
-				std::vector<Node*>& siblings = _parent->_children;
-
-				auto removeIndex = std::find(siblings.begin(), siblings.end(), this);
-
-				if (removeIndex != siblings.end())
-					siblings.erase(removeIndex);
-			}
+				_parent->_children.Remove(this);
 			_parent = nullptr;
 		}
 		else
 		{
-			switch (_location_type)
+			if (Game::GetScene()->_isWorking)
 			{
+				switch (_location_type)
+				{
 				case _Node_Location_Type::_NODE_LOCATION_SCENE_ROOT:
 				{
-					auto& rootCollection = Game::GetScene()->_rootNodes;
-
-					auto removeIndex = std::find(rootCollection.begin(), rootCollection.end(), this);
-
-					if (removeIndex != rootCollection.end())
-						rootCollection.erase(removeIndex);
+					Game::GetScene()->_rootNodes.Remove(this);
 
 					break;
 				}
 				case _Node_Location_Type::_NODE_LOCATION_SCENE_PREFAB:
 				{
-					auto& rootCollection = Game::GetScene()->_prefabs;
-
-					auto removeIndex = std::find(rootCollection.begin(), rootCollection.end(), this);
-
-					if (removeIndex != rootCollection.end())
-						rootCollection.erase(removeIndex);
+					Game::GetScene()->_rootNodes.Remove(this);
 
 					break;
+				}
 				}
 			}
 		}
@@ -106,7 +99,7 @@ namespace bae
 	{
 		if (parentNode != nullptr)
 		{
-			parentNode->_children.push_back(this);
+			parentNode->_children.Append(this);
 			this->_parent = parentNode;
 			switch (_location_type)
 			{
@@ -130,12 +123,12 @@ namespace bae
 			case _Node_Location_Type::_NODE_LOCATION_SCENE_ROOT: 
 			case _Node_Location_Type::_NODE_LOCATION_CHILD_IN_ROOT:
 				_location_type = _Node_Location_Type::_NODE_LOCATION_SCENE_ROOT;
-				Game::GetScene()->_rootNodes.push_back(this);
+				Game::GetScene()->_rootNodes.Append(this);
 				break;
 			case _Node_Location_Type::_NODE_LOCATION_SCENE_PREFAB: 
 			case _Node_Location_Type::_NODE_LOCATION_CHILD_IN_PREFAB:
 				_location_type = _Node_Location_Type::_NODE_LOCATION_SCENE_PREFAB;
-				Game::GetScene()->_prefabs.push_back(this);
+				Game::GetScene()->_prefabs.Append(this);
 				break;
 			}
 		}

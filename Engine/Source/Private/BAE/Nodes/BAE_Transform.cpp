@@ -115,7 +115,7 @@ namespace bae
 	{
 		if (includeChildren)
 		{
-			auto children = GetChildren();
+			auto& children = GetChildren();
 
 			for (Node* child : children)
 			{

@@ -6,7 +6,7 @@
 #include "Nodes/BAE_PhysicsBody.h"
 #include "Nodes/BAE_Collider.h"
 #include "Nodes/BAE_ColliderAxisBox.h"
-#include <deque>
+
 
 namespace bae
 {
@@ -42,14 +42,14 @@ namespace bae
 
 	private:
 		bool _isWorking;
-		std::vector<PhysicsBody*> _physicsBodies;
-		std::vector<std::pair<Collider*, PhysicsBody*>> _collidersWithConnectedBody;
-		std::deque<PhysicsCollision> _collisionLog;
+		bae::List<PhysicsBody*> _physicsBodies;
+		bae::List<std::pair<Collider*, PhysicsBody*>> _collidersWithConnectedBody;
+		bae::List<PhysicsCollision> _collisionLog;
 
 	public:
-		const std::deque<PhysicsCollision>& GetCollisionLog() const noexcept;
+		const bae::List<PhysicsCollision>& GetCollisionLog() const noexcept;
 
-		template<typename TResultCollection = std::vector<PhysicsCollision>>
+		template<typename TResultCollection = bae::List<PhysicsCollision>>
 		size_t FindCollisionsOf(in<PhysicsBody*> physicsBody, ref<TResultCollection> results)
 		{
 			for (const PhysicsCollision& collision : _collisionLog)
@@ -68,7 +68,7 @@ namespace bae
 			}
 		}
 
-		template<typename TResultCollection = std::vector<PhysicsCollision>>
+		template<typename TResultCollection = bae::List<PhysicsCollision>>
 		size_t FindCollisionsOf(in<Collider*> collider, ref<TResultCollection> results)
 		{
 			for (const PhysicsCollision& collision : _collisionLog)

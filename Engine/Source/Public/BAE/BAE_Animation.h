@@ -1,7 +1,6 @@
 #pragma once
 #include "BAE_Def.h"
-#include <vector>
-#include <map>
+#include "BAE_Collections.h"
 #include "Nodes/BAE_Node.h"
 #include "Math/BAE_VectorT.h"
 #include "BAE_Image.h"
@@ -16,10 +15,10 @@ namespace bae
 		friend class AnimationState;
 
 	public:
-		std::vector<std::string> nodePath;
+		bae::List<std::string> nodePath;
 
 	public:
-		AnimationControl(std::initializer_list<std::string> nodePath) noexcept;
+		AnimationControl(in_initializer_list<std::string> nodePath) noexcept;
 		virtual ~AnimationControl() noexcept { }
 
 	protected:
@@ -37,7 +36,7 @@ namespace bae
 		float frameRate;
 
 	public:
-		AnimationControlSpriteImage(std::initializer_list<std::string> nodePath) noexcept;
+		AnimationControlSpriteImage(in_initializer_list<std::string> nodePath) noexcept;
 		virtual ~AnimationControlSpriteImage() noexcept { }
 
 	protected:
@@ -49,11 +48,12 @@ namespace bae
 		friend class Animator;
 
 	private:
-		std::vector<AnimationControl*> _controls;
+		bae::List<AnimationControl*> _controls;
 
 	public:
 		AnimationState() noexcept;
-		AnimationState(std::initializer_list<AnimationControl*> controls) noexcept;
+		AnimationState(in_initializer_list<AnimationControl*> controls) noexcept;
+		~AnimationState();
 
 	private:
 		void _Process(in<Animator*> animator, in<float> animationTime) noexcept;
@@ -64,12 +64,13 @@ namespace bae
 		friend class Animator;
 
 	private:
-		std::map<std::string, AnimationState> _states; // This type gives me high blood pressure.
+		bae::List<bae::Pair<std::string, AnimationState*>> _states;
 
 	public:
-		Animation(std::initializer_list<std::pair<std::string, AnimationState>> states) noexcept;
+		Animation(in_initializer_list<bae::Pair<std::string, AnimationState*>> states) noexcept;
+		~Animation();
 
-		void AddAnimationState(in<std::string> name, in<AnimationState> state) noexcept;
+		void CreateAnimationState(in<std::string> name, in_initializer_list<AnimationControl*> controls) noexcept;
 
 		void RemoveAnimationState(in<std::string> name) noexcept;
 

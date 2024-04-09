@@ -6,7 +6,6 @@
 #include "BAE_Debug.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <deque>
 #include "Math/BAE_VectorT.h"
 #include "Math/BAE_Color.h"
 
@@ -34,8 +33,8 @@ namespace bae
 		SDL_Window* _sdlWindow;
 		SDL_Renderer* _sdlRenderer;
 		// !! TEMPORARY SOLUTION !!
-		//std::deque<Visual*> _visualsInZOrder;
-		std::deque<Visual*>* _visualsInZOrder;
+		//bae::List<Visual*> _visualsInZOrder;
+		bae::List<Visual*>* _visualsInZOrder;
 		bool _isWorking;
 		Color _backgroundColor;
 

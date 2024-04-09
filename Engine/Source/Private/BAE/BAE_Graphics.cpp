@@ -73,16 +73,14 @@ namespace bae
 		// !! TEMPORARY SOLUTION !!
 		if (_visualsInZOrder == nullptr)
 		{
-			_visualsInZOrder = new std::deque<Visual*>();
+			_visualsInZOrder = new bae::List<Visual*>();
 
 			for (Node* child : Game::GetScene()->GetRootNodes())
 			{
-				_ForeachVisualAndChildren<Visual>(child, [&](in<Visual*> node) -> void
+				_ForeachVisualAndChildren<Visual>(child, [&](Visual* node) -> void
 					{
-						_visualsInZOrder->insert(
-							std::upper_bound(_visualsInZOrder->begin(), _visualsInZOrder->end(), node, [](in<Visual*> a, in<Visual*> b) -> bool
-								{ return a->GetZIndex() < b->GetZIndex(); }),
-							node);
+						_visualsInZOrder->InsertAt(_visualsInZOrder->FindIf([&](in<Visual*> v) -> bool
+							{ return v->GetZIndex() < node->GetZIndex(); }), node);
 					});
 			}
 		}

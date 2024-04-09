@@ -3,7 +3,7 @@
 #if defined(MESSAGE_WHEN_INCLUDED)
 #pragma message(MESSAGE_WHEN_INCLUDED("BAE_Game.h"))
 #endif
-#include <vector>
+#include "BAE_Collections.h"
 #include "BAE_Graphics.h"
 #include "BAE_Scene.h"
 #include "BAE_Time.h"

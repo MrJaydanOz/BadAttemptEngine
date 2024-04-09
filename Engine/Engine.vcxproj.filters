@@ -431,7 +431,7 @@
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\BAE\Math\BAE_List.h">
+    <ClInclude Include="Source\Public\BAE\BAE_Collections.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

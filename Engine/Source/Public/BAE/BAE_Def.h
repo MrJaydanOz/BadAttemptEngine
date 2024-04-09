@@ -1,10 +1,19 @@
 #pragma once
 #include <iostream>
-#include <iomanip>
+#include <iomanip> // gets "std::setprecision(int)"
 #include <vcruntime.h> // gets "_NODISCARD"
 #include <type_traits>
-#include <limits>
-#include <optional>
+#include <limits> // gets "std::numeric_limits<T>"
+#include <optional> // gets "std::optional<T>" (write '{}' for no value)
+#include <initializer_list> // gets "std::initializer_list<T>"
+
+#define _NODISCARD_ONLY_READ _NODISCARD_MSG( /* Just to add my own compiler message. */\
+	"This function returns a value representing some property of an object and has no other " \
+	"effects. It is not useful to call this function and discard the return value.")
+
+#define _NODISCARD_RESULT _NODISCARD_MSG( /* Just to add my own compiler message. */\
+	"This function returns a value that was calculated to get and has no other effects. It is not " \
+	"useful to call this function and discard the return value.")
 
 // I had to debug the compiler at one point because of the order of the #includes.
 #if false
@@ -76,6 +85,43 @@ namespace bae
 
 	template<long long int limit>
 	using int_fit_t = typename bae::int_fit<limit>::type;
+
+	template<typename TLeft, typename TRight = TLeft>
+	concept Equatable =
+		requires(TLeft a, TRight b) { { a == b } -> std::convertible_to<bool>; }&&
+		requires(TLeft a, TRight b) { { a != b } -> std::convertible_to<bool>; };
+
+	template<typename T>
+	concept EmptyConstructor =
+		requires { { T() } -> std::convertible_to<T>; };
+
+	template<typename TFrom, typename TTo = TFrom>
+	concept CopyOperator =
+		requires(TFrom a, TTo& b) { { a = b } -> std::convertible_to<TTo&>; };
+
+	template<typename TFrom, typename TTo>
+	concept CastOperator =
+		requires(TFrom v) { { (TTo)v } -> std::convertible_to<TTo>; };
+
+	template<typename TCollection, typename TIndex>
+	concept Indexable =
+		requires(TCollection v, TIndex i) { v[i]; };
+
+	template<typename TCollection, typename TIndex = size_t>
+	concept Sizable =
+		requires(TCollection v) { { v.size() } -> std::convertible_to<TIndex>; };
+
+	template<typename T, typename TReturnValue = void, typename... TArguments>
+	concept Callable =
+		requires(T v, TArguments... arguments) { { v(arguments...) } -> std::convertible_to<TReturnValue>; };
+
+	template<typename T>
+	concept Iterable =
+		requires(T v) { v.begin(); v.end(); };
+
+	template<typename T>
+	concept Printable =
+		requires(std::ostream s, T v) { s << v; };
 }
 
 template<typename T> 
@@ -86,6 +132,8 @@ template<typename T>
 using in_delegate = T;
 template<typename T>
 using in_optional = in<std::optional<T>>;
+template<typename T>
+using in_initializer_list = in<std::initializer_list<T>>;
 
 template<typename T>
 using out = T&;

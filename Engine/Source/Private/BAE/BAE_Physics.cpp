@@ -27,26 +27,26 @@ namespace bae
 
 	}
 
-	const std::deque<PhysicsCollision>& Physics::GetCollisionLog() const noexcept
+	const bae::List<PhysicsCollision>& Physics::GetCollisionLog() const noexcept
 	{ return _collisionLog; }
 
 	void Physics::_AddPhysicsBody(in<PhysicsBody*> physicsBody) noexcept
 	{
 		if (physicsBody != nullptr)
-			_physicsBodies.push_back(physicsBody);
+			_physicsBodies.Append(physicsBody);
 	}
 
 	void Physics::_AddCollider(in<Collider*> collider) noexcept
 	{
 		if (collider != nullptr)
-			_collidersWithConnectedBody.push_back({ collider, collider->FindParentOfTypeRecursive<PhysicsBody>() });
+			_collidersWithConnectedBody.Append({ collider, collider->FindParentOfTypeRecursive<PhysicsBody>() });
 	}
 
 	void Physics::_RemovePhysicsBody(in<PhysicsBody*> physicsBody) noexcept
 	{
 		if (physicsBody != nullptr)
 		{
-			std::deque<Collider*> collidersConnectedToGivenBody;
+			bae::List<Collider*> collidersConnectedToGivenBody;
 
 			for (auto& pair : _collidersWithConnectedBody)
 			{
@@ -54,10 +54,7 @@ namespace bae
 					pair.second = physicsBody->FindParentOfTypeRecursive<PhysicsBody>();
 			}
 
-			auto found = std::find(_physicsBodies.begin(), _physicsBodies.end(), physicsBody);
-
-			if (found != _physicsBodies.end())
-				_physicsBodies.erase(found);
+			_physicsBodies.Remove(physicsBody);
 		}
 	}
 
@@ -65,17 +62,13 @@ namespace bae
 	{
 		if (collider != nullptr)
 		{
-			auto found = std::find_if(_collidersWithConnectedBody.begin(), _collidersWithConnectedBody.end(), [&](in<std::pair<Collider*, PhysicsBody*>> pair) -> bool
-				{ return pair.first == collider; });
-
-			if (found != _collidersWithConnectedBody.end())
-				_collidersWithConnectedBody.erase(found);
+			_collidersWithConnectedBody.RemoveFirstWhere([&](in<std::pair<Collider*, PhysicsBody*>> pair) -> bool { return pair.first == collider; });
 		}
 	}
 
 	void Physics::_Simulate(in<float> deltaTime) noexcept
 	{
-		_collisionLog.clear();
+		_collisionLog.Clear();
 
 		for (auto& physicsBody : _physicsBodies)
 		{
@@ -186,7 +179,7 @@ namespace bae
 										}
 									}
 
-									_collisionLog.push_back(collision);
+									_collisionLog.Append(collision);
 								}
 							}
 					}

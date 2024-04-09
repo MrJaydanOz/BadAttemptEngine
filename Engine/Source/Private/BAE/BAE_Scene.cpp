@@ -1,11 +1,10 @@
 #include "BAE_Scene.h"
 #include "Nodes/BAE_Transform.h"
-#include <deque>
 #include "Nodes/BAE_Animator.h"
 
 namespace bae
 {
-	const std::vector<Node*>& Scene::GetRootNodes() const noexcept
+	const bae::List<Node*>& Scene::GetRootNodes() const noexcept
 	{ return _rootNodes; }
 
 	Scene::Scene() : 
@@ -15,16 +14,18 @@ namespace bae
 
 	Scene::~Scene()
 	{
-		for (auto i = _prefabs.rbegin(); i < _prefabs.rend(); i++)
-			delete *i;
+		_isWorking = false;
 
-		for (auto i = _rootNodes.rbegin(); i < _rootNodes.rend(); i++)
-			delete* i;
+		for (auto& node : _prefabs)
+			delete node;
+
+		for (auto& node : _rootNodes)
+			delete node;
 	}
 
 	void Scene::_ProcessAnimation(in<float> deltaTime) noexcept
 	{
-		std::deque<Animator*> animatorBuffer;
+		bae::List<Animator*> animatorBuffer;
 		FindNodesThat<Animator>([](in<Animator*> animator) -> bool { return animator->IsEnabled(); }, animatorBuffer);
 
 		for (Animator* animator : animatorBuffer)
@@ -33,13 +34,13 @@ namespace bae
 
 	void Scene::_ClearWorldPositionCaches() const noexcept
 	{
-		std::deque<Transform*> transformBuffer;
+		bae::List<Transform*> transformBuffer;
 		for (Node* child : GetRootNodes())
 			if (child != nullptr)
 			{
 				Transform* castedChild = dynamic_cast<Transform*>(child);
 				if (castedChild != nullptr)
-					transformBuffer.push_back(castedChild);
+					transformBuffer.Append(castedChild);
 				
 				child->FindChildrenOfTypeRecursive<Transform>(transformBuffer);
 			}

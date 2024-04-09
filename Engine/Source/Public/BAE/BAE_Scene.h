@@ -4,7 +4,7 @@
 #pragma message(MESSAGE_WHEN_INCLUDED("BAE_Scene.h"))
 #endif
 #include "Nodes/BAE_Node.h"
-#include <vector>
+#include "BAE_Collections.h"
 
 namespace bae
 {
@@ -19,12 +19,12 @@ namespace bae
 		friend class Node;
 
 	private:
-		std::vector<Node*> _rootNodes;
-		std::vector<Node*> _prefabs;
+		bae::List<Node*> _rootNodes;
+		bae::List<Node*> _prefabs;
 		bool _isWorking;
 
 	public:
-		_NODISCARD const std::vector<Node*>& GetRootNodes() const noexcept;
+		_NODISCARD const bae::List<Node*>& GetRootNodes() const noexcept;
 
 		template<typename T, typename TNodePredicate = bool(T*)>
 		_NODISCARD T* FindRootNodeThat(in<TNodePredicate> predicate)
@@ -68,7 +68,7 @@ namespace bae
 			return nullptr;
 		}
 
-		template<typename T, typename TNodePredicate = bool(T*), typename TResultCollection = std::vector<T*>>
+		template<typename T, typename TNodePredicate = bool(T*), typename TResultCollection = bae::List<T*>>
 		size_t FindRootNodesThat(in<TNodePredicate> predicate, ref<TResultCollection> results)
 		{
 			static_assert(std::is_base_of<Node, T>::value);
@@ -90,7 +90,7 @@ namespace bae
 			return foundCount;
 		}
 
-		template<typename T, typename TNodePredicate = bool(T*), typename TResultCollection = std::vector<T*>>
+		template<typename T, typename TNodePredicate = bool(T*), typename TResultCollection = bae::List<T*>>
 		size_t FindNodesThat(in<TNodePredicate> predicate, ref<TResultCollection> results)
 		{
 			static_assert(std::is_base_of<Node, T>::value);
@@ -124,29 +124,29 @@ namespace bae
 		_NODISCARD T* FindNodeOfType()
 		{ return FindNodeThat<T>([](T*) -> bool { return true; }); }
 
-		template<typename T, typename TResultCollection = std::vector<T*>>
+		template<typename T, typename TResultCollection = bae::List<T*>>
 		size_t FindCRootNodesOfType(ref<TResultCollection> results)
 		{ return FindRootNodesThat<T, TResultCollection>([](T*) -> bool { return true; }, results); }
 
-		template<typename T, typename TResultCollection = std::vector<T*>>
+		template<typename T, typename TResultCollection = bae::List<T*>>
 		size_t FindNodesOfType(ref<TResultCollection> results)
 		{ return FindNodesThat<T>([](T*) -> bool { return true; }, results); }
 
 		template<typename T>
 		_NODISCARD T* FindRootNodeWithName(in<std::string> name)
-		{ return FindRootNodeThat<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
+		{ return FindRootNodeThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 
 		template<typename T>
 		_NODISCARD T* FindNodeWithName(in<std::string> name)
-		{ return FindNodeThat<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
+		{ return FindNodeThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 
-		template<typename T, typename TResultCollection = std::vector<T*>>
+		template<typename T, typename TResultCollection = bae::List<T*>>
 		size_t FindRootNodesWithName(in<std::string> name, ref<TResultCollection> results)
-		{ return FindRootNodesThat<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
+		{ return FindRootNodesThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 
-		template<typename T, typename TResultCollection = std::vector<T*>>
+		template<typename T, typename TResultCollection = bae::List<T*>>
 		size_t FindNodesWithName(in<std::string> name, ref<TResultCollection> results)
-		{ return FindNodesThat<T>([&](in<T*> node) -> bool { return node->GetName().compare(name) == 0; }); }
+		{ return FindNodesThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 
 		template<typename T, typename... TConstructorArguments>
 		T* AddNode(TConstructorArguments... constructorArguments)
