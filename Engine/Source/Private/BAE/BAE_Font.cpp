@@ -10,8 +10,7 @@
 
 namespace bae
 {
-	Font::Font(in_value<char*> path, in<TTF_Font*> sdlFont) noexcept :
-		_path(path),
+	Font::Font(in<TTF_Font*> sdlFont) noexcept :
 		_sdlFont(sdlFont) { }
 
 	Font::~Font() noexcept
@@ -29,7 +28,7 @@ namespace bae
 			return nullptr;
 		}
 
-		return new Font(path, sdlFont);
+		return new Font(sdlFont);
 	}
 
 	bool Font::TryLoad(in_value<char*> path, in<int> fontSize, out<Font*> font) noexcept
@@ -37,8 +36,6 @@ namespace bae
 		font = Load(path, fontSize);
 		return font != nullptr;
 	}
-
-	const char* Font::GetPath() const noexcept { return _path; }
 
 	void Font::_CreateSDLComponents(in<std::string> text, in_optional<int> textWrapAtPixel, ref<SDL_Surface*> sdlSurface, ref<SDL_Texture*> sdlTexture)
 	{

@@ -137,7 +137,7 @@ namespace bae
 		_NODISCARD T* FindRootNodeWithName(in<std::string> name) requires std::is_base_of_v<Node, T>
 		{ return FindRootNodeThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 
-		template<typename T>
+		template<typename T = Node>
 		_NODISCARD T* FindNodeWithName(in<std::string> name) requires std::is_base_of_v<Node, T>
 		{ return FindNodeThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 

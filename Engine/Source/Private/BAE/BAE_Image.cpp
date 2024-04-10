@@ -11,8 +11,7 @@
 
 namespace bae
 {
-	Image::Image(in_value<char*> path, in<SDL_Surface*> sdlSurface, in<SDL_Texture*> sdlTexture) noexcept : 
-		_path(path), 
+	Image::Image(in<SDL_Surface*> sdlSurface, in<SDL_Texture*> sdlTexture) noexcept : 
 		_sdlSurface(sdlSurface), 
 		_sdlTexture(sdlTexture) { }
 
@@ -43,7 +42,7 @@ namespace bae
 			return nullptr;
 		}
 
-		return new Image(path, sdlSurface, sdlTexture);
+		return new Image(sdlSurface, sdlTexture);
 	}
 
 	bool Image::TryLoad(in_value<char*> path, out<Image*> image) noexcept
@@ -51,8 +50,6 @@ namespace bae
 		image = Load(path);
 		return image != nullptr;
 	}
-
-	const char* Image::GetPath() const noexcept { return _path; }
 
 	Vector2I Image::GetSize() const noexcept { return Vector2I(GetWidth(), GetHeight()); }
 	int Image::GetWidth() const noexcept { return _sdlSurface->w; }

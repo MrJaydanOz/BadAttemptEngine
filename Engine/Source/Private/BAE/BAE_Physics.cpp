@@ -59,11 +59,8 @@ namespace bae
 	{
 		_collisionLog.Clear();
 
-		DEBUG_LOG_INFO("- " << _physicsBodies.Size());
-
 		for (auto& physicsBody : _physicsBodies)
 		{
-			DEBUG_LOG_INFO(DEBUG_NODE_NAME(physicsBody));
 			physicsBody->_velocity += gravity;
 			physicsBody->_velocity *= 1.0f - physicsBody->_drag;
 			physicsBody->Translate(physicsBody->_velocity * deltaTime);

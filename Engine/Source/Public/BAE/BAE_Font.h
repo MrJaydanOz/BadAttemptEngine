@@ -34,26 +34,23 @@ namespace bae
 	private:
 		TTF_Font* _sdlFont;
 
-		const char* _path;
-
 	public:
 		/// <summary>
 		/// Loads the font at the given path into memory and returns the pointer.
 		/// </summary>
 		/// <returns>Image* or nullptr if failed.</returns>
 		_NODISCARD static Font* Load(in_value<char*> path, in<int> fontSize) noexcept;
+
 		/// <summary>
 		/// Tries to load the font at the given path into memory and returns the pointer.
 		/// </summary>
 		/// <returns>true if successful, false otherwise.</returns>
-		static bool TryLoad(in_value<char*> path, in<int> fontSize, out<Font*> image) noexcept;
+		static bool TryLoad(in_value<char*> path, in<int> fontSize, out<Font*> font) noexcept;
 
 		~Font() noexcept;
 
-		_NODISCARD const char* GetPath() const noexcept;
-
 	private:
-		Font(in_value<char*> path, in<TTF_Font*> sdlFont) noexcept;
+		Font(in<TTF_Font*> sdlFont) noexcept;
 
 		void _CreateSDLComponents(in<std::string> text, in_optional<int> textWrapAtPixel, ref<SDL_Surface*> sdlSurface, ref<SDL_Texture*> sdlTexture);
 

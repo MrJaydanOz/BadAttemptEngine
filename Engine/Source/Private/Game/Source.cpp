@@ -164,7 +164,7 @@ public:
 
 	void Die(ref<float> globalScore)
 	{
-		globalScore += 500.0f;
+
 	}
 
 protected:
@@ -209,10 +209,13 @@ Animation* collectableAnimation;
 PlayerCharacter* playerCharacter;
 bae::List<EnemyCharacter*> enemyCharacters;
 bae::List<Collectable*> collectables;
+Text* scoreDisplay;
+Text* helpDisplay;
 
 Vector2I lastWalkInput;
 
-Font* testFont;
+Font* largeFont;
+Font* smallFont;
 
 bool isGameOver;
 
@@ -222,6 +225,7 @@ float globalScore = 0.0f;
 
 void SpawnEnemy();
 void SpawnCollectable(in<Vector2F> position);
+void Restart();
 
 void BAE_Start()
 {
@@ -229,7 +233,8 @@ void BAE_Start()
 	playerSprites = Image::Load("Content/Sprites/PlayerSprites.png");
 	enemySprites = Image::Load("Content/Sprites/EnemySprites.png");
 	collectableSprites = Image::Load("Content/Sprites/Cube4.png");
-	testFont = Font::Load("Content/Fonts/Roboto/Roboto-Medium.ttf", 64);
+	largeFont = Font::Load("Content/Fonts/Roboto/Roboto-Medium.ttf", 64);
+	smallFont = Font::Load("Content/Fonts/Roboto/Roboto-Medium.ttf", 24);
 
 	// Load animations.
 	playerAnimation = new Animation({});
@@ -326,7 +331,7 @@ void BAE_Start()
 
 	collectableAnimation = new Animation({});
 
-	animationControl.clipSize = Vector2I(16, 16);
+	animationControl.clipSize = Vector2I(32, 32);
 	animationControl.frameCount = 10;
 	animationControl.frameRate = 12.0f;
 	animationControl.image = collectableSprites;
@@ -334,52 +339,75 @@ void BAE_Start()
 	collectableAnimation->CreateAnimationState("spin", { new AnimationControlSpriteImage(animationControl) });
 
 	// Create Objects.
-	playerCharacter = Game::GetScene()->AddNode<PlayerCharacter>("Player");
-	playerCharacter->SetPosition(Vector2F(100.0f, 100.0f));
-	playerCharacter->speed = 500.0f;
-	playerCharacter->acceleration = 5000.0f;
-	playerCharacter->animator->animation = playerAnimation;
-	playerCharacter->animator->Play("idle +y");
-	playerCharacter->sprite->scale = Vector2F(3.0f, 3.0f);
-	playerCharacter->collider->size = Vector2F(50.0f, 50.0f);
+
+	Transform* scoreDisplayHolder = Game::GetScene()->AddNode<Transform>("Score Display Holder");
+	scoreDisplayHolder->SetPosition(((Vector2F)Game::GetGraphics()->GetScreenSize()) - Vector2F(20.0f, 50.0f));
+	scoreDisplay = scoreDisplayHolder->AddChild<Text>("Score Display");
+	scoreDisplay->text = "0";
+	scoreDisplay->pivot = Vector2F(1.0f, 1.0f);
+	scoreDisplay->font = smallFont;
+	scoreDisplay->SetZIndex(100);
+
+	Transform* infoDisplayHolder = Game::GetScene()->AddNode<Transform>("Info Display Holder");
+	infoDisplayHolder->SetPosition(((Vector2F)Game::GetGraphics()->GetScreenSize()) - Vector2F(20.0f, 20.0f));
+	Text* infoDisplay = infoDisplayHolder->AddChild<Text>("Info Display");
+	infoDisplay->text = "Click on the enemies to damage them and collect the cubies.";
+	infoDisplay->pivot = Vector2F(1.0f, 1.0f);
+	infoDisplay->font = smallFont;
+	infoDisplay->SetZIndex(100);
+
+	Restart();
 }
 
 void BAE_Update()
 {
 	lastWalkInput = Vector2I(0, 0);
 
-	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_W)) lastWalkInput.y++;
-	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_S)) lastWalkInput.y--;
-	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_A)) lastWalkInput.x--;
-	if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_D)) lastWalkInput.x++;
+	if (!isGameOver)
+	{
+		if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_W)) lastWalkInput.y++;
+		if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_S)) lastWalkInput.y--;
+		if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_A)) lastWalkInput.x--;
+		if (Game::GetInput()->KeyHeld(KeyCode::KEYCODE_D)) lastWalkInput.x++;
+	}
 
 	playerCharacter->UpdateAnimation();
 
 	Vector2F mousePosition = (Vector2F)Game::GetInput()->GetMousePosition();
 	mousePosition.y = Game::GetGraphics()->GetScreenSize().y - mousePosition.y;
 
-	for (EnemyCharacter*& enemy : enemyCharacters)
+	if (!isGameOver)
 	{
-		enemy->UpdateAnimation();
-
-		if (Game::GetInput()->KeyPressed(KeyCode::KEYCODE_LMB) && mousePosition.SqrDistance(enemy->GetPosition()) < 80.0f * 80.0f)
+		for (EnemyCharacter*& enemy : enemyCharacters)
 		{
-			enemy->Damage(50.0f);
-			if (enemy->health <= 0.0f)
-			{
-				//SpawnCollectable(enemy->GetPosition());
-				//SpawnCollectable(enemy->GetPosition());
-				//SpawnCollectable(enemy->GetPosition());
+			enemy->UpdateAnimation();
 
-				enemy->Die(globalScore);
-				Destroy(enemy);
-				enemy = nullptr;
+			if (Game::GetInput()->KeyPressed(KeyCode::KEYCODE_LMB) && mousePosition.SqrDistance(enemy->GetPosition()) < 40.0f * 40.0f)
+			{
+				enemy->Damage(40.0f);
+				if (enemy->health <= 0.0f)
+				{
+					SpawnCollectable(enemy->GetPosition());
+					SpawnCollectable(enemy->GetPosition());
+					SpawnCollectable(enemy->GetPosition());
+
+					enemy->Die(globalScore);
+					Destroy(enemy);
+					enemy = nullptr;
+				}
 			}
 		}
-	}
 
-	enemyCharacters.RemoveWhere([](in<EnemyCharacter*> enemy) -> bool 
-		{ return enemy == nullptr; });
+		enemyCharacters.RemoveWhere([](in<EnemyCharacter*> enemy) -> bool
+			{ return enemy == nullptr; });
+	}
+	else
+	{
+		if (Game::GetInput()->KeyPressed(KeyCode::KEYCODE_LMB))
+		{
+			Restart();
+		}
+	}
 }
 
 void BAE_LateUpdate()
@@ -418,7 +446,7 @@ void BAE_PhysicsUpdate()
 		textHolder->SetPosition(((Vector2F)Game::GetGraphics()->GetScreenSize()) * 0.5f);
 
 		Text* text = textHolder->AddChild<Text>("Game Over Text");
-		text->font = testFont;
+		text->font = largeFont;
 		text->color = COLOR_YELLOW;
 		text->textAlignment = TextHorizonalAlignment::TEXT_ALIGNMENT_CENTER;
 		text->text = "Game Over";
@@ -429,19 +457,28 @@ void BAE_PhysicsUpdate()
 		Game::GetTime()->SetTimeScale(0.2f);
 	}
 
-	for (Collectable*& collectable : collectables)
+	if (!isGameOver)
 	{
-		if (Game::GetPhysics()->CollisionExistsWithWhere(collectable, [&](in<PhysicsCollision> collision) -> bool
-			{ return collision.physicsBody2 == playerCharacter; }))
-		{
-			collectable->Collect(globalScore);
-			Destroy(collectable);
-			collectable = nullptr;
-		}
-	}
+		bool hasScoreChanged = false;
 
-	collectables.RemoveWhere([](in<Collectable*> collectable) -> bool
-		{ return collectable == nullptr; });
+		for (Collectable*& collectable : collectables)
+		{
+			if (Game::GetPhysics()->CollisionExistsWithWhere(collectable, [&](in<PhysicsCollision> collision) -> bool
+				{ return collision.physicsBody2 == playerCharacter; }))
+			{
+				collectable->Collect(globalScore);
+				Destroy(collectable);
+				collectable = nullptr;
+
+				hasScoreChanged = true;
+			}
+		}
+
+		collectables.RemoveWhere([](in<Collectable*> collectable) -> bool
+			{ return collectable == nullptr; });
+
+		scoreDisplay->text = std::to_string((int)globalScore);
+	}
 }
 
 void BAE_End()
@@ -463,7 +500,7 @@ void SpawnEnemy()
 	enemyCharacter->animator->animation = enemyAnimation;
 	enemyCharacter->animator->Play("idle +y");
 	enemyCharacter->sprite->scale = Vector2F(3.0f, 3.0f);
-	enemyCharacter->collider->size = Vector2F(50.0f, 50.0f);
+	enemyCharacter->collider->size = Vector2F(60.0f, 60.0f);
 
 	enemyCharacters.Append(enemyCharacter);
 }
@@ -475,11 +512,41 @@ void SpawnCollectable(in<Vector2F> position)
 	collectable->value = 100.0f;
 	collectable->SetMass(0.01f);
 	collectable->SetDrag(0.05f);
-	collectable->SetVelocity(Vector2F(Lerp(-1.0f, 1.0f, std::rand() / (float)RAND_MAX), Lerp(-1.0f, 1.0f, std::rand() / (float)RAND_MAX)) * 100.0f);
+	collectable->SetVelocity(Vector2F(Lerp(-1.0f, 1.0f, std::rand() / (float)RAND_MAX), Lerp(-1.0f, 1.0f, std::rand() / (float)RAND_MAX)) * 200.0f);
 	collectable->animator->animation = collectableAnimation;
 	collectable->animator->Play("spin");
-	collectable->sprite->scale = Vector2F(2.0f, 2.0f);
+	collectable->sprite->scale = Vector2F(1.0f, 1.0f);
 	collectable->collider->size = Vector2F(10.0f, 10.0f);
+	collectable->sprite->SetZIndex(-10);
 
 	collectables.Append(collectable);
+}
+
+void Restart()
+{
+	Destroy(playerCharacter);
+
+	for (Collectable*& collectable : collectables)
+		Destroy(collectable);
+	collectables.Clear();
+
+	for (EnemyCharacter*& enemy : enemyCharacters)
+		Destroy(enemy);
+	enemyCharacters.Clear();
+
+	Text* gameOverText = Game::GetScene()->FindNodeWithName<Text>("Game Over Text");
+	Destroy(gameOverText);
+	Game::GetTime()->SetTimeScale(1.0f);
+	isGameOver = false;
+	globalScore = 0.0f;
+	spawnTimer = 3.0f;
+
+	playerCharacter = Game::GetScene()->AddNode<PlayerCharacter>("Player");
+	playerCharacter->SetPosition(Vector2F(100.0f, 100.0f));
+	playerCharacter->speed = 500.0f;
+	playerCharacter->acceleration = 5000.0f;
+	playerCharacter->animator->animation = playerAnimation;
+	playerCharacter->animator->Play("idle +y");
+	playerCharacter->sprite->scale = Vector2F(3.0f, 3.0f);
+	playerCharacter->collider->size = Vector2F(60.0f, 60.0f);
 }

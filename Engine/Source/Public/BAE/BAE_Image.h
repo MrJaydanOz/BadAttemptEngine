@@ -59,8 +59,6 @@ namespace bae
 		SDL_Surface* _sdlSurface;
 		SDL_Texture* _sdlTexture;
 
-		const char* _path;
-
 	public:
 		/// <summary>
 		/// Loads the image at the given path into memory and returns the pointer.
@@ -68,6 +66,7 @@ namespace bae
 		/// <param name="path">- char[]</param>
 		/// <returns>Image* or nullptr if failed.</returns>
 		_NODISCARD static Image* Load(in_value<char*> path) noexcept;
+
 		/// <summary>
 		/// Tries to load the image at the given path into memory and returns the pointer.
 		/// </summary>
@@ -77,8 +76,6 @@ namespace bae
 		static bool TryLoad(in_value<char*> path, out<Image*> image) noexcept;
 
 		~Image() noexcept;
-
-		_NODISCARD const char* GetPath() const noexcept;
 
 		_NODISCARD Vector2I GetSize() const noexcept;
 		_NODISCARD int GetWidth() const noexcept;
@@ -93,7 +90,7 @@ namespace bae
 		void RenderAsDefault(in_optional<RectI> sourceRect, in_optional<RectF> destinationRect, in<double> rotation = 0.0, in_optional<Vector2F> rotationCenter = {}, in<ImageFlipMode> flipMode = ImageFlipMode::FLIP_NONE, in<Color> color = COLOR_WHITE, ImageBlendMode blendingMode = ImageBlendMode::BLENDMODE_NONE);
 
 	private:
-		Image(in_value<char*> path, in<SDL_Surface*> sdlSurface, in<SDL_Texture*> sdlTexture) noexcept;
+		Image(in<SDL_Surface*> sdlSurface, in<SDL_Texture*> sdlTexture) noexcept;
 	
 		static void _ObjectParamsToDefaultParams(in<PoseF> pose, in<Vector2F> pivot, in<Vector2F> resultSize, ref<RectF> destinationRect, ref<double> rotation, ref<Vector2F> rotationCenter);
 	};
