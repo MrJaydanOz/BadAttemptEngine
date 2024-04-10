@@ -24,7 +24,7 @@ namespace bae
 	_NODISCARD double Sqrt(in<double> v) noexcept(noexcept(sqrt(v)));
 	_NODISCARD long double Sqrt(in<long double> v) noexcept(noexcept(sqrt(v)));
 	
-	template<typename TValue, typename TProgress>
+	template<typename TValue, typename TProgress = TValue>
 	_NODISCARD constexpr TValue Lerp(in<TValue> a, in<TValue> b, in<TProgress> t) noexcept(noexcept(a + ((b - a) * t)))
 	{ return a + ((b - a) * t); }
 	template<typename T>

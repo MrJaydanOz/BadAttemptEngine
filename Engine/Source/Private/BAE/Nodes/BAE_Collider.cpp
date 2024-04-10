@@ -3,30 +3,29 @@
 
 namespace bae
 {
-	Collider::Collider(in<std::string> name) noexcept : 
-		Transform::Transform(name),
+	Collider::Collider(in<Node*> parent) noexcept :
+		Transform::Transform(parent),
 		isTrigger(false) { }
 
-	Collider::~Collider() noexcept
+	Collider::~Collider() noexcept { }
+
+	void Collider::Create(in<const char*> name)
 	{
-		Transform::~Transform();
+		Transform::Create(name);
 	}
 
-	void Collider::OnLoad() noexcept
+	void Collider::Destroy()
 	{
-		Transform::OnLoad();
+		Game::GetPhysics()->_RemoveCollider(this);
+
+		Transform::Destroy();
 	}
 
 	void Collider::OnParentChanged() noexcept
 	{
+		Transform::OnParentChanged();
+
 		Game::GetPhysics()->_RemoveCollider(this);
 		Game::GetPhysics()->_AddCollider(this);
-		Transform::OnParentChanged();
-	}
-
-	void Collider::OnDestroy() noexcept
-	{
-		Game::GetPhysics()->_RemoveCollider(this);
-		Transform::OnDestroy();
 	}
 }

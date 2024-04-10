@@ -5,6 +5,10 @@
 #endif
 #include <iostream>
 
+#if false
+#define THROW_EXCEPTIONS_INSTEAD_OF_LOG
+#endif
+
 #define CONSOLE_COLORID_DEFAULT "0"
 #define CONSOLE_COLORID_BLACK "30"
 #define CONSOLE_COLORID_DARK_BLUE "34"
@@ -41,8 +45,13 @@
 #define DEBUG_LOG_WARNING_CONTEXTED(context, message)						DEBUG_LOG_CONTEXTED_COLOURED("WARNING"  , context, message         , CONSOLE_COLORID_YELLOW )
 #define DEBUG_LOG_ERROR(message)											DEBUG_LOG_COLOURED          ("ERROR"    ,          message         , CONSOLE_COLORID_RED    )
 #define DEBUG_LOG_ERROR_CONTEXTED(context, message)							DEBUG_LOG_CONTEXTED_COLOURED("ERROR"    , context, message         , CONSOLE_COLORID_RED    )
+#if THROW_EXCEPTIONS_INSTEAD_OF_LOG
+#define DEBUG_LOG_EXCEPTION(exception)										throw exception
+#define DEBUG_LOG_EXCEPTION_CONTEXTED(context, exception)					throw exception
+#else
 #define DEBUG_LOG_EXCEPTION(exception)										DEBUG_LOG_COLOURED          ("EXCEPTION",          exception.what(), CONSOLE_COLORID_RED    )
 #define DEBUG_LOG_EXCEPTION_CONTEXTED(context, exception)					DEBUG_LOG_CONTEXTED_COLOURED("EXCEPTION", context, exception.what(), CONSOLE_COLORID_RED    )
+#endif
 #define DEBUG_LOG_SDL_ERROR(message)                                        DEBUG_LOG_ERROR_CONTEXTED(SDL_LOG_CONTEXT, message << SDL_GetError());
 
 #define DEBUG_NODE_NAME(nodePointer) "\'" << (nodePointer)->GetName() << "'(" << typeid(nodePointer).name() << ')'

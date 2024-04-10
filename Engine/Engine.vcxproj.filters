@@ -33,9 +33,6 @@
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\BAE\Math\BAE_Color.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Private\BAE\BAE_Physics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,9 +63,6 @@
     <ClCompile Include="Source\Private\BAE\BAE_Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\BAE\Math\BAE_Constants.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Private\BAE\BAE_Time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -94,6 +88,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Text.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\BAE\Math\BAE_Color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

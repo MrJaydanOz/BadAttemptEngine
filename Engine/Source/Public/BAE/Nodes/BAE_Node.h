@@ -12,9 +12,7 @@ try { nodePointer->functionName(__VA_ARGS__); } \
 catch (in<std::exception> exception) \
 { DEBUG_LOG_EXCEPTION_CONTEXTED(DEBUG_NODE_NAME(nodePointer) << '.' << #functionName << "()", exception); }
 
-#define NODE_BEGIN \
-friend class Node;  /* This allows for Node::AddChild() and Scene::AddNode() to access the node's */\
-friend class Scene  /* constructor which should be protected. */
+#define NODE_BEGIN friend class bae::Node /* This allows for Node::AddChild() to access the node's constructor. */
 
 namespace bae
 {
@@ -41,12 +39,10 @@ namespace bae
 		std::string _name;
 		bae::List<Node*> _children;
 		Node* _parent;
-		bool _active;
+		bae::uintx_t<2> _statusFlags;
 		_Node_Location_Type _location_type;
 
 	public:
-		virtual ~Node() noexcept;
-
 		_NODISCARD bool HasName() const noexcept;
 		_NODISCARD const std::string& GetName() const noexcept;
 		void SetName(in<std::string> name) noexcept;
@@ -62,10 +58,8 @@ namespace bae
 		_NODISCARD const bae::List<Node*>& GetChildren() const noexcept;
 
 		template<typename T, typename TNodePredicate = bool(T*)>
-		_NODISCARD T* FindChildThat(in_delegate<TNodePredicate> predicate) const noexcept
+		_NODISCARD T* FindChildThat(in_delegate<TNodePredicate> predicate) const noexcept requires std::is_base_of_v<Node, T>
 		{
-			static_assert(std::is_base_of<Node, T>::value);
-
 			for (Node* child : GetChildren())
 				if (child != nullptr)
 				{
@@ -80,10 +74,8 @@ namespace bae
 		}
 
 		template<typename T, typename TNodePredicate = bool(T*)>
-		_NODISCARD T* FindChildThatRecursive(in_delegate<TNodePredicate> predicate) const noexcept
+		_NODISCARD T* FindChildThatRecursive(in_delegate<TNodePredicate> predicate) const noexcept requires std::is_base_of_v<Node, T>
 		{
-			static_assert(std::is_base_of<Node, T>::value);
-
 			for (Node* child : GetChildren())
 				if (child != nullptr)
 				{
@@ -104,17 +96,16 @@ namespace bae
 		}
 
 		template<typename T, typename TNodePredicate = bool(T*)>
-		bool TryFindChildThat(in_delegate<TNodePredicate> predicate, out<T*> result) const noexcept
+		bool TryFindChildThat(in_delegate<TNodePredicate> predicate, out<T*> result) const noexcept requires std::is_base_of_v<Node, T>
 		{ return (result = FindChildThat<T, TNodePredicate>(predicate)) != nullptr; }
 
 		template<typename T, typename TNodePredicate = bool(T*)>
-		bool TryFindChildThatRecursive(in_delegate<TNodePredicate> predicate, out<T*> result) const noexcept
+		bool TryFindChildThatRecursive(in_delegate<TNodePredicate> predicate, out<T*> result) const noexcept requires std::is_base_of_v<Node, T>
 		{ return (result = FindChildThatRecursive<T, TNodePredicate>(predicate)) != nullptr; }
 
 		template<typename T, typename TNodePredicate = bool(T*), typename TResultCollection = bae::List<T*>>
-		size_t FindChildrenThat(in_delegate<TNodePredicate> predicate, ref<TResultCollection> results) const noexcept
+		size_t FindChildrenThat(in_delegate<TNodePredicate> predicate, ref<TResultCollection> results) const noexcept requires std::is_base_of_v<Node, T>
 		{
-			static_assert(std::is_base_of<Node, T>::value);
 			size_t foundCount = 0;
 
 			for (Node* child : GetChildren())
@@ -134,9 +125,8 @@ namespace bae
 		}
 
 		template<typename T, typename TNodePredicate = bool(T*), typename TResultCollection = bae::List<T*>>
-		size_t FindChildrenThatRecursive(in_delegate<TNodePredicate> predicate, ref<TResultCollection> results) const noexcept
+		size_t FindChildrenThatRecursive(in_delegate<TNodePredicate> predicate, ref<TResultCollection> results) const noexcept requires std::is_base_of_v<Node, T>
 		{
-			static_assert(std::is_base_of<Node, T>::value);
 			size_t foundCount = 0;
 
 			for (Node* child : GetChildren())
@@ -160,10 +150,8 @@ namespace bae
 		}
 
 		template<typename T, typename TNodePredicate = bool(T*)>
-		_NODISCARD T* FindParentThatRecursive(in_delegate<TNodePredicate> predicate) const noexcept
+		_NODISCARD T* FindParentThatRecursive(in_delegate<TNodePredicate> predicate) const noexcept requires std::is_base_of_v<Node, T>
 		{
-			static_assert(std::is_base_of<Node, T>::value);
-
 			Node* parent = GetParentNode();
 
 			while (parent != nullptr)
@@ -179,99 +167,139 @@ namespace bae
 		}
 		
 		template<typename T, typename TNodePredicate = bool(T*)>
-		bool TryFindParentThatRecursive(in_delegate<TNodePredicate> predicate, out<T*> result) const noexcept
+		bool TryFindParentThatRecursive(in_delegate<TNodePredicate> predicate, out<T*> result) const noexcept requires std::is_base_of_v<Node, T>
 		{ return (result = FindParentThatRecursive<T, TNodePredicate>(predicate)) != nullptr; }
 
 		template<typename T>
-		_NODISCARD T* FindChildOfType() const noexcept
+		_NODISCARD T* FindChildOfType() const noexcept requires std::is_base_of_v<Node, T>
 		{ return FindChildThat<T>([](T*) -> bool { return true; }); }
 		
 		template<typename T>
-		_NODISCARD T* FindChildOfTypeRecursive() const noexcept
+		_NODISCARD T* FindChildOfTypeRecursive() const noexcept requires std::is_base_of_v<Node, T>
 		{ return FindChildThatRecursive<T>([](T*) -> bool { return true; }); }
 		
 		template<typename T>
-		bool TryFindChildOfType(out<T*> result) const noexcept
+		bool TryFindChildOfType(out<T*> result) const noexcept requires std::is_base_of_v<Node, T>
 		{ return TryFindChildThat<T>([](T*) -> bool { return true; }, result); }
 
 		template<typename T>
-		bool TryFindChildOfTypeRecursive(out<T*> result) const noexcept
+		bool TryFindChildOfTypeRecursive(out<T*> result) const noexcept requires std::is_base_of_v<Node, T>
 		{ return TryFindChildThatRecursive<T>([](T*) -> bool { return true; }, result); }
 
 		template<typename T, typename TResultCollection = bae::List<T*>>
-		size_t FindChildrenOfType(ref<TResultCollection> results) const noexcept
+		size_t FindChildrenOfType(ref<TResultCollection> results) const noexcept requires std::is_base_of_v<Node, T>
 		{ return FindChildrenThat<T>([](T*) -> bool { return true; }, results); }
 
 		template<typename T, typename TResultCollection = bae::List<T*>>
-		size_t FindChildrenOfTypeRecursive(ref<TResultCollection> results) const noexcept
+		size_t FindChildrenOfTypeRecursive(ref<TResultCollection> results) const noexcept requires std::is_base_of_v<Node, T>
 		{ return FindChildrenThatRecursive<T>([](T*) -> bool { return true; }, results); }
 		
 		template<typename T>
-		_NODISCARD T* FindParentOfTypeRecursive() const noexcept
+		_NODISCARD T* FindParentOfTypeRecursive() const noexcept requires std::is_base_of_v<Node, T>
 		{ return FindParentThatRecursive<T>([](T*) -> bool { return true; }); }
 		
 		template<typename T>
-		bool TryFindParentOfTypeRecursive(out<T*> result) const noexcept
+		bool TryFindParentOfTypeRecursive(out<T*> result) const noexcept requires std::is_base_of_v<Node, T>
 		{ return TryFindParentThatRecursive<T>([](T*) -> bool { return true; }, result); }
 
 		template<typename T>
-		_NODISCARD T* FindChildWithName(in<std::string> name) const noexcept
+		_NODISCARD T* FindChildWithName(in<std::string> name) const noexcept requires std::is_base_of_v<Node, T>
 		{ return FindChildThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 
 		template<typename T>
-		_NODISCARD T* FindChildWithNameRecursive(in<std::string> name) const noexcept
+		_NODISCARD T* FindChildWithNameRecursive(in<std::string> name) const noexcept requires std::is_base_of_v<Node, T>
 		{ return FindChildThatRecursive<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 		
 		template<typename T>
-		bool TryFindChildWithName(in<std::string> name, out<T*> result) const noexcept
+		bool TryFindChildWithName(in<std::string> name, out<T*> result) const noexcept requires std::is_base_of_v<Node, T>
 		{ return TryFindChildThat<T>([&](T* node) -> bool { return node->NameIs(name); }, result); }
 
 		template<typename T>
-		bool TryFindChildWithNameRecursive(in<std::string> name, out<T*> result) const noexcept
+		bool TryFindChildWithNameRecursive(in<std::string> name, out<T*> result) const noexcept requires std::is_base_of_v<Node, T>
 		{ return TryFindChildThatRecursive<T>([&](in<T*> node) -> bool { return node->NameIs(name); }, result); }
 
 		template<typename T, typename TResultCollection = bae::List<T*>>
-		size_t FindChildrenWithName(in<std::string> name, ref<TResultCollection> results) const noexcept
+		size_t FindChildrenWithName(in<std::string> name, ref<TResultCollection> results) const noexcept requires std::is_base_of_v<Node, T>
 		{ return FindChildrenThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 
 		template<typename T, typename TResultCollection = bae::List<T*>>
-		size_t FindChildrenWithNameRecursive(in<std::string> name, ref<TResultCollection> results) const noexcept
+		size_t FindChildrenWithNameRecursive(in<std::string> name, ref<TResultCollection> results) const noexcept requires std::is_base_of_v<Node, T>
 		{ return FindChildrenThatRecursive<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 		
 		template<typename T>
-		_NODISCARD T* FindParentWithNameRecursive(in<std::string> name) const noexcept
+		_NODISCARD T* FindParentWithNameRecursive(in<std::string> name) const noexcept requires std::is_base_of_v<Node, T>
 		{ return FindParentThatRecursive<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 		
 		template<typename T>
-		bool TryFindParentWithNameRecursive(in<std::string> name, out<T*> result) const noexcept
+		bool TryFindParentWithNameRecursive(in<std::string> name, out<T*> result) const noexcept requires std::is_base_of_v<Node, T>
 		{ return TryFindParentThatRecursive<T>([&](in<T*> node) -> bool { return node->NameIs(name); }, result); }
 
 		template<typename T, typename... TConstructorArguments>
-		T* AddChild(TConstructorArguments... constructorArguments)
-		{ return AddChildIn<T, TConstructorArguments...>(this, constructorArguments...); }
+		T* AddChild(in<const char*> name, TConstructorArguments... constructorArguments) requires std::is_base_of_v<Node, T>
+		{ return AddChildIn<T, TConstructorArguments...>(this, name, constructorArguments...); }
 
 		template<typename T, typename... TConstructorArguments>
-		static T* AddChildIn(in<Node*> parent, TConstructorArguments... constructorArguments)
+		static T* AddChildIn(in<Node*> parent, in<const char*> name, TConstructorArguments... constructorArguments) requires std::is_base_of_v<Node, T>
 		{
-			static_assert(std::is_base_of<Node, T>::value);
-			T* newNode = new T(constructorArguments...);
-			newNode->_SetAsParent(parent);
-			NODE_TRIGGER_EVENT_WITH_TRY_CATCH(newNode, OnLoad);
+			T* newNode = _ConstructNode<T>(parent);
+			newNode->_CallCreate(name, constructorArguments...);
 			return newNode;
 		}
 
-	protected:
-		Node(in<std::string> name = "") noexcept;
+		template<typename T>
+		static void Destroy(ref<T*> node) requires std::is_base_of_v<Node, T>
+		{
+			if (node != nullptr)
+			{
+				node->_statusFlags |= (1 << 1);
+				node->_CallDestroy();
+				delete node;
+				node = nullptr;
+			}
+		}
 
-		virtual void OnLoad() { };
+	protected:
+		Node(in<Node*> parent) noexcept;
+		virtual ~Node() noexcept;
+		virtual void Create(in<const char*> name = "");
+		virtual void Destroy();
 
 		virtual void OnParentChanged() { };
-
-		virtual void OnDestroy() { };
 
 	private:
 		void _RemoveThisFromParent() noexcept;
 
 		void _SetAsParent(in<Node*> parentNode) noexcept;
-	};	
+		
+		template<typename T>
+		static T* _ConstructNode(in<Node*> parent) requires std::is_base_of_v<Node, T>
+		{ return new T(parent); }
+
+		template<typename... TConstructorArguments>
+		void _CallCreate(in<const char*> name, TConstructorArguments... constructorArguments)
+		{
+			try { Create(name, constructorArguments...); }
+			catch (in<std::exception> exception) 
+			{ DEBUG_LOG_EXCEPTION_CONTEXTED(DEBUG_NODE_NAME(this) << ".Create()", exception); };
+
+			if (!_IsActive())
+				DEBUG_LOG_ERROR_CONTEXTED(BAE_LOG_CONTEXT,
+					"A node has been created with Create() has not also called its base::Create(). "
+					"All nodes have to call their base::Create().");
+		}
+
+		void _CallDestroy();
+
+		bool constexpr _IsActive() const;
+
+		bool constexpr _AllowDelete() const;
+	};
+
+	template<typename T, typename... TConstructorArguments>
+	static T* AddChildIn(in<Node*> parent, in<const char*> name, TConstructorArguments... constructorArguments) requires std::is_base_of_v<Node, T>
+	{ return Node::AddChildIn<T, TConstructorArguments...>(parent, name, constructorArguments...); }
+
+	template<typename T>
+	static void Destroy(ref<T*> node) requires std::is_base_of_v<Node, T>
+	{ Node::Destroy<T>(node); }
 }

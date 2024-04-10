@@ -10,8 +10,6 @@
 
 namespace bae
 {
-	class Scene;
-
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
 #pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Transform))
 #endif
@@ -21,12 +19,9 @@ namespace bae
 
 	private:
 		PoseF _pose;
-		PoseF* _cachedWorldPose;
 		bool _hasModified;
 
 	public:
-		virtual ~Transform() noexcept override;
-
 		PoseF GetLocalPose() const noexcept;
 		void SetLocalPose(in<PoseF> pose) noexcept;
 
@@ -50,9 +45,6 @@ namespace bae
 
 		void Rotate(in<float> deltaRotation) noexcept;
 
-		void CacheWorldPose(in<bool> recalculateIfAlreadyCached = false) noexcept;
-		void ClearWorldPoseCache(in<bool> includeChildren = true) noexcept;
-
 		PoseF TransformPose(in<PoseF> pose) const noexcept;
 
 		Vector2F TransformPoint(in<Vector2F> point) const noexcept;
@@ -70,6 +62,9 @@ namespace bae
 		float InverseTransformRotation(in<float> rotation) const noexcept;
 
 	protected:
-		Transform(in<std::string> name = "") noexcept;
+		Transform(in<Node*> parent) noexcept;
+		virtual ~Transform() noexcept override;
+		virtual void Create(in<const char*> name = "") override;
+		virtual void Destroy() override;
 	};
 }

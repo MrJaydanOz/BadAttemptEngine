@@ -15,8 +15,6 @@ struct SDL_Texture;
 
 namespace bae
 {
-	class Scene;
-
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
 #pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Text))
 #endif
@@ -42,12 +40,11 @@ namespace bae
 		SDL_Surface* _sdlSurface;
 		SDL_Texture* _sdlTexture;
 
-	public:
-		virtual ~Text() noexcept override;
-
 	protected:
-		Text(in<std::string> name = "", in<bool> enabled = true) noexcept;
-		Text(in<bool> enabled) noexcept;
+		Text(in<Node*> parent) noexcept;
+		virtual ~Text() noexcept override;
+		virtual void Create(in<const char*> name = "") override;
+		virtual void Destroy() override;
 
 		virtual void Render() override;
 	};

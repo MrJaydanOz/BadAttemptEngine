@@ -43,8 +43,9 @@ namespace bae
 	private:
 		bool _isWorking;
 		bae::List<PhysicsBody*> _physicsBodies;
-		bae::List<std::pair<Collider*, PhysicsBody*>> _collidersWithConnectedBody;
+		bae::List<Collider*> _colliders;
 		bae::List<PhysicsCollision> _collisionLog;
+		bae::List<std::pair<Collider*, PhysicsBody*>> _collidersWithConnectedBodyBuffer;
 
 	public:
 		const bae::List<PhysicsCollision>& GetCollisionLog() const noexcept;
@@ -87,7 +88,7 @@ namespace bae
 			}
 		}
 
-		template<typename TPredicate = bool(in<PhysicsCollision>)>
+		template<typename TPredicate = bool(PhysicsCollision)>
 		bool CollisionExistsWithWhere(in<PhysicsBody*> physicsBody, in_delegate<TPredicate> predicate)
 		{
 			for (const PhysicsCollision& collision : _collisionLog)
@@ -112,7 +113,7 @@ namespace bae
 			return false;
 		}
 
-		template<typename TPredicate = bool(in<PhysicsCollision>)>
+		template<typename TPredicate = bool(PhysicsCollision)>
 		bool CollisionExistsWithWhere(in<Collider*> collider, in_delegate<TPredicate> predicate)
 		{
 			for (const PhysicsCollision& collision : _collisionLog)

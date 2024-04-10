@@ -7,7 +7,6 @@
 
 namespace bae
 {
-	class Scene;
 	class Physics;
 
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
@@ -22,10 +21,10 @@ namespace bae
 		Vector2F center;
 		Vector2F size;
 
-	public:
-		virtual ~ColliderAxisBox() noexcept override;
-
 	protected:
-		ColliderAxisBox(in<std::string> name = "") noexcept;
+		ColliderAxisBox(in<Node*> parent) noexcept;
+		virtual ~ColliderAxisBox() noexcept override;
+		virtual void Create(in<const char*> name = "") override;
+		virtual void Destroy() override;
 	};
 }

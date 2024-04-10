@@ -3,25 +3,32 @@
 
 namespace bae
 {
-	Behaviour::Behaviour(in<std::string> name, in<bool> enabled) noexcept : 
-		Node::Node(name),
-		_enabledState(enabled ? 0b01 : 0b00) { }
-
-	Behaviour::Behaviour(in<bool> enabled) noexcept :
-		Behaviour::Behaviour("", enabled) { }
-
-	void Behaviour::OnLoad()
+	Behaviour::Behaviour(in<Node*> parent) noexcept :
+		Node::Node(parent) 
 	{
+		_enabledState = 0b01;
+
+		Behaviour* result;
+		if (TryFindParentOfTypeRecursive<Behaviour>(result) ? result->IsEnabled() : true)
+			_enabledState |= 0b10;
+	}
+
+	Behaviour::~Behaviour() noexcept { }
+
+	void Behaviour::Create(in<const char*> name)
+	{
+		Node::Create(name);
+
 		if (IsEnabled())
 			NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnEnabled);
 	}
 
-	Behaviour::~Behaviour() noexcept
+	void Behaviour::Destroy()
 	{
 		if (IsEnabled())
 			NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnDisabled);
 
-		Node::~Node();
+		Node::Destroy();
 	}
 
 	bool Behaviour::IsEnabledSelf() const noexcept

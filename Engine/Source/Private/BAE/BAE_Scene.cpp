@@ -32,22 +32,11 @@ namespace bae
 			animator->_Process(deltaTime);
 	}
 
-	void Scene::_ClearWorldPositionCaches() const noexcept
+	void Scene::_DeleteDestroyed() noexcept
 	{
-		bae::List<Transform*> transformBuffer;
-		for (Node* child : GetRootNodes())
-			if (child != nullptr)
-			{
-				Transform* castedChild = dynamic_cast<Transform*>(child);
-				if (castedChild != nullptr)
-					transformBuffer.Append(castedChild);
-				
-				child->FindChildrenOfTypeRecursive<Transform>(transformBuffer);
-			}
-			else
-				DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, "The scene has a null root node.");
+		for (Node* node : _nodesToDelete)
+			delete node;
 
-		for (Transform* transform : transformBuffer)
-			transform->ClearWorldPoseCache(false);
+		_nodesToDelete.Clear();
 	}
 }

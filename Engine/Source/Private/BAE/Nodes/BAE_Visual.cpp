@@ -4,11 +4,22 @@
 
 namespace bae
 {
-	Visual::Visual(in<std::string> name, in<bool> enabled) noexcept : 
-		Behaviour::Behaviour(name, enabled),
+	Visual::Visual(in<Node*> parent) noexcept :
+		Behaviour::Behaviour(parent),
 		_zIndex(0) { }
-	Visual::Visual(in<bool> enabled) noexcept : 
-		Visual::Visual("", enabled) { }
+
+	Visual::~Visual() noexcept { }
+
+	void Visual::Create(in<const char*> name)
+	{
+		Behaviour::Create(name);
+		SetZIndex(0);
+	}
+
+	void Visual::Destroy()
+	{
+		Behaviour::Destroy();
+	}
 
 	void Visual::OnEnabled()
 	{
@@ -22,11 +33,6 @@ namespace bae
 		Behaviour::OnDisabled();
 	
 		Game::GetGraphics()->_MarkVisualHasBeenDeleted(this);
-	}
-
-	Visual::~Visual() noexcept
-	{
-		Behaviour::~Behaviour();
 	}
 
 	int Visual::GetZIndex() const noexcept

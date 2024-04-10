@@ -22,15 +22,13 @@ private:
 	float _hurtAnimationTimer;
 
 public:
-	virtual ~Character() noexcept override { PhysicsBody::~PhysicsBody(); }
-
 	void UpdateAnimation()
 	{
 		if (_hurtAnimationTimer >= 0.0f)
 		{
 			const float notRed = Min(1.0f, _hurtAnimationTimer);
 
-			//sprite->color = (Color)ColorF(1.0f, notRed, notRed);
+			sprite->color = (Color)ColorF(1.0f, notRed, notRed);
 			sprite->offset.rotation = 15.0f / ((20.0f * _hurtAnimationTimer) + 1);
 
 			_hurtAnimationTimer += Game::GetTime()->DeltaTime();
@@ -115,22 +113,29 @@ public:
 	{
 		Vector2F scaledInput = input.SqrMagnitude() > 1.0f ? input.Normalized() : input;
 
-		SetVelocity(MoveTowards(GetVelocity(), scaledInput * 500.0f, 5000.0f * Game::GetTime()->DeltaTime()));
+		SetVelocity(MoveTowards(GetVelocity(), scaledInput * speed, acceleration * Game::GetTime()->DeltaTime()));
 	}
 
 protected:
-	Character(in<std::string> name = "") noexcept : PhysicsBody::PhysicsBody(name)
+	Character(in<Node*> parent) noexcept : PhysicsBody::PhysicsBody(parent),
+		speed(0.0f),
+		acceleration(0.0f),
+		animator(nullptr),
+		sprite(nullptr),
+		collider(nullptr),
+		maxHealth(100.0f),
+		health(maxHealth),
+		_lastAnimationDirection(0),
+		_lastIsWalking(false),
+		_hurtAnimationTimer(1.0f) { }
+	virtual ~Character() noexcept override { }
+	virtual void Create(in<const char*> name = "") override
 	{
-		speed = 0.0f;
-		acceleration = 0.0f;
-		animator = AddChild<Animator>(std::string("Animator"));
-		sprite = animator->AddChild<Sprite>(std::string("Sprite"));
-		collider = AddChild<ColliderAxisBox>(std::string("Collider"));
-		maxHealth = 100.0f;
-		health = maxHealth;
-		_lastAnimationDirection = 0;
-		_lastIsWalking = false;
-		_hurtAnimationTimer = -1.0f;
+		PhysicsBody::Create(name);
+
+		animator = AddChild<Animator>("Animator");
+		sprite = animator->AddChild<Sprite>("Sprite");
+		collider = AddChild<ColliderAxisBox>("Collider");
 	}
 };
 
@@ -139,13 +144,10 @@ class PlayerCharacter : public Character
 	NODE_BEGIN;
 
 public:
-	virtual ~PlayerCharacter() noexcept override { Character::~Character(); }
 
 protected:
-	PlayerCharacter(in<std::string> name = "") noexcept : Character::Character(name)
-	{ 
-
-	}
+	PlayerCharacter(in<Node*> parent) noexcept : Character::Character(parent) { }
+	virtual ~PlayerCharacter() noexcept override { }
 };
 
 class EnemyCharacter : public Character
@@ -153,8 +155,6 @@ class EnemyCharacter : public Character
 	NODE_BEGIN;
 
 public:
-	virtual ~EnemyCharacter() noexcept override { Character::~Character(); }
-
 	void MoveTowardsPlayer(in<PlayerCharacter*> player)
 	{
 		Vector2F deltaPosition = player->GetPosition() - GetPosition();
@@ -162,19 +162,53 @@ public:
 		MoveWithInput(deltaPosition);
 	}
 
-protected:
-	EnemyCharacter(in<std::string> name = "") noexcept : Character::Character(name)
+	void Die(ref<float> globalScore)
 	{
+		globalScore += 500.0f;
+	}
 
+protected:
+	EnemyCharacter(in<Node*> parent) noexcept : Character::Character(parent) { }
+	virtual ~EnemyCharacter() noexcept override { }
+};
+
+class Collectable : public PhysicsBody
+{
+	NODE_BEGIN;
+
+public:
+	Animator* animator;
+	Sprite* sprite;
+	ColliderAxisBox* collider;
+	float value;
+
+public:
+	virtual ~Collectable() noexcept override { }
+
+	void Collect(ref<float> globalScore)
+	{
+		globalScore += value;
+	}
+
+protected:
+	Collectable(in<Node*> parent) noexcept : PhysicsBody::PhysicsBody(parent)
+	{
+		value = 100.0f;
+		animator = AddChild<Animator>("Animator");
+		sprite = animator->AddChild<Sprite>("Sprite");
+		collider = AddChild<ColliderAxisBox>("Collider");
 	}
 };
 
 Image* playerSprites;
 Image* enemySprites;
+Image* collectableSprites;
 Animation* playerAnimation;
 Animation* enemyAnimation;
+Animation* collectableAnimation;
 PlayerCharacter* playerCharacter;
 bae::List<EnemyCharacter*> enemyCharacters;
+bae::List<Collectable*> collectables;
 
 Vector2I lastWalkInput;
 
@@ -184,13 +218,17 @@ bool isGameOver;
 
 float spawnTimer = 3.0f;
 
+float globalScore = 0.0f;
+
 void SpawnEnemy();
+void SpawnCollectable(in<Vector2F> position);
 
 void BAE_Start()
 {
 	// Load images.
 	playerSprites = Image::Load("Content/Sprites/PlayerSprites.png");
 	enemySprites = Image::Load("Content/Sprites/EnemySprites.png");
+	collectableSprites = Image::Load("Content/Sprites/Cube4.png");
 	testFont = Font::Load("Content/Fonts/Roboto/Roboto-Medium.ttf", 64);
 
 	// Load animations.
@@ -286,10 +324,19 @@ void BAE_Start()
 	animationControl.clipStartPosition.y += 32;
 	enemyAnimation->CreateAnimationState("walking -x+y", { new AnimationControlSpriteImage(animationControl) });
 
+	collectableAnimation = new Animation({});
+
+	animationControl.clipSize = Vector2I(16, 16);
+	animationControl.frameCount = 10;
+	animationControl.frameRate = 12.0f;
+	animationControl.image = collectableSprites;
+	animationControl.clipStartPosition = Vector2I(0, 0);
+	collectableAnimation->CreateAnimationState("spin", { new AnimationControlSpriteImage(animationControl) });
+
 	// Create Objects.
-	playerCharacter = Game::GetScene()->AddNode<PlayerCharacter>(std::string("Player"));
+	playerCharacter = Game::GetScene()->AddNode<PlayerCharacter>("Player");
 	playerCharacter->SetPosition(Vector2F(100.0f, 100.0f));
-	playerCharacter->speed = 300.0f;
+	playerCharacter->speed = 500.0f;
 	playerCharacter->acceleration = 5000.0f;
 	playerCharacter->animator->animation = playerAnimation;
 	playerCharacter->animator->Play("idle +y");
@@ -308,18 +355,27 @@ void BAE_Update()
 
 	playerCharacter->UpdateAnimation();
 
+	Vector2F mousePosition = (Vector2F)Game::GetInput()->GetMousePosition();
+	mousePosition.y = Game::GetGraphics()->GetScreenSize().y - mousePosition.y;
+
 	for (EnemyCharacter*& enemy : enemyCharacters)
 	{
 		enemy->UpdateAnimation();
 
-		/*if (Game::GetInput()->KeyPressed(KeyCode::KEYCODE_LMB) && ((Vector2F)Game::GetInput()->GetMousePosition()).SqrDistance(enemy->GetPosition()) < 80.0f)
+		if (Game::GetInput()->KeyPressed(KeyCode::KEYCODE_LMB) && mousePosition.SqrDistance(enemy->GetPosition()) < 80.0f * 80.0f)
 		{
 			enemy->Damage(50.0f);
 			if (enemy->health <= 0.0f)
-				delete enemy;
+			{
+				//SpawnCollectable(enemy->GetPosition());
+				//SpawnCollectable(enemy->GetPosition());
+				//SpawnCollectable(enemy->GetPosition());
 
-			enemy = nullptr;
-		}*/
+				enemy->Die(globalScore);
+				Destroy(enemy);
+				enemy = nullptr;
+			}
+		}
 	}
 
 	enemyCharacters.RemoveWhere([](in<EnemyCharacter*> enemy) -> bool 
@@ -352,6 +408,40 @@ void BAE_PhysicsUpdate()
 
 		SpawnEnemy();
 	}
+
+	if (!isGameOver && Game::GetPhysics()->CollisionExistsWithWhere(playerCharacter, [](in<PhysicsCollision> collision) -> bool
+		{ return collision.physicsBody2 != nullptr && collision.physicsBody2->NameIs("Enemy"); }))
+	{
+		playerCharacter->Damage(0.0f);
+
+		Transform* textHolder = Game::GetScene()->AddNode<Transform>("Game Over Text");
+		textHolder->SetPosition(((Vector2F)Game::GetGraphics()->GetScreenSize()) * 0.5f);
+
+		Text* text = textHolder->AddChild<Text>("Game Over Text");
+		text->font = testFont;
+		text->color = COLOR_YELLOW;
+		text->textAlignment = TextHorizonalAlignment::TEXT_ALIGNMENT_CENTER;
+		text->text = "Game Over";
+		text->SetZIndex(100);
+
+		isGameOver = true;
+
+		Game::GetTime()->SetTimeScale(0.2f);
+	}
+
+	for (Collectable*& collectable : collectables)
+	{
+		if (Game::GetPhysics()->CollisionExistsWithWhere(collectable, [&](in<PhysicsCollision> collision) -> bool
+			{ return collision.physicsBody2 == playerCharacter; }))
+		{
+			collectable->Collect(globalScore);
+			Destroy(collectable);
+			collectable = nullptr;
+		}
+	}
+
+	collectables.RemoveWhere([](in<Collectable*> collectable) -> bool
+		{ return collectable == nullptr; });
 }
 
 void BAE_End()
@@ -366,7 +456,7 @@ void BAE_End()
 
 void SpawnEnemy()
 {
-	EnemyCharacter* enemyCharacter = Game::GetScene()->AddNode<EnemyCharacter>(std::string("Enemy"));
+	EnemyCharacter* enemyCharacter = Game::GetScene()->AddNode<EnemyCharacter>("Enemy");
 	enemyCharacter->SetPosition(Vector2F(100.0f, 100.0f));
 	enemyCharacter->speed = 200.0f;
 	enemyCharacter->acceleration = 1000.0f;
@@ -376,4 +466,20 @@ void SpawnEnemy()
 	enemyCharacter->collider->size = Vector2F(50.0f, 50.0f);
 
 	enemyCharacters.Append(enemyCharacter);
+}
+
+void SpawnCollectable(in<Vector2F> position)
+{
+	Collectable* collectable = Game::GetScene()->AddNode<Collectable>("Collectable");
+	collectable->SetPosition(position);
+	collectable->value = 100.0f;
+	collectable->SetMass(0.01f);
+	collectable->SetDrag(0.05f);
+	collectable->SetVelocity(Vector2F(Lerp(-1.0f, 1.0f, std::rand() / (float)RAND_MAX), Lerp(-1.0f, 1.0f, std::rand() / (float)RAND_MAX)) * 100.0f);
+	collectable->animator->animation = collectableAnimation;
+	collectable->animator->Play("spin");
+	collectable->sprite->scale = Vector2F(2.0f, 2.0f);
+	collectable->collider->size = Vector2F(10.0f, 10.0f);
+
+	collectables.Append(collectable);
 }

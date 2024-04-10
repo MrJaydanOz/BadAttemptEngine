@@ -7,17 +7,22 @@
 
 namespace bae
 {
-	Transform::Transform(in<std::string> name) noexcept : Node(name),
+	Transform::Transform(in<Node*> parent) noexcept : 
+		Node::Node(parent),
 		_pose(),
-		_cachedWorldPose(nullptr),
 		_hasModified(false)
 	{ }
 
-	Transform::~Transform() noexcept
-	{
-		delete _cachedWorldPose;
+	Transform::~Transform() noexcept { }
 
-		Node::~Node();
+	void Transform::Create(in<const char*> name)
+	{
+		Node::Create(name);
+	}
+
+	void Transform::Destroy()
+	{
+		Node::Destroy();
 	}
 
 	PoseF Transform::GetLocalPose() const noexcept { return _pose; }
@@ -25,9 +30,6 @@ namespace bae
 
 	PoseF Transform::GetPose() const noexcept
 	{
-		if (_cachedWorldPose != nullptr)
-			return *_cachedWorldPose;
-
 		Transform* parentTransform;
 
 		if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
@@ -50,9 +52,6 @@ namespace bae
 
 	Vector2F Transform::GetPosition() const noexcept
 	{
-		if (_cachedWorldPose != nullptr)
-			return _cachedWorldPose->position;
-
 		Transform* parentTransform;
 
 		if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
@@ -75,9 +74,6 @@ namespace bae
 
 	float Transform::GetRotation() const noexcept
 	{
-		if (_cachedWorldPose != nullptr)
-			return _cachedWorldPose->rotation;
-
 		Transform* parentTransform;
 
 		if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
@@ -103,31 +99,6 @@ namespace bae
 
 	void Transform::Rotate(in<float> deltaRotation) noexcept
 	{ SetLocalRotation(GetLocalRotation() + deltaRotation); }
-
-	void Transform::CacheWorldPose(in<bool> recalculateIfAlreadyCached) noexcept
-	{
-		if (_cachedWorldPose == nullptr)
-			_cachedWorldPose = new PoseF(GetPose());
-		else if (recalculateIfAlreadyCached)
-			*_cachedWorldPose = GetPose();
-	}
-	void Transform::ClearWorldPoseCache(in<bool> includeChildren) noexcept
-	{
-		if (includeChildren)
-		{
-			auto& children = GetChildren();
-
-			for (Node* child : children)
-			{
-				Transform* childTransform = dynamic_cast<Transform*>(child);
-				if (childTransform)
-					childTransform->ClearWorldPoseCache(true);
-			}
-		}
-
-		delete _cachedWorldPose;
-		_cachedWorldPose = nullptr;
-	}
 
 	PoseF Transform::TransformPose(in<PoseF> pose) const noexcept 
 	{ return GetPose().TransformPose(pose); }

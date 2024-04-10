@@ -7,8 +7,6 @@
 
 namespace bae
 {
-	class Scene;
-
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
 #pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Behaviour))
 #endif
@@ -20,17 +18,15 @@ namespace bae
 		bae::uintx_t<2> _enabledState;
 
 	public:
-		virtual ~Behaviour() noexcept override;
-
 		_NODISCARD bool IsEnabledSelf() const noexcept;
 		void SetEnabledSelf(in<bool> enabled) noexcept;
 		_NODISCARD bool IsEnabled() const noexcept;
 
 	protected:
-		Behaviour(in<std::string> name = "", in<bool> enabled = true) noexcept;
-		Behaviour(in<bool> enabled) noexcept;
-
-		virtual void OnLoad() override;
+		Behaviour(in<Node*> parent) noexcept;
+		virtual ~Behaviour() noexcept override;
+		virtual void Create(in<const char*> name = "") override;
+		virtual void Destroy() override;
 
 		virtual void OnParentChanged() override;
 

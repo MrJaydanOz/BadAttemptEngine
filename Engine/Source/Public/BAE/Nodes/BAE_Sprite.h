@@ -12,8 +12,6 @@
 
 namespace bae
 {
-	class Scene;
-
 	#if defined(MESSAGE_WHEN_CLASS_DEFINED)
 	#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Sprite))
 	#endif
@@ -31,12 +29,11 @@ namespace bae
 		Vector2F pivot;
 		Vector2F scale;
 
-	public:
-		virtual ~Sprite() noexcept override;
-
 	protected:
-		Sprite(in<std::string> name = "", in<bool> enabled = true) noexcept;
-		Sprite(in<bool> enabled) noexcept;
+		Sprite(in<Node*> parent) noexcept;
+		virtual ~Sprite() noexcept override;
+		virtual void Create(in<const char*> name = "") override;
+		virtual void Destroy() override;
 
 		virtual void Render() override;
 	};

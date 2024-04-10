@@ -16,6 +16,7 @@ namespace bae
 	class Animator : public Behaviour
 	{
 		NODE_BEGIN;
+		friend class Scene;
 
 	public:
 		Animation* animation;
@@ -26,8 +27,6 @@ namespace bae
 		float _animationTime;
 
 	public:
-		virtual ~Animator() noexcept override;
-
 		void Play(in<std::string> stateName) noexcept;
 		void Play(in<AnimationState*> state) noexcept;
 
@@ -38,8 +37,10 @@ namespace bae
 		void Stop() noexcept;
 
 	private:
-		Animator(in<std::string> name = "", in<bool> enabled = true) noexcept;
-		Animator(in<bool> enabled) noexcept;
+		Animator(in<Node*> parent) noexcept;
+		virtual ~Animator() noexcept override;
+		virtual void Create(in<const char*> name = "") override;
+		virtual void Destroy() override;
 
 		void _Process(in<float> deltaTime) noexcept;
 	};

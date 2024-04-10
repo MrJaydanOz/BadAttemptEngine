@@ -11,7 +11,6 @@
 namespace bae
 {
 	class Graphics;
-	class Scene;
 
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
 #pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Visual))
@@ -25,14 +24,14 @@ namespace bae
 		int _zIndex;
 
 	public:
-		virtual ~Visual() noexcept override;
-
 		_NODISCARD int GetZIndex() const noexcept;
 		void SetZIndex(in<int> index) noexcept;
 
 	protected:
-		Visual(in<std::string> name = "", in<bool> enabled = true) noexcept;
-		Visual(in<bool> enabled) noexcept;
+		Visual(in<Node*> parent) noexcept;
+		virtual ~Visual() noexcept override;
+		virtual void Create(in<const char*> name = "") override;
+		virtual void Destroy() override;
 
 		virtual void OnEnabled() override;
 

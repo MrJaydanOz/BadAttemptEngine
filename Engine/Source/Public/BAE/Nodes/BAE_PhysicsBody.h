@@ -7,7 +7,6 @@
 
 namespace bae
 {
-	class Scene;
 	class Physics;
 
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
@@ -23,10 +22,9 @@ namespace bae
 		float _angularVelocity;
 		Vector2F _localCenterOfMass;
 		float _mass;
+		float _drag;
 
 	public:
-		virtual ~PhysicsBody() noexcept override;
-
 		_NODISCARD Vector2F GetVelocity() const noexcept;
 		void SetVelocity(in<Vector2F> velocity) noexcept;
 
@@ -41,13 +39,15 @@ namespace bae
 		_NODISCARD float GetMass() const noexcept;
 		void SetMass(in<float> mass) noexcept;
 
-	protected:
-		PhysicsBody(in<std::string> name = "") noexcept;
+		_NODISCARD float GetDrag() const noexcept;
+		void SetDrag(in<float> drag) noexcept;
 
-		virtual void OnLoad() noexcept override;
+	protected:
+		PhysicsBody(in<Node*> parent) noexcept;
+		virtual ~PhysicsBody() noexcept override;
+		virtual void Create(in<const char*> name = "") override;
+		virtual void Destroy() override;
 
 		virtual void OnParentChanged() noexcept override;
-
-		virtual void OnDestroy() noexcept override;
 	};
 }

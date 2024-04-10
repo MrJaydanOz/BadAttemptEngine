@@ -36,8 +36,6 @@ namespace bae
 			clipStartPosition + (clipFrameDelta.value_or(Vector2I(clipSize.x, 0)) * frame), 
 			clipSize
 		);
-
-		DEBUG_LOG_INFO("control in " << DEBUG_NODE_NAME(targetNode->GetParentNode()->GetParentNode()) << " " << (targetSprite->image->GetSize()) << " - " << targetSprite->clipRect.value());
 	}
 
 	AnimationState::AnimationState() noexcept :

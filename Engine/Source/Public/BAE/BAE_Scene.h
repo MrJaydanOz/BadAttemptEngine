@@ -21,13 +21,14 @@ namespace bae
 	private:
 		bae::List<Node*> _rootNodes;
 		bae::List<Node*> _prefabs;
+		bae::List<Node*> _nodesToDelete;
 		bool _isWorking;
 
 	public:
 		_NODISCARD const bae::List<Node*>& GetRootNodes() const noexcept;
 
 		template<typename T, typename TNodePredicate = bool(T*)>
-		_NODISCARD T* FindRootNodeThat(in<TNodePredicate> predicate)
+		_NODISCARD T* FindRootNodeThat(in<TNodePredicate> predicate) requires std::is_base_of_v<Node, T>
 		{
 			static_assert(std::is_base_of<Node, T>::value);
 
@@ -45,7 +46,7 @@ namespace bae
 		}
 
 		template<typename T, typename TNodePredicate = bool(T*)>
-		_NODISCARD T* FindNodeThat(in<TNodePredicate> predicate)
+		_NODISCARD T* FindNodeThat(in<TNodePredicate> predicate) requires std::is_base_of_v<Node, T>
 		{
 			static_assert(std::is_base_of<Node, T>::value);
 
@@ -69,7 +70,7 @@ namespace bae
 		}
 
 		template<typename T, typename TNodePredicate = bool(T*), typename TResultCollection = bae::List<T*>>
-		size_t FindRootNodesThat(in<TNodePredicate> predicate, ref<TResultCollection> results)
+		size_t FindRootNodesThat(in<TNodePredicate> predicate, ref<TResultCollection> results) requires std::is_base_of_v<Node, T>
 		{
 			static_assert(std::is_base_of<Node, T>::value);
 			size_t foundCount = 0;
@@ -91,7 +92,7 @@ namespace bae
 		}
 
 		template<typename T, typename TNodePredicate = bool(T*), typename TResultCollection = bae::List<T*>>
-		size_t FindNodesThat(in<TNodePredicate> predicate, ref<TResultCollection> results)
+		size_t FindNodesThat(in<TNodePredicate> predicate, ref<TResultCollection> results) requires std::is_base_of_v<Node, T>
 		{
 			static_assert(std::is_base_of<Node, T>::value);
 			size_t foundCount = 0;
@@ -117,53 +118,49 @@ namespace bae
 		}
 
 		template<typename T>
-		_NODISCARD T* FindRootNodeOfType()
+		_NODISCARD T* FindRootNodeOfType() requires std::is_base_of_v<Node, T>
 		{ return FindRootNodeThat<T>([](T*) -> bool { return true; }); }
 
 		template<typename T>
-		_NODISCARD T* FindNodeOfType()
+		_NODISCARD T* FindNodeOfType() requires std::is_base_of_v<Node, T>
 		{ return FindNodeThat<T>([](T*) -> bool { return true; }); }
 
 		template<typename T, typename TResultCollection = bae::List<T*>>
-		size_t FindCRootNodesOfType(ref<TResultCollection> results)
+		size_t FindCRootNodesOfType(ref<TResultCollection> results) requires std::is_base_of_v<Node, T>
 		{ return FindRootNodesThat<T, TResultCollection>([](T*) -> bool { return true; }, results); }
 
 		template<typename T, typename TResultCollection = bae::List<T*>>
-		size_t FindNodesOfType(ref<TResultCollection> results)
+		size_t FindNodesOfType(ref<TResultCollection> results) requires std::is_base_of_v<Node, T>
 		{ return FindNodesThat<T>([](T*) -> bool { return true; }, results); }
 
 		template<typename T>
-		_NODISCARD T* FindRootNodeWithName(in<std::string> name)
+		_NODISCARD T* FindRootNodeWithName(in<std::string> name) requires std::is_base_of_v<Node, T>
 		{ return FindRootNodeThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 
 		template<typename T>
-		_NODISCARD T* FindNodeWithName(in<std::string> name)
+		_NODISCARD T* FindNodeWithName(in<std::string> name) requires std::is_base_of_v<Node, T>
 		{ return FindNodeThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 
 		template<typename T, typename TResultCollection = bae::List<T*>>
-		size_t FindRootNodesWithName(in<std::string> name, ref<TResultCollection> results)
+		size_t FindRootNodesWithName(in<std::string> name, ref<TResultCollection> results) requires std::is_base_of_v<Node, T>
 		{ return FindRootNodesThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 
 		template<typename T, typename TResultCollection = bae::List<T*>>
-		size_t FindNodesWithName(in<std::string> name, ref<TResultCollection> results)
+		size_t FindNodesWithName(in<std::string> name, ref<TResultCollection> results) requires std::is_base_of_v<Node, T>
 		{ return FindNodesThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 
 		template<typename T, typename... TConstructorArguments>
-		T* AddNode(TConstructorArguments... constructorArguments)
+		T* AddNode(in<const char*> name, TConstructorArguments... constructorArguments) requires std::is_base_of_v<Node, T>
 		{
-			static_assert(std::is_base_of<Node, T>::value);
-			T* newNode = new T(constructorArguments...);
+			T* newNode = Node::_ConstructNode<T>(nullptr);
 			newNode->_location_type = Node::_Node_Location_Type::_NODE_LOCATION_SCENE_ROOT;
-			newNode->_SetAsParent(nullptr);
-			NODE_TRIGGER_EVENT_WITH_TRY_CATCH(newNode, OnLoad);
+			newNode->_CallCreate<TConstructorArguments...>(name, constructorArguments...);
 			return newNode;
 		}
 
 		template<typename T>
-		_NODISCARD T* GetPrefabWithName(in<std::string> name)
+		_NODISCARD T* GetPrefabWithName(in<std::string> name) requires std::is_base_of_v<Node, T>
 		{
-			static_assert(std::is_base_of<Node, T>::value);
-
 			for (Node* node : _prefabs)
 				if (node != nullptr)
 				{
@@ -178,13 +175,11 @@ namespace bae
 		}
 
 		template<typename T, typename... TConstructorArguments>
-		T* AddPrefab(TConstructorArguments... arguments)
+		T* AddPrefab(in<const char*> name, TConstructorArguments... constructorArguments) requires std::is_base_of_v<Node, T>
 		{
-			static_assert(std::is_base_of<Node, T>::value);
-			T* newNode = new T(arguments...);
+			T* newNode = Node::_ConstructNode<T>(nullptr);
 			newNode->_location_type = Node::_Node_Location_Type::_NODE_LOCATION_SCENE_PREFAB;
-			newNode->_SetAsParent(nullptr);
-			NODE_TRIGGER_EVENT_WITH_TRY_CATCH(newNode, OnLoad);
+			newNode->_CallCreate(name, constructorArguments...);
 			return newNode;
 		}
 
@@ -194,6 +189,6 @@ namespace bae
 
 		void _ProcessAnimation(in<float> deltaTime) noexcept;
 
-		void _ClearWorldPositionCaches() const noexcept;
+		void _DeleteDestroyed() noexcept;
 	};
 }

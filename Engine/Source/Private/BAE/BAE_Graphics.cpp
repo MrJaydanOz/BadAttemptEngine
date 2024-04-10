@@ -80,7 +80,7 @@ namespace bae
 				_ForeachVisualAndChildren<Visual>(child, [&](Visual* node) -> void
 					{
 						_visualsInZOrder->InsertAt(_visualsInZOrder->FindIf([&](in<Visual*> v) -> bool
-							{ return v->GetZIndex() < node->GetZIndex(); }), node);
+							{ return v->GetZIndex() > node->GetZIndex(); }), node);
 					});
 			}
 		}
@@ -89,9 +89,8 @@ namespace bae
 		SDL_SetRenderDrawColor(_sdlRenderer, _backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a);
 		SDL_RenderFillRect(_sdlRenderer, nullptr);
 
-		auto end = _visualsInZOrder->end();
-		for (auto i = _visualsInZOrder->begin(); i < end; i++)
-			(*i)->Render();
+		for (Visual* visual : *_visualsInZOrder)
+			visual->Render();
 
 		SDL_RenderPresent(_sdlRenderer);
 	}
@@ -102,6 +101,7 @@ namespace bae
 		if (_visualsInZOrder != nullptr)
 		{
 			delete _visualsInZOrder;
+			_visualsInZOrder = nullptr;
 		}
 
 		//std::lower_bound(_visualsInZOrder.begin(), _visualsInZOrder.end(), visual, _CompareVisuals);

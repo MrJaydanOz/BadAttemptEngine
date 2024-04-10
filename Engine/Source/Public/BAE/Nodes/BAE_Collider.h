@@ -7,7 +7,6 @@
 
 namespace bae
 {
-	class Scene;
 	class Physics;
 
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
@@ -21,16 +20,12 @@ namespace bae
 	public:
 		bool isTrigger;
 
-	public:
-		virtual ~Collider() noexcept override;
-
 	protected:
-		Collider(in<std::string> name = "") noexcept;
-
-		virtual void OnLoad() noexcept override;
+		Collider(in<Node*> parent) noexcept;
+		virtual ~Collider() noexcept override;
+		virtual void Create(in<const char*> name = "") override;
+		virtual void Destroy() override;
 
 		virtual void OnParentChanged() noexcept override;
-
-		virtual void OnDestroy() noexcept override;
 	};
 }

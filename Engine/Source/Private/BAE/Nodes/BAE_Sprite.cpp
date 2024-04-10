@@ -8,8 +8,8 @@
 
 namespace bae
 {
-	Sprite::Sprite(in<std::string> name, in<bool> enabled) noexcept : 
-		Visual::Visual(name, enabled),
+	Sprite::Sprite(in<Node*> parent) noexcept :
+		Visual::Visual(parent),
 		image(nullptr),
 		clipRect({}),
 		color(COLOR_WHITE),
@@ -19,12 +19,16 @@ namespace bae
 		pivot(0.5f, 0.5f),
 		scale(1.0f, 1.0f) { }
 
-	Sprite::Sprite(in<bool> enabled) noexcept : 
-		Sprite::Sprite("", enabled) { }
+	Sprite::~Sprite() noexcept { }
 
-	Sprite::~Sprite() noexcept
+	void Sprite::Create(in<const char*> name)
 	{
-		Visual::~Visual();
+		Visual::Create(name);
+	}
+
+	void Sprite::Destroy()
+	{
+		Visual::Destroy();
 	}
 
 	void Sprite::Render()
@@ -35,10 +39,7 @@ namespace bae
 
 			Transform* parentTransform;
 			if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
-			{
-				parentTransform->CacheWorldPose();
 				pose = parentTransform->TransformPose(pose);
-			}
 
 			image->RenderAsObject(clipRect, pose, pivot, scale, flipMode, color, blendingMode);
 		}

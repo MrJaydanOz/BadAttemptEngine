@@ -3,11 +3,10 @@
 #if defined(MESSAGE_WHEN_INCLUDED)
 #pragma message(MESSAGE_WHEN_INCLUDED("BAE_Color.h"))
 #endif
+#include <cmath>
 
 namespace bae
 {
-	struct ColorF;
-
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
 #pragma message(MESSAGE_WHEN_CLASS_DEFINED(struct Color))
 #endif
@@ -17,14 +16,32 @@ namespace bae
 		uint8 r, g, b, a;
 
 	public:
-		constexpr Color(in<uint8> r, in<uint8> g, in<uint8> b, in<uint8> a = (uint8)0xFF) noexcept;
-		constexpr Color(in<bae::uintx_t<8 * 4>> hex) noexcept;
+		constexpr Color(in<uint8> r, in<uint8> g, in<uint8> b, in<uint8> a = (uint8)0xFF) noexcept :
+			r(r), g(g), b(b), a(a) { }
+		constexpr Color(in<bae::uintx_t<8 * 4>> hex) noexcept :
+			r((hex & 0xFF000000u) >> (6 * 4)),
+			g((hex & 0x00FF0000u) >> (4 * 4)),
+			b((hex & 0x0000FF00u) >> (2 * 4)),
+			a((hex & 0x000000FFu) >> (0 * 4)) { }
 
-		constexpr Color& operator=(in<bae::uintx_t<8 * 4>> hex) noexcept;
+		constexpr Color& operator=(in<bae::uintx_t<8 * 4>> hex) noexcept
+		{
+			r = (hex & 0xFF000000u) >> (6 * 4);
+			g = (hex & 0x00FF0000u) >> (4 * 4);
+			b = (hex & 0x0000FF00u) >> (2 * 4);
+			a = (hex & 0x000000FFu) >> (0 * 4);
 
-		friend std::ostream& operator<<(ref<std::ostream> stream, in<Color> color);
+			return *this;
+		}
 
-		constexpr operator ColorF() const noexcept;
+		friend std::ostream& operator<<(ref<std::ostream> stream, in<Color> color)
+		{
+			return stream <<
+				"(r:" << (int)color.r <<
+				", g:" << (int)color.g <<
+				", b:" << (int)color.b <<
+				", a:" << (int)color.a << ')';
+		}
 	};
 
 #if defined(MESSAGE_WHEN_CLASS_DEFINED)
@@ -36,14 +53,41 @@ namespace bae
 		float r, g, b, a;
 
 	public:
-		constexpr ColorF(in<float> r, in<float> g, in<float> b, in<float> a = 1.0f) noexcept;
-		constexpr ColorF(in<bae::uintx_t<8 * 4>> hex) noexcept;
+		constexpr ColorF(in<float> r, in<float> g, in<float> b, in<float> a = 1.0f) noexcept :
+			r(r), g(g), b(b), a(a) { }
+		constexpr ColorF(in<bae::uintx_t<8 * 4>> hex) noexcept :
+			r(((hex & 0xFF000000u) >> (6 * 4))* (1.0f / 255.0f)),
+			g(((hex & 0x00FF0000u) >> (4 * 4))* (1.0f / 255.0f)),
+			b(((hex & 0x0000FF00u) >> (2 * 4))* (1.0f / 255.0f)),
+			a(((hex & 0x000000FFu) >> (0 * 4))* (1.0f / 255.0f)) { }
 
-		constexpr ColorF& operator=(in<bae::uintx_t<8 * 4>> hex) noexcept;
+		constexpr ColorF& operator=(in<bae::uintx_t<8 * 4>> hex) noexcept
+		{
+			r = ((hex & 0xFF000000u) >> (6 * 4)) * (1.0f / 255.0f);
+			g = ((hex & 0x00FF0000u) >> (4 * 4)) * (1.0f / 255.0f);
+			b = ((hex & 0x0000FF00u) >> (2 * 4)) * (1.0f / 255.0f);
+			a = ((hex & 0x000000FFu) >> (0 * 4)) * (1.0f / 255.0f);
+
+			return *this;
+		}
 		
-		friend std::ostream& operator<<(ref<std::ostream> stream, in<ColorF> color);
+		friend std::ostream& operator<<(ref<std::ostream> stream, in<ColorF> color)
+		{
+			return stream <<
+				 "(r:" << std::setprecision(2) << std::fixed << color.r <<
+				", g:" << std::setprecision(2) << std::fixed << color.g <<
+				", b:" << std::setprecision(2) << std::fixed << color.b <<
+				", a:" << std::setprecision(2) << std::fixed << color.a << ')';
+		}
 
-		constexpr explicit operator Color() const noexcept;
+		constexpr explicit operator Color() const noexcept
+		{
+			return Color(
+				(uint8)std::max(0l, std::min(std::lroundf(r * 255.0f), 255l)),
+				(uint8)std::max(0l, std::min(std::lroundf(g * 255.0f), 255l)),
+				(uint8)std::max(0l, std::min(std::lroundf(b * 255.0f), 255l)),
+				(uint8)std::max(0l, std::min(std::lroundf(a * 255.0f), 255l)));
+		}
 	};
 
 	static const Color COLOR_WHITE =    0xFFFFFFFFu;

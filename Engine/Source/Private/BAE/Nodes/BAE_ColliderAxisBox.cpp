@@ -2,11 +2,18 @@
 
 namespace bae
 {
-	ColliderAxisBox::ColliderAxisBox(in<std::string> name) noexcept :
-		Collider::Collider(name) { }
+	ColliderAxisBox::ColliderAxisBox(in<Node*> parent) noexcept :
+		Collider::Collider(parent) { }
 
-	ColliderAxisBox::~ColliderAxisBox() noexcept
+	ColliderAxisBox::~ColliderAxisBox() noexcept { }
+
+	void ColliderAxisBox::Create(in<const char*> name)
 	{
-		Collider::~Collider();
+		Collider::Create(name);
+	}
+
+	void ColliderAxisBox::Destroy()
+	{
+		Collider::Destroy();
 	}
 }

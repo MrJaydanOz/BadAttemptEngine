@@ -19,7 +19,8 @@ namespace bae
 	Physics::Physics() :
 		_isWorking(true),
 		_physicsBodies(),
-		_collidersWithConnectedBody(),
+		_colliders(),
+		_collidersWithConnectedBodyBuffer(),
 		_collisionLog() { }
 
 	Physics::~Physics()
@@ -39,58 +40,53 @@ namespace bae
 	void Physics::_AddCollider(in<Collider*> collider) noexcept
 	{
 		if (collider != nullptr)
-			_collidersWithConnectedBody.Append({ collider, collider->FindParentOfTypeRecursive<PhysicsBody>() });
+			_colliders.Append(collider);
 	}
 
 	void Physics::_RemovePhysicsBody(in<PhysicsBody*> physicsBody) noexcept
 	{
 		if (physicsBody != nullptr)
-		{
-			bae::List<Collider*> collidersConnectedToGivenBody;
-
-			for (auto& pair : _collidersWithConnectedBody)
-			{
-				if (pair.second == physicsBody)
-					pair.second = physicsBody->FindParentOfTypeRecursive<PhysicsBody>();
-			}
-
 			_physicsBodies.Remove(physicsBody);
-		}
 	}
 
 	void Physics::_RemoveCollider(in<Collider*> collider) noexcept
 	{
 		if (collider != nullptr)
-		{
-			_collidersWithConnectedBody.RemoveFirstWhere([&](in<std::pair<Collider*, PhysicsBody*>> pair) -> bool { return pair.first == collider; });
-		}
+			_colliders.Remove(collider);
 	}
 
 	void Physics::_Simulate(in<float> deltaTime) noexcept
 	{
 		_collisionLog.Clear();
 
+		DEBUG_LOG_INFO("- " << _physicsBodies.Size());
+
 		for (auto& physicsBody : _physicsBodies)
 		{
+			DEBUG_LOG_INFO(DEBUG_NODE_NAME(physicsBody));
 			physicsBody->_velocity += gravity;
+			physicsBody->_velocity *= 1.0f - physicsBody->_drag;
 			physicsBody->Translate(physicsBody->_velocity * deltaTime);
 			physicsBody->Rotate(physicsBody->_angularVelocity * deltaTime);
 		}
 
-		for (auto& [collider, physicsBody] : _collidersWithConnectedBody)
-		{
-		}
+		_collidersWithConnectedBodyBuffer.Clear();
+		_collidersWithConnectedBodyBuffer.SetCapacityAtLeast(_colliders.Size());
+		for (auto& collider : _colliders)
+			_collidersWithConnectedBodyBuffer.Append({ collider, collider->FindParentOfTypeRecursive<PhysicsBody>() });
 
 		bool didCollide;
 		PhysicsCollision collision;
 
 		auto processCollisionForPair = [&](PhysicsBody* physicsBody1, PhysicsBody* physicsBody2) -> void
 			{
-				for (auto& [collider2, collider2physicsBody] : _collidersWithConnectedBody)
-					if (collider2 != nullptr && collider2physicsBody == physicsBody2 && !collider2->isTrigger)
+				for (auto& [collider2, collider2physicsBody] : _collidersWithConnectedBodyBuffer)
+				{
+					if (collider2 != nullptr && collider2physicsBody == physicsBody2)
 					{
-						for (auto& [collider1, collider1physicsBody] : _collidersWithConnectedBody)
-							if (collider1 != nullptr && collider1physicsBody == physicsBody1)
+						for (auto& [collider1, collider1physicsBody] : _collidersWithConnectedBodyBuffer)
+						{
+							if (collider1 != nullptr && collider1physicsBody == physicsBody1 && !(collider1->isTrigger && collider2->isTrigger))
 							{
 								didCollide = false;
 
@@ -159,7 +155,6 @@ namespace bae
 												physicsBody1->_velocity -= collision.contactNormal * physicsBody1_velocity_Dot_collision_contactNormal;
 
 											physicsBody1->Translate(collision.contactNormal * -collision.contactOverlap);
-											physicsBody1->CacheWorldPose(true);
 										}
 										else
 										{
@@ -182,7 +177,9 @@ namespace bae
 									_collisionLog.Append(collision);
 								}
 							}
+						}
 					}
+				}
 			};
 
 		for (auto i1 = _physicsBodies.begin(); i1 < _physicsBodies.end(); i1++)
@@ -191,5 +188,7 @@ namespace bae
 				processCollisionForPair(*i1, *i2);
 			processCollisionForPair(*i1, nullptr);
 		}
+
+		_collidersWithConnectedBodyBuffer.Clear();
 	}
 }

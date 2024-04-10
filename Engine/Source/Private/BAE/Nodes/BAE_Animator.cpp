@@ -2,20 +2,24 @@
 
 namespace bae
 {
-	Animator::Animator(in<std::string> name, in<bool> enabled) noexcept :
-		Behaviour::Behaviour(name, enabled),
+	Animator::Animator(in<Node*> parent) noexcept :
+		Behaviour::Behaviour(parent),
 		animation(nullptr),
 		isPlaying(false),
 		animationSpeed(1.0f),
 		_animationState(nullptr),
 		_animationTime(0.0f) { }
 
-	Animator::Animator(in<bool> enabled) noexcept :
-		Animator::Animator("", enabled) { }
+	Animator::~Animator() noexcept { }
 
-	Animator::~Animator() noexcept
+	void Animator::Create(in<const char*> name)
 	{
+		Behaviour::Create(name);
+	}
 
+	void Animator::Destroy()
+	{
+		Behaviour::Destroy();
 	}
 
 	void Animator::Play(in<std::string> stateName) noexcept

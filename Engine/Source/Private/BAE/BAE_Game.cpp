@@ -115,8 +115,6 @@ namespace bae
 	{
 		while (_isRunning)
 		{
-			_input->_ProcessInput();
-
 			BAE_Update();
 
 			bool useFixedTimeForPhysics = _time->GetUseFixedTimeForPhysics();
@@ -125,10 +123,8 @@ namespace bae
 			{
 				if (useFixedTimeForPhysics)
 				{
-					_scene->_ClearWorldPositionCaches();
 					BAE_PhysicsUpdate();
 
-					_scene->_ClearWorldPositionCaches();
 					_physics->_Simulate(_time->FixedDeltaTime());
 				}
 
@@ -137,10 +133,8 @@ namespace bae
 
 			if (!useFixedTimeForPhysics)
 			{
-				_scene->_ClearWorldPositionCaches();
 				BAE_PhysicsUpdate();
 
-				_scene->_ClearWorldPositionCaches();
 				_physics->_Simulate(_time->DeltaTime());
 			}
 
@@ -148,10 +142,13 @@ namespace bae
 
 			BAE_LateUpdate();
 
-			_scene->_ClearWorldPositionCaches();
 			_graphics->_Render();
 
+			_input->_ProcessInput();
+
 			_time->_SleepUntilNextFrame();
+
+			_scene->_DeleteDestroyed();
 		}
 
 		Dispose();

@@ -8,8 +8,8 @@
 
 namespace bae
 {
-	Text::Text(in<std::string> name, in<bool> enabled) noexcept :
-		Visual::Visual(name, enabled),
+	Text::Text(in<Node*> parent) noexcept :
+		Visual::Visual(parent),
 		font(nullptr),
 		color(COLOR_WHITE),
 		flipMode(ImageFlipMode::FLIP_NONE),
@@ -23,18 +23,22 @@ namespace bae
 		_sdlSurface(nullptr),
 		_sdlTexture(nullptr) { }
 
-	Text::Text(in<bool> enabled) noexcept :
-		Text::Text("", enabled) { }
+	Text::~Text() noexcept { }
 
-	Text::~Text() noexcept
+	void Text::Create(in<const char*> name)
 	{
-		Visual::~Visual();
+		Visual::Create(name);
+	}
 
+	void Text::Destroy()
+	{
 		if (_sdlSurface != nullptr)
 			SDL_FreeSurface(_sdlSurface);
 
 		if (_sdlTexture != nullptr)
 			SDL_DestroyTexture(_sdlTexture);
+
+		Visual::Destroy();
 	}
 
 	void Text::Render()
@@ -45,10 +49,7 @@ namespace bae
 
 			Transform* parentTransform;
 			if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
-			{
-				parentTransform->CacheWorldPose();
 				pose = parentTransform->TransformPose(pose);
-			}
 
 			if (_lastText.compare(text) != 0 || _lastFont != font)
 			{

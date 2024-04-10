@@ -103,7 +103,7 @@
     <ClCompile Include="Source\Private\BAE\BAE_Input.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Scene.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Image.cpp" />
-    <ClCompile Include="Source\Private\BAE\Math\BAE_Constants.cpp" />
+    <ClCompile Include="Source\Private\BAE\Math\BAE_Color.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Behaviour.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Collider.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_PhysicsBody.cpp" />
@@ -112,7 +112,6 @@
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Text.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Transform.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Node.cpp" />
-    <ClCompile Include="Source\Private\BAE\Math\BAE_Color.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Physics.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Engine.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Visual.cpp" />

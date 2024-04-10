@@ -63,7 +63,7 @@ namespace bae
 		typedef const T* const_iterator;
 
 	private:
-		std::unique_ptr<T> _dataPointer;
+		T* _dataPointer;
 		size_type _listSize;
 		size_type _listCapacity;
 
@@ -72,17 +72,17 @@ namespace bae
 			_listSize(initializerList.size()),
 			_listCapacity(_listSize > 1 ? _listSize : 1)
 		{
-			_dataPointer = std::unique_ptr<T>(Allocate<T>(_listCapacity));
+			_dataPointer = Allocate<T>(_listCapacity);
 
 			if (_listSize > 0)
-				Copy<T>(initializerList.begin(), _dataPointer.get(), _listCapacity);
+				Copy<T>(initializerList.begin(), _dataPointer, _listCapacity);
 		}
 
 		constexpr List(in<size_type> capacity) :
 			_listSize(0),
 			_listCapacity(capacity > 1 ? capacity : 1)
 		{
-			_dataPointer = std::unique_ptr<T>(Allocate<T>(_listCapacity));
+			_dataPointer = Allocate<T>(_listCapacity);
 		}
 
 		constexpr List() :
@@ -92,10 +92,10 @@ namespace bae
 			_listSize(originalList._listSize),
 			_listCapacity(_listSize > 1 ? _listSize : 1)
 		{
-			_dataPointer = std::unique_ptr<T>(Allocate<T>(_listSize));
+			_dataPointer = Allocate<T>(_listSize);
 
 			if (_listSize > 0)
-				Copy<T>(originalList._dataPointer.get(), _dataPointer.get(), _listCapacity);
+				Copy<T>(originalList._dataPointer, _dataPointer, _listCapacity);
 		}
 
 		template<typename TOriginal>
@@ -110,20 +110,12 @@ namespace bae
 		}
 
 		constexpr ~List() noexcept
-		{ _dataPointer.release(); }
+		{ Deallocate<T>(_dataPointer); }
 
 		_NODISCARD_ONLY_READ constexpr size_type Size() const noexcept
 		{ return _listSize; }
 		_NODISCARD_ONLY_READ constexpr size_type Capacity() const noexcept
 		{ return _listCapacity; }
-
-		constexpr void SetSize(in<size_type> size)
-		{
-			if (size > _listCapacity)
-				SetCapacity(size);
-
-			_listSize = size;
-		}
 
 		constexpr void SetCapacity(in<size_type> capacity)
 		{
@@ -131,11 +123,17 @@ namespace bae
 				return;
 
 			T* newPointer = Allocate<T>(capacity);
-			Copy<T>(_dataPointer.get(), newPointer, capacity < _listCapacity ? capacity : _listCapacity);
-			_dataPointer.reset(newPointer);
+			Copy<T>(_dataPointer, newPointer, capacity < _listCapacity ? capacity : _listCapacity);
+			Deallocate<T>(_dataPointer);
+			_dataPointer = newPointer;
 
 			_listCapacity = capacity;
 			_listSize = _listSize < _listCapacity ? _listSize : _listCapacity;
+		}
+		constexpr void SetCapacityAtLeast(in<size_type> minimumCapacity)
+		{
+			if (_listCapacity < minimumCapacity)
+				SetCapacity(minimumCapacity);
 		}
 
 		_NODISCARD_RESULT constexpr bool WithinRange(in<size_type> index) const noexcept
@@ -146,8 +144,8 @@ namespace bae
 
 		_NODISCARD_RESULT constexpr iterator Find(in<T> item) requires Equatable<T>
 		{
-			iterator itEnd = _dataPointer.get() + _listSize;
-			for (iterator it = _dataPointer.get(); it < itEnd; it++)
+			iterator itEnd = _dataPointer + _listSize;
+			for (iterator it = _dataPointer; it < itEnd; it++)
 				if (*it == item)
 					return it;
 
@@ -157,15 +155,15 @@ namespace bae
 		{ return const_cast<List&>(*this).Find(item); }
 
 		constexpr bool TryFind(in<T> item, out<iterator> iterator) requires Equatable<T>
-		{ return (iterator = Find(item)) != _dataPointer.get() + _listSize; }
+		{ return (iterator = Find(item)) != _dataPointer + _listSize; }
 		constexpr bool TryFind(in<T> item, out<const_iterator> iterator) const requires Equatable<T>
 		{ return const_cast<List&>(*this).TryFind(item, iterator); }
 
 		template<typename TPredicate = bool(T)>
 		_NODISCARD_RESULT constexpr iterator FindIf(in_delegate<TPredicate> predicate) requires Callable<TPredicate, bool, in<T>>
 		{
-			iterator itEnd = _dataPointer.get() + _listSize;
-			for (iterator it = _dataPointer.get(); it < itEnd; it++)
+			iterator itEnd = _dataPointer + _listSize;
+			for (iterator it = _dataPointer; it < itEnd; it++)
 				if (predicate(*it))
 					return it;
 
@@ -177,7 +175,7 @@ namespace bae
 
 		template<typename TPredicate = bool(T)>
 		constexpr bool TryFindIf(in_delegate<TPredicate> predicate, out<iterator> iterator) requires Callable<TPredicate, bool, in<T>>
-		{ return (iterator = FindIf(predicate)) != _dataPointer.get() + _listSize; }
+		{ return (iterator = FindIf(predicate)) != _dataPointer + _listSize; }
 		template<typename TPredicate = bool(T)>
 		constexpr bool TryFindIf(in_delegate<TPredicate> predicate, out<const_iterator> iterator) const requires Callable<TPredicate, bool, in<T>>
 		{ return const_cast<List&>(*this).TryFindIf(predicate, iterator); }
@@ -188,7 +186,7 @@ namespace bae
 			if (newSize > _listCapacity)
 				SetCapacity(_listCapacity * 2);
 
-			Copy<T>(&item, _dataPointer.get() + _listSize, 1);
+			Copy<T>(&item, _dataPointer + _listSize, 1);
 			_listSize = newSize;
 		}
 
@@ -202,7 +200,7 @@ namespace bae
 
 			SetCapacity(newCapacity);
 
-			Copy<T>(initializerList.begin(), _dataPointer.get() + _listSize, initializerList.size());
+			Copy<T>(initializerList.begin(), _dataPointer + _listSize, initializerList.size());
 			_listSize = newSize;
 		}
 
@@ -223,21 +221,22 @@ namespace bae
 				newCapacity *= 2;
 			bool newAllocation = newCapacity != _listCapacity;
 
-			T* dataTo = newAllocation ? Allocate<T>(newCapacity) : _dataPointer.get();
+			T* dataTo = newAllocation ? Allocate<T>(newCapacity) : _dataPointer;
 
 			if (newAllocation)
-				Copy<T>(_dataPointer.get(), dataTo, index);
+				Copy<T>(_dataPointer, dataTo, index);
+
+			Copy<T>(_dataPointer + index, dataTo + (index + valuesSize), newSize - (index + valuesSize));
 
 			T* dataInsertTo = dataTo + index;
 
 			for (auto& value : values)
 				*(dataInsertTo++) = value;
 
-			Copy<T>(_dataPointer.get() + index, dataTo + (index + valuesSize), newSize - (index + valuesSize));
-
 			if (newAllocation)
 			{
-				_dataPointer.reset(dataTo);
+				Deallocate<T>(_dataPointer);
+				_dataPointer = dataTo;
 				_listCapacity = newCapacity;
 			}
 
@@ -245,7 +244,7 @@ namespace bae
 		}
 		template<typename TCollection = List>
 		constexpr void InsertRangeAt(in<const_iterator> iterator, in<TCollection> values) requires CopyOperator<T> && Iterable<TCollection> && Sizable<TCollection, size_type>
-		{ InsertRangeAt<TCollection>(iterator - _dataPointer.get(), values); }
+		{ InsertRangeAt<TCollection>(iterator - _dataPointer, values); }
 
 		constexpr void InsertAt(in<size_type> index, in<T> value) requires CopyOperator<T>
 		{ InsertRangeAt(index, std::initializer_list({ value })); }
@@ -261,12 +260,12 @@ namespace bae
 			size_type copySize = _listSize - to - 1;
 
 			if (copySize > 0)
-				Copy<T>(_dataPointer.get() + (to + 1), _dataPointer.get() + from, copySize);
+				Copy<T>(_dataPointer + (to + 1), _dataPointer + from, copySize);
 
 			_listSize -= deltaSize;
 		}
 		constexpr void RemoveRange(in<const_iterator> from, in<const_iterator> to)
-		{ RemoveRange(from - _dataPointer.get(), to - _dataPointer.get()); }
+		{ RemoveRange(from - _dataPointer, to - _dataPointer); }
 		
 		constexpr void RemoveAt(in<const_iterator> iterator)
 		{ RemoveRange(iterator, iterator); }
@@ -302,8 +301,8 @@ namespace bae
 		constexpr size_type RemoveWhere(in_delegate<TPredicate> predicate) requires Callable<TPredicate, bool, in<T>>
 		{
 			size_type removedCounter = 0;
-			iterator itFrom = _dataPointer.get();
-			iterator itTo = _dataPointer.get();
+			iterator itFrom = _dataPointer;
+			iterator itTo = _dataPointer;
 			iterator itEnd = end();
 
 			while (itFrom < itEnd)
@@ -332,18 +331,18 @@ namespace bae
 		{ RemoveAt(index); }
 
 		_NODISCARD_ONLY_READ constexpr iterator begin() noexcept
-		{ return _dataPointer.get(); }
+		{ return _dataPointer; }
 		_NODISCARD_ONLY_READ constexpr const_iterator begin() const noexcept
-		{ return _dataPointer.get(); }
+		{ return _dataPointer; }
 		_NODISCARD_ONLY_READ constexpr const_iterator cbegin() const noexcept
-		{ return _dataPointer.get(); }
+		{ return _dataPointer; }
 
 		_NODISCARD_ONLY_READ constexpr iterator end() noexcept
-		{ return _dataPointer.get() + _listSize; }
+		{ return _dataPointer + _listSize; }
 		_NODISCARD_ONLY_READ constexpr const_iterator end() const noexcept
-		{ return _dataPointer.get() + _listSize; }
+		{ return _dataPointer + _listSize; }
 		_NODISCARD_ONLY_READ constexpr const_iterator cend() const noexcept
-		{ return _dataPointer.get() + _listSize; }
+		{ return _dataPointer + _listSize; }
 
 		constexpr void swap(ref<List> other) noexcept
 		{
@@ -364,7 +363,7 @@ namespace bae
 			if (index >= _listSize)
 				throw std::out_of_range("Index is out of range of bae::List<>.");
 
-			return *(_dataPointer.get() + index);
+			return *(_dataPointer + index);
 		}
 		_NODISCARD_ONLY_READ constexpr const T& operator[](in<size_type> index) const
 		{ return const_cast<List&>(*this).operator[](index); }
@@ -372,12 +371,11 @@ namespace bae
 		constexpr List& operator=(in<List> other) noexcept
 		{
 			_listSize = other._listSize;
-			_listCapacity = _listSize;
 
-			_dataPointer.reset(Allocate<T>(_listCapacity));
+			SetCapacityAtLeast(_listSize);
 
 			if (_listSize > 0)
-				Copy<T>(other._dataPointer.get(), _dataPointer.get(), _listSize);
+				Copy<T>(other._dataPointer, _dataPointer, _listSize);
 
 			return *this;
 		}
@@ -388,7 +386,7 @@ namespace bae
 				return false;
 
 			for (size_type i = 0; i < _listSize; i++)
-				if (*(_dataPointer.get() + i) != *(other._dataPointer.get() + i))
+				if (*(_dataPointer + i) != *(other._dataPointer + i))
 					return false;
 
 			return true;
@@ -399,7 +397,7 @@ namespace bae
 				return true;
 
 			for (size_type i = 0; i < _listSize; i++)
-				if (*(_dataPointer.get() + i) != *(other._dataPointer.get() + i))
+				if (*(_dataPointer + i) != *(other._dataPointer + i))
 					return true;
 
 			return false;
