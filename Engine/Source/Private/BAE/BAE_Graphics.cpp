@@ -20,11 +20,15 @@ namespace bae
 	void Graphics::SetBackgroundColor(in<Color> color) noexcept
 	{ _backgroundColor = color; }
 
+	WinMenu* Graphics::GetWinMenu() const noexcept
+	{ return _winMenu; }
+
 	Graphics::Graphics() :
 		_sdlWindow(nullptr), 
 		_sdlRenderer(nullptr),
 		_visualsInZOrder(nullptr),
-		_backgroundColor(COLOR_BLACK)
+		_backgroundColor(COLOR_BLACK),
+		_winMenu(nullptr)
 	{
 		_isWorking = false;
 
@@ -48,6 +52,13 @@ namespace bae
 			return;
 		}
 
+		_winMenu = new WinMenu(_sdlWindow);
+
+		if (!_winMenu->InitialiseMenu())
+		{
+			return;
+		}
+
 		_isWorking = true;
 	}
 
@@ -55,17 +66,14 @@ namespace bae
 	{
 		_isWorking = false;
 
+		if (_winMenu != nullptr)
+			delete _winMenu;
+
 		if (_sdlRenderer != nullptr)
-		{
 			SDL_DestroyRenderer(_sdlRenderer);
-			_sdlRenderer = nullptr;
-		}
 
 		if (_sdlWindow != nullptr)
-		{
 			SDL_DestroyWindow(_sdlWindow);
-			_sdlWindow = nullptr;
-		}
 	}
 
 	void Graphics::_Render()

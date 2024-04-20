@@ -1,5 +1,10 @@
 #include "BAE_Input.h"
+#include "Math/BAE_VectorT.h"
 #include "BAE_Game.h"
+#include "Menus/BAE_WinMenu.h"
+#include "SDL2/SDL_syswm.h"
+#include "BAE_Resources.h"
+#include "BAE_Engine.h"
 
 namespace bae
 {
@@ -14,8 +19,6 @@ namespace bae
 
 	bool Input::KeyHeld(in<KeyCode> keyCode) const noexcept
 	{
-		// DUDE BRO MATE GUY PAL, BITMASK! BITMASK!!!!!!!!!
-
 		switch (keyCode)
 		{
 		case KeyCode::KEYCODE_LMB:
@@ -83,9 +86,61 @@ namespace bae
 					Game::GetGame()->Quit();
 					break;
 				}
+				case SDL_SYSWMEVENT:
+				{
+					_HandleWinMenuEvents(inputEvent);
+					break;
+				}
 				default:
 					break;
 			}
+		}
+	}
+
+	void Input::_HandleWinMenuEvents(in<SDL_Event> event)
+	{
+		switch (event.syswm.msg->msg.win.wParam)
+		{
+		case ID_FILE_EXITAPP:
+			Game::GetGame()->Quit();
+			break;
+		case ID_FILE_RESTARTGAME:
+			BAE_Restart();
+			break;
+		case ID_GAME_GAMECONTROLS:
+			Game::GetWinMenu()->ActivatePopup("Game Controls",
+				"WASD - Move Ship\n"
+				"Left Mouse Button - Attack"
+			);
+			break;
+		case ID_ABOUT_ABOUTBADATTEMPTENGINE:
+			Game::GetWinMenu()->ActivatePopup("Bad Attempt Engine",
+				"Once, there was a brilliant but reclusive programmer named Alexander Hargrove. He was a visionary in the field of game development, possessing a rare talent for crafting mediocre\n"
+				"digital worlds. However, his life was marred by tragedy from an early age.\n\nAlexander grew up in a small town, where he was often bullied for his introverted nature and passion for\n"
+				"computers. His only solace was in the world of video games, where he found refuge from the harsh realities of his daily life. Despite the challenges he faced, Alexander's love for\n"
+				"gaming only grew stronger with time, and he dreamt of one day creating his own masterpiece.\n\nAs he grew older, Alexander dedicated himself to mastering the art of programming. He\n"
+				"spent countless hours honing his skills, pouring his heart and soul into his work. Finally, after years of perseverance, he achieved his lifelong dream: he developed his own game\n"
+				"engine, which he named the \"Bad Attempt Engine\".\n\nThe Bad Attempt Engine was meant to revolutionize the gaming industry, boasting basic graphics, simple physics, and\n"
+				"paralleled immersion. Alexander poured every ounce of his being into perfecting his creation, believing it would be his ticket to recognition and success.\n\nHowever, tragedy struck\n"
+				"when Alexander's beloved sister, Emily, fell gravely ill. Despite his best efforts to save her, Emily passed away, leaving Alexander shattered and consumed by grief. Devastated by\n"
+				"the loss, he withdrew from the world, abandoning his dreams and isolating himself from everyone, including his friends and colleagues.\n\nIn his despair, Alexander became obsessed with\n"
+				"his work, using the Bad Attempt Engine as a means of escape from his pain. He threw himself into its development with reckless abandon, pushing himself to the brink of exhaustion in\n"
+				"a desperate attempt to fill the void left by his sister's absence.\n\nBut as Alexander's obsession grew, so too did the flaws in his creation. The Bad Attempt Engine, once heralded as\n"
+				"quite good, began to crumble under the weight of his grief-fueled madness. Glitches and bugs plagued the system, rendering it unusable for all but the most basic of applications.\n\n"
+				"Despite his best efforts to salvage his creation, Alexander's mental and emotional turmoil proved insurmountable. In the end, the Bad Attempt Engine was nothing more than a tragic\n"
+				"reminder of what could have been. A testament to the fragility of dreams and the destructive power of grief.\n\nAnd so, Alexander Hargrove faded into obscurity, his genius overshadowed\n"
+				"by the darkness that consumed him. The Bad Attempt Engine became little more than a cautionary tale, a warning to those who dared to tread the path of obsession at the expense of\n"
+				"everything they held dear."
+			);
+			break;
+		case ID_GAME_CHEATS_DOUBLETIMESCALE:
+			Game::GetTime()->SetTimeScale(Game::GetTime()->GetTimeScale() * 2.0f);
+			break;
+		case ID_GAME_CHEATS_HALFTIMESCALE:
+			Game::GetTime()->SetTimeScale(Game::GetTime()->GetTimeScale() * 0.5f);
+			break;
+		default:
+			break;
 		}
 	}
 }

@@ -117,6 +117,7 @@
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Visual.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Time.cpp" />
     <ClCompile Include="Source\Private\Game\Source.cpp" />
+    <ClCompile Include="Source\Private\BAE\Menus\BAE_WinMenu.cpp" />
     <ClCompile Include="Source\Public\BAE\BAE_Animation.h" />
     <ClCompile Include="Source\Public\BAE\BAE_Scene.h" />
     <ClCompile Include="Source\Private\BAE\BAE_Source.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_version.h" />
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_video.h" />
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_vulkan.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Public\BAE\BAE.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Def.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Engine.h" />
@@ -211,6 +213,7 @@
     <ClInclude Include="Source\Public\BAE\BAE_Graphics.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Math.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Nodes.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_Resources.h" />
     <ClInclude Include="Source\Public\BAE\Math\BAE_Color.h" />
     <ClInclude Include="Source\Public\BAE\Math\BAE_Constants.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Collections.h" />
@@ -221,6 +224,7 @@
     <ClInclude Include="Source\Public\BAE\BAE_Debug.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Game.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Image.h" />
+    <ClInclude Include="Source\Public\BAE\Menus\BAE_WinMenu.h" />
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Animator.h" />
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Behaviour.h" />
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Collider.h" />
@@ -247,6 +251,9 @@
     <None Include="ExternalLibs\DynamicLibs\SDL2.dll" />
     <None Include="ExternalLibs\DynamicLibs\SDL2_image.dll" />
     <None Include="ExternalLibs\DynamicLibs\SDL2_ttf.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -481,6 +481,11 @@ void BAE_PhysicsUpdate()
 	}
 }
 
+void BAE_Restart()
+{
+	Restart();
+}
+
 void BAE_End()
 {
 	delete playerAnimation;

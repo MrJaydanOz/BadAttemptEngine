@@ -93,6 +93,9 @@
     <ClCompile Include="Source\Private\BAE\Math\BAE_Color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Private\BAE\Menus\BAE_WinMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\BAE\BAE_Game.h">
@@ -431,6 +434,15 @@
     <ClInclude Include="Source\Public\BAE\BAE_Collections.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\BAE\BAE_Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\BAE\Menus\BAE_WinMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="ExternalLibs\StaticLibs\SDL2.lib" />
@@ -442,5 +454,10 @@
     <None Include="ExternalLibs\DynamicLibs\SDL2_image.dll" />
     <None Include="ExternalLibs\DynamicLibs\SDL2.dll" />
     <None Include="ExternalLibs\DynamicLibs\SDL2_ttf.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

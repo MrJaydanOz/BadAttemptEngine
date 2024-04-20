@@ -17,4 +17,6 @@ extern void BAE_FixedUpdate();
 
 extern void BAE_PhysicsUpdate();
 
+extern void BAE_Restart();
+
 extern void BAE_End();

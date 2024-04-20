@@ -5,6 +5,8 @@
 #endif
 #include "Math/BAE_VectorT.h"
 
+union SDL_Event;
+
 namespace bae
 {
 	class Game;
@@ -415,5 +417,7 @@ namespace bae
 		~Input();
 
         void _ProcessInput();
+
+        void _HandleWinMenuEvents(in<SDL_Event> event);
 	};
 }

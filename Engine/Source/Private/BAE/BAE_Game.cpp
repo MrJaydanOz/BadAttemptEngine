@@ -29,6 +29,9 @@ namespace bae
 
 	Input* Game::GetInput() noexcept { return GetGame()->_input; }
 
+	WinMenu* Game::GetWinMenu() noexcept
+	{ return GetGame()->_graphics->GetWinMenu(); }
+
 	void Game::DestroyGame()
 	{
 		delete GetGame();
@@ -45,6 +48,41 @@ namespace bae
 	void Game::Quit()
 	{
 		_isRunning = false;
+	}
+
+	void Game::Restart()
+	{
+		_isRunning = false;
+
+		delete _graphics;
+		delete _scene;
+		delete _time;
+		delete _physics;
+		delete _input;
+
+		_graphics = new Graphics();
+		if (!_graphics->_isWorking)
+			return;
+
+		_scene = new Scene();
+		if (!_scene->_isWorking)
+			return;
+
+		_time = new Time();
+		if (!_time->_isWorking)
+			return;
+
+		_physics = new Physics();
+		if (!_physics->_isWorking)
+			return;
+
+		_input = new Input();
+		if (!_input->_isWorking)
+			return;
+
+		_isRunning = true;
+
+		DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game restarted.");
 	}
 
 	Game::Game() : 
@@ -159,6 +197,12 @@ namespace bae
 		BAE_End();
 
 		SDL_Quit();
+
+		delete _graphics;
+		delete _scene;
+		delete _time;
+		delete _physics;
+		delete _input;
 
 		DEBUG_LOG_SUCCESS_CONTEXTED(BAE_LOG_CONTEXT, "Game disposed.");
 	}

@@ -26,23 +26,28 @@ namespace bae
 		Input* _input;
 
 	public:
-		static Game* GetGame() noexcept;
+		_NODISCARD static Game* GetGame() noexcept;
 
-		static Graphics* GetGraphics() noexcept;
+		_NODISCARD static Graphics* GetGraphics() noexcept;
 
-		static Scene* GetScene() noexcept;
+		_NODISCARD static Scene* GetScene() noexcept;
 
-		static Time* GetTime() noexcept;
+		_NODISCARD static Time* GetTime() noexcept;
 
-		static Physics* GetPhysics() noexcept;
+		_NODISCARD static Physics* GetPhysics() noexcept;
 
-		static Input* GetInput() noexcept;
+		_NODISCARD static Input* GetInput() noexcept;
+
+		_NODISCARD static WinMenu* GetWinMenu() noexcept;
 
 		static void DestroyGame();
 
 		void Run();
 
 		void Quit();
+
+		// Makes no sense but ok? Though maybe to readjust some driver settings?
+		void Restart();
 
 	private:
 		Game();

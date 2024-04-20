@@ -8,6 +8,7 @@
 #include <SDL2/SDL_image.h>
 #include "Math/BAE_VectorT.h"
 #include "Math/BAE_Color.h"
+#include "Menus/BAE_WinMenu.h"
 
 // !! TEMPORARY SOLUTION !!
 #include "Nodes/BAE_Node.h"
@@ -37,12 +38,15 @@ namespace bae
 		bae::List<Visual*>* _visualsInZOrder;
 		bool _isWorking;
 		Color _backgroundColor;
+		WinMenu* _winMenu;
 
 	public:
 		_NODISCARD Vector2I GetScreenSize() const noexcept;
 
 		_NODISCARD Color GetBackgroundColor() const noexcept;
 		void SetBackgroundColor(in<Color> color) noexcept;
+
+		_NODISCARD WinMenu* GetWinMenu() const noexcept;
 
 	private:
 		Graphics();
