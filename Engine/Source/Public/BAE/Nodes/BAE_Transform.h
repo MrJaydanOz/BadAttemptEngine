@@ -10,8 +10,8 @@
 
 namespace bae
 {
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Transform))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Transform))
 #endif
 	class Transform : public Node
 	{

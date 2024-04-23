@@ -10,8 +10,8 @@ namespace bae
 {
 	class Scene;
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Animator))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Animator))
 #endif
 	class Animator : public Behaviour
 	{

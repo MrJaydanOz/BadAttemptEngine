@@ -7,8 +7,8 @@
 
 namespace bae
 {
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(struct Color))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(struct Color))
 #endif
 	struct Color
 	{
@@ -44,8 +44,8 @@ namespace bae
 		}
 	};
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(struct ColorF))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(struct ColorF))
 #endif
 	struct ColorF
 	{

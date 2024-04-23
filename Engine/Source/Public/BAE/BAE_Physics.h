@@ -12,8 +12,8 @@ namespace bae
 {
 	class Game;
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(struct PhysicsCollision))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(struct PhysicsCollision))
 #endif
 	struct PhysicsCollision
 	{
@@ -28,8 +28,8 @@ namespace bae
 		PhysicsCollision() noexcept;
 	};
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Physics))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Physics))
 #endif
 	class Physics
 	{

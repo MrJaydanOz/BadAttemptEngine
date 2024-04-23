@@ -9,8 +9,8 @@
 
 namespace bae
 {
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Vector<size_t, typename>))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Vector<size_t, typename>))
 #endif
 	template<size_t elementCount, typename T>
 	class Vector { };

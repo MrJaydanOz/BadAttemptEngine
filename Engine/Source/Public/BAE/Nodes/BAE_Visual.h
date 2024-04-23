@@ -12,8 +12,8 @@ namespace bae
 {
 	class Graphics;
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Visual))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Visual))
 #endif
 	class Visual : public Behaviour
 	{

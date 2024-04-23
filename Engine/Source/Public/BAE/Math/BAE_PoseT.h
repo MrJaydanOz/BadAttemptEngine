@@ -7,8 +7,8 @@
 
 namespace bae
 {
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Pose<typename, typename>))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Pose<typename, typename>))
 #endif
 	template<typename TPosition, typename TRotation = TPosition>
 	class Pose

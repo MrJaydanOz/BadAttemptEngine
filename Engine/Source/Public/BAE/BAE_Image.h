@@ -14,8 +14,8 @@ struct SDL_Texture;
 
 namespace bae
 {
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(enum class ImageFlipMode))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(enum class ImageFlipMode))
 #endif
 	enum class ImageFlipMode : int_fit_t<2>
 	{
@@ -24,8 +24,8 @@ namespace bae
 		FLIP_VERTICAL
 	};
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(enum class ImageBlendMode))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(enum class ImageBlendMode))
 #endif
 	enum class ImageBlendMode : int_fit_t<4>
 	{
@@ -50,8 +50,8 @@ namespace bae
 		BLENDMODE_MUL
 	};
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(struct Image))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(struct Image))
 #endif
 	struct Image
 	{

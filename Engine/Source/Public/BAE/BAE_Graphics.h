@@ -20,8 +20,8 @@ namespace bae
 	struct Image;
 	struct Font;
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Graphics))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Graphics))
 #endif
 	class Graphics
 	{

@@ -14,8 +14,8 @@ namespace bae
 {
 	class Text;
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(enum class TextHorizonalAlignment))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(enum class TextHorizonalAlignment))
 #endif
 	enum class TextHorizonalAlignment : int_fit_t<2>
 	{
@@ -24,8 +24,8 @@ namespace bae
 		TEXT_ALIGNMENT_RIGHT
 	};
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(struct Font))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(struct Font))
 #endif
 	struct Font
 	{

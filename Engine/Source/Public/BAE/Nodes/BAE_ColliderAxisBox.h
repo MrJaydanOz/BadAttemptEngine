@@ -9,8 +9,8 @@ namespace bae
 {
 	class Physics;
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class ColliderAxisBox))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class ColliderAxisBox))
 #endif
 	class ColliderAxisBox : public Collider
 	{

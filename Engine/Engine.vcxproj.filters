@@ -96,6 +96,9 @@
     <ClCompile Include="Source\Private\BAE\Menus\BAE_WinMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Private\BAE\BAE_StateMachine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\BAE\BAE_Game.h">
@@ -443,6 +446,9 @@
     <ClInclude Include="Source\Public\BAE\Menus\BAE_WinMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Public\BAE\BAE_StateMachine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="ExternalLibs\StaticLibs\SDL2.lib" />
@@ -454,6 +460,7 @@
     <None Include="ExternalLibs\DynamicLibs\SDL2_image.dll" />
     <None Include="ExternalLibs\DynamicLibs\SDL2.dll" />
     <None Include="ExternalLibs\DynamicLibs\SDL2_ttf.dll" />
+    <None Include="Engine.aps" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc">

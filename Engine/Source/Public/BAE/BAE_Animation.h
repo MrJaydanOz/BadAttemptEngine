@@ -4,6 +4,7 @@
 #include "Nodes/BAE_Node.h"
 #include "Math/BAE_VectorT.h"
 #include "BAE_Image.h"
+#include "BAE_StateMachine.h"
 
 namespace bae
 {
@@ -43,7 +44,7 @@ namespace bae
 		virtual void Process(in<Node*> targetNode, in<float> animationTime) noexcept override;
 	};
 
-	class AnimationState
+	class AnimationState : public State<std::string, in<float>>
 	{
 		friend class Animator;
 
@@ -55,11 +56,18 @@ namespace bae
 		AnimationState(in_initializer_list<AnimationControl*> controls) noexcept;
 		~AnimationState();
 
+	protected:
+		virtual void OnStart(ref<MachineType> machine, in<float>) override;
+
+		virtual void OnTick(ref<MachineType> machine, in<float> animationTime) override;
+
+		virtual void OnEnd(ref<MachineType> machine, in<float>) override;
+
 	private:
 		void _Process(in<Animator*> animator, in<float> animationTime) noexcept;
 	};
 
-	class Animation
+	class Animation : public StateMachine<State<std::string, in<float>>>
 	{
 		friend class Animator;
 
@@ -77,5 +85,3 @@ namespace bae
 		AnimationState* GetState(in<std::string> name) noexcept;
 	};
 }
-
-#include "Nodes/BAE_Animator.h"

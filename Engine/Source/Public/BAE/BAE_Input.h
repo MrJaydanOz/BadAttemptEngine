@@ -394,8 +394,8 @@ namespace bae
         KEYCODE_NUM_CODES = 512
 };
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Input))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Input))
 #endif
 	class Input
 	{

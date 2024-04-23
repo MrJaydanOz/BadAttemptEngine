@@ -6,8 +6,8 @@
 
 namespace bae
 {
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(struct Pair))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(struct Pair))
 #endif
 	template<typename TFirst, typename TSecond>
 	struct Pair
@@ -25,8 +25,8 @@ namespace bae
 			second(second) { }
 	};
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class Collection))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Collection))
 #endif
 	class Collection
 	{
@@ -51,16 +51,16 @@ namespace bae
 		{ memcpy(to, from, sizeof(T) * size); }
 	};
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(class List))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class List))
 #endif
 	template<typename T>
 	class List : public Collection
 	{
 	public:
-		typedef size_t size_type;
-		typedef T* iterator;
-		typedef const T* const_iterator;
+		using size_type = size_t;
+		using iterator = T*;
+		using const_iterator = const T*;
 
 	private:
 		T* _dataPointer;
@@ -99,7 +99,7 @@ namespace bae
 		}
 
 		template<typename TOriginal>
-		constexpr List(in<TOriginal> originalList) requires CopyOperator<T> && requires(TOriginal originalList, size_type index) { (T)originalList[index]; }&& Sizable<TOriginal, size_type> :
+		constexpr List(in<TOriginal> originalList) requires CopyOperator<T> && requires(TOriginal originalList, size_type index) { (T)originalList[index]; } && Sizable<TOriginal, size_type> :
 			_listSize(originalList.size()),
 			_listCapacity(_listSize > 1 ? _listSize : 1)
 		{

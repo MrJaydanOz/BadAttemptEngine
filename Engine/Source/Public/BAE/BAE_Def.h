@@ -20,7 +20,7 @@
 #define MESSAGE_WHEN_INCLUDED(...) " --[ Compiling '" __VA_ARGS__ "' ]--"
 #endif
 #if false
-#define MESSAGE_WHEN_CLASS_DEFINED(...) " --[ Compiling '" #__VA_ARGS__ "' ]--"
+#define MESSAGE_WHEN_CLASS_DECLARED(...) " --[ Compiling '" #__VA_ARGS__ "' ]--"
 #endif
 
 typedef signed char            int8;
@@ -126,8 +126,8 @@ namespace bae
 
 template<typename T> 
 using in = const T&;
-template<typename T> 
-using in_value = std::conditional_t<std::is_same_v<std::remove_pointer_t<T>, T>, const T, const std::remove_pointer_t<T>*>;
+//template<typename T> 
+//using in_value = std::conditional_t<std::is_same_v<std::remove_pointer_t<T>, T>, const T, const std::remove_pointer_t<T>*>;
 template<typename T>
 using in_delegate = T;
 template<typename T>

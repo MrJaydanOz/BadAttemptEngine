@@ -6,8 +6,8 @@
 
 #include <SDL2/SDL_syswm.h>
 
-#if defined(MESSAGE_WHEN_CLASS_DEFINED)
-#pragma message(MESSAGE_WHEN_CLASS_DEFINED(struct WinMenu))
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(struct WinMenu))
 #endif
 class WinMenu
 {

@@ -103,6 +103,7 @@
     <ClCompile Include="Source\Private\BAE\BAE_Input.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Scene.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Image.cpp" />
+    <ClCompile Include="Source\Private\BAE\BAE_StateMachine.cpp" />
     <ClCompile Include="Source\Private\BAE\Math\BAE_Color.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Behaviour.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Collider.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="Source\Public\BAE\BAE_Math.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Nodes.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Resources.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_StateMachine.h" />
     <ClInclude Include="Source\Public\BAE\Math\BAE_Color.h" />
     <ClInclude Include="Source\Public\BAE\Math\BAE_Constants.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Collections.h" />
@@ -248,6 +250,7 @@
     <Library Include="ExternalLibs\StaticLibs\SDL2_ttf.lib" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Engine.aps" />
     <None Include="ExternalLibs\DynamicLibs\SDL2.dll" />
     <None Include="ExternalLibs\DynamicLibs\SDL2_image.dll" />
     <None Include="ExternalLibs\DynamicLibs\SDL2_ttf.dll" />
