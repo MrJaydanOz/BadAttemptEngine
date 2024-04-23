@@ -24,26 +24,27 @@ namespace bae
 #if defined(MESSAGE_WHEN_CLASS_DECLARED)
 #pragma message(MESSAGE_WHEN_CLASS_DECLARED(class State))
 #endif
-	template<typename TKey, typename... TParameters>
+	template<typename TKey, typename TParameter>
 	class State
 	{
 	public:
 		using KeyType = TKey;
-		using ParameterTypes = TParameters;
+		using ParameterType = TParameter;
 
-		using MachineType = StateMachineInstance<StateMachine<State>>;
-
-		friend class MachineType;
+		using InstanceType = StateMachineInstance<StateMachine<State>>;
 
 	private:
 		KeyType _key;
 
-	protected:
-		virtual void OnStart(ref<MachineType> machine, ParameterTypes... parameters) = 0;
+	public:
+		const KeyType& GetKey()
+		{ return _key; }
 
-		virtual void OnTick(ref<MachineType> machine, ParameterTypes... parameters) = 0;
+		virtual void OnStart(ParameterType parameter) = 0;
 
-		virtual void OnEnd(ref<MachineType> machine, ParameterTypes... parameters) = 0;
+		virtual void OnTick(ParameterType parameter) = 0;
+
+		virtual void OnEnd(ParameterType parameter) = 0;
 
 		State(in<TKey> key) noexcept :
 			_key(key) { }
@@ -56,29 +57,52 @@ namespace bae
 		using StateType = TStateType;
 
 		using StateKeyType = StateType::KeyType;
-		using StateParameterTypes = StateType::ParameterTypes;
+		using StateParameterType = StateType::ParameterType;
 		using IndexType = List<StateType>::size_type;
 
 	private:
-		List<StateType> _states;
+		List<StateType*> _states;
+		List<StateType*> _deleteInDestructor;
 
 	public:
 		StateMachine() noexcept :
 			_states(),
-			_currentState(nullptr),
-			_doNoRecursionError(false) { }
+			_deleteInDestructor() { }
 
-		StateMachine(in_initializer_list<StateType> states) noexcept : 
+		StateMachine(in_initializer_list<StateType*> states) noexcept : 
 			_states(states),
-			_currentState(nullptr),
-			_doNoRecursionError(false) { }
+			_deleteInDestructor() { }
 
-		_NODISCARD_RESULT StateType* GetState(in<StateKeyType> key) const noexcept requires requires(in<StateType> state, in<StateKeyType> key) { state._key == key; }
-		{ return _states.FindIf([&](in<StateType> state) -> bool { return state._key == key }); }
+		~StateMachine() noexcept
+		{
+			for (StateType*& state : _deleteInDestructor)
+				delete state;
+		}
+
+		_NODISCARD_ONLY_READ const List<StateType*>& GetStates() const noexcept
+		{ return _states; }
+
+		template<typename... TConstructorArguments>
+		const void CreateState(in<StateKeyType> key, TConstructorArguments... constructorArguments) noexcept(noexcept(StateType(key, constructorArguments...)))
+		{ AssignState(new StateType(key, constructorArguments...), true); }
+		const void AssignState(in<StateType*> state, bool deleteOnDestruction = false) noexcept
+		{
+			_states.Append(state);
+			if (deleteOnDestruction)
+				_deleteInDestructor.Append(state);
+		}
+
+		_NODISCARD_RESULT StateType* GetState(in<StateKeyType> key) const noexcept requires requires(in<StateType*> state, in<StateKeyType> key) { state->GetKey() == key; }
+		{ 
+			StateType*const* result;
+			return _states.TryFindIf([&](in<StateType*> state) -> bool { return state != nullptr && state->GetKey() == key; }, result) 
+				? *result 
+				: nullptr;
+		}
 		_NODISCARD_RESULT StateType* GetState(in<IndexType> index) const noexcept requires !std::is_convertible_v<StateKeyType, IndexType>
-		{ return _states[index]; }
+		{ return index >= _states.size() ? nullptr : _states[index]; }
 
-		bool TryGetState(in<StateKeyType> key, ref<StateType*> result) const noexcept requires requires(in<StateType> state, in<StateKeyType> key) { state._key == key; }
+		bool TryGetState(in<StateKeyType> key, ref<StateType*> result) const noexcept requires requires { GetState(key); }
 		{ return (result = GetState(key)) != nullptr; }
 	};
 
@@ -90,94 +114,124 @@ namespace bae
 
 		using StateType = MachineType::StateType;
 		using StateKeyType = MachineType::StateKeyType;
-		using StateParameterTypes = MachineType::StateParameterTypes;
+		using StateParameterType = MachineType::StateParameterType;
 		using IndexType = MachineType::IndexType;
 
-	private:
-		MachineType* _machine;
+	public:
+		MachineType* machine;
 
+	private:
 		StateType* _currentState;
-		std::optional<StateType*> _queuedState;
+		StateType* _queuedState;
+		bool _useQueuedState;
 		bool _doNoRecursionError;
 
 	public:
 		StateMachineInstance() noexcept :
-			_machine(nullptr) { }
+			machine(nullptr),
+			_currentState(nullptr),
+			_queuedState(nullptr),
+			_useQueuedState(false),
+			_doNoRecursionError(false) { }
 
 		StateMachineInstance(in<MachineType*> machine) noexcept :
-			_machine(machine) { }
+			machine(machine),
+			_currentState(nullptr),
+			_queuedState(nullptr),
+			_useQueuedState(false),
+			_doNoRecursionError(false) { }
 
-		void Tick(StateParameterTypes... parameters)
+		void Tick(StateParameterType parameter)
 		{
 			if (_doNoRecursionError)
-				throw new std::exception("Do not call Tick(...) from inside a state.");
+				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
+					"Do not call Tick(StateParameterType) from inside a state."));
 
-			if (_queuedState.has_value())
-				ChangeState(_queuedState.value(), parameters...);
+			if (_useQueuedState)
+			{
+				ChangeState(_queuedState, parameter);
+			}
 
 			if (_currentState != nullptr)
 			{
 				_doNoRecursionError = true;
-				_currentState->OnTick(this, parameters...);
+				_currentState->OnTick(parameter);
 				_doNoRecursionError = false;
 			}
 		}
 
-		void ChangeState(in<StateType*> targetState, StateParameterTypes... parameters)
+		void ChangeState(in<StateType*> targetState, StateParameterType parameter)
 		{
 			if (_doNoRecursionError)
-				throw new std::exception("Do not call ChangeState(StateType*, ...) from inside a State<>. Use QueueState(StateType*) instead.");
-
-			_queuedState = {};
+				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
+					"Do not call ChangeState(StateType*, StateParameterType) from inside a State<>. Use QueueState(StateType*) instead."));
 
 			if (_currentState != nullptr)
 			{
 				_doNoRecursionError = true;
-				_currentState->OnEnd(this, parameters...);
+				_currentState->OnEnd(parameter);
 				_doNoRecursionError = false;
 			}
 
 			_currentState = targetState;
 
+			_queuedState = nullptr;
+			_useQueuedState = false;
+
 			if (_currentState != nullptr)
 			{
 				_doNoRecursionError = true;
-				_currentState->OnStart(this, parameters...);
+				_currentState->OnStart(parameter);
 				_doNoRecursionError = false;
 			}
 		}
-		void ChangeState(in<StateKeyType> targetStateKey, StateParameterTypes... parameters) requires requires(in<StateType> state, in<StateKeyType> key) { state._key == key; }
+		void ChangeState(in<StateKeyType> targetStateKey, StateParameterType parameter) requires requires(in<StateType> state, in<StateKeyType> key) { state._key == key; }
 		{
-			if (_doNoRecursionError)
-				throw new std::exception("Do not call ChangeState(TStateKey, ...) from inside a State<>. Use QueueState(TStateKey) instead.");
+			if (machine == nullptr)
+				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
+					"There is no StateMachine to read a state from."));
 
-			StateType* targetState = GetState(targetStateKey);
+			if (_doNoRecursionError)
+				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
+					"Do not call ChangeState(TStateKey, ...) from inside a State<>. Use QueueState(TStateKey) instead."));
+
+			StateType* targetState = machine->GetState(targetStateKey);
 
 			if (targetState)
 				DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, "No state has the given stateKey, setting state to null.");
 
-			ChangeState(targetState, parameters...);
+			ChangeState(targetState, parameter);
 		}
-		void ChangeState(in<IndexType> targetStateIndex, StateParameterTypes... parameters) requires !std::is_convertible_v<StateKeyType, IndexType>
+		void ChangeState(in<IndexType> targetStateIndex, StateParameterType parameter) requires !std::is_convertible_v<StateKeyType, IndexType>
 		{
-			if (_doNoRecursionError)
-				throw new std::exception("Do not call ChangeState(size_t, ...) from inside a State<>. Use QueueState(size_t) instead.");
+			if (machine == nullptr)
+				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
+					"There is no StateMachine to read a state from."));
 
-			StateType* targetState = GetState(targetStateIndex);
+			if (_doNoRecursionError)
+				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
+					"Do not call ChangeState(size_t, ...) from inside a State<>. Use QueueState(size_t) instead."));
+
+			StateType* targetState = machine->GetState(targetStateIndex);
 
 			if (targetState)
 				DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, "Index outside of range, setting state to null.");
 
-			ChangeState(targetState, parameters...);
+			ChangeState(targetState, parameter);
 		}
 
 		void QueueState(in<StateType*> targetState) noexcept
 		{
 			_queuedState = targetState;
+			_useQueuedState = true;
 		}
 		void QueueState(in<StateKeyType> targetStateKey) noexcept requires requires(in<StateType> state, in<StateKeyType> key) { state._key == key; }
 		{
-			StateType* targetState = GetState(targetStateIndex);
+			if (machine == nullptr)
+				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
+					"There is no StateMachine to read a state from."));
+
+			StateType* targetState = machine->GetState(targetStateKey);
 
 			if (targetState)
 				DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, "No state has the given stateKey, setting state to null.");
@@ -186,7 +240,11 @@ namespace bae
 		}
 		void QueueState(in<IndexType> targetStateIndex) noexcept requires !std::is_convertible_v<StateKeyType, IndexType>
 		{
-			StateType* targetState = GetState(targetStateIndex);
+			if (machine == nullptr)
+				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
+					"There is no StateMachine to read a state from."));
+
+			StateType* targetState = machine->GetState(targetStateIndex);
 
 			if (targetState)
 				DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, "Index outside of range, setting state to null.");

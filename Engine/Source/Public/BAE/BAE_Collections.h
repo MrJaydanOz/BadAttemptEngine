@@ -152,12 +152,19 @@ namespace bae
 			return itEnd;
 		}
 		_NODISCARD_RESULT constexpr const_iterator Find(in<T> item) const requires Equatable<T>
-		{ return const_cast<List&>(*this).Find(item); }
+		{
+			iterator itEnd = _dataPointer + _listSize;
+			for (iterator it = _dataPointer; it < itEnd; it++)
+				if (*it == item)
+					return it;
+
+			return itEnd;
+		}
 
 		constexpr bool TryFind(in<T> item, out<iterator> iterator) requires Equatable<T>
 		{ return (iterator = Find(item)) != _dataPointer + _listSize; }
 		constexpr bool TryFind(in<T> item, out<const_iterator> iterator) const requires Equatable<T>
-		{ return const_cast<List&>(*this).TryFind(item, iterator); }
+		{ return (iterator = Find(item)) != _dataPointer + _listSize; }
 
 		template<typename TPredicate = bool(T)>
 		_NODISCARD_RESULT constexpr iterator FindIf(in_delegate<TPredicate> predicate) requires Callable<TPredicate, bool, in<T>>
@@ -171,14 +178,21 @@ namespace bae
 		}
 		template<typename TPredicate = bool(T)>
 		_NODISCARD_RESULT constexpr const_iterator FindIf(in_delegate<TPredicate> predicate) const requires Callable<TPredicate, bool, in<T>>
-		{ return const_cast<List&>(*this).FindIf(predicate); }
+		{
+			iterator itEnd = _dataPointer + _listSize;
+			for (iterator it = _dataPointer; it < itEnd; it++)
+				if (predicate(*it))
+					return it;
+
+			return itEnd;
+		}
 
 		template<typename TPredicate = bool(T)>
 		constexpr bool TryFindIf(in_delegate<TPredicate> predicate, out<iterator> iterator) requires Callable<TPredicate, bool, in<T>>
 		{ return (iterator = FindIf(predicate)) != _dataPointer + _listSize; }
 		template<typename TPredicate = bool(T)>
 		constexpr bool TryFindIf(in_delegate<TPredicate> predicate, out<const_iterator> iterator) const requires Callable<TPredicate, bool, in<T>>
-		{ return const_cast<List&>(*this).TryFindIf(predicate, iterator); }
+		{ return (iterator = FindIf(predicate)) != _dataPointer + _listSize; }
 
 		constexpr void Append(in<T> item) requires CopyOperator<T>
 		{

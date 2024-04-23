@@ -4,10 +4,9 @@ namespace bae
 {
 	Animator::Animator(in<Node*> parent) noexcept :
 		Behaviour::Behaviour(parent),
-		animation(nullptr),
-		isPlaying(false),
 		animationSpeed(1.0f),
-		_animationState(nullptr),
+		isPlaying(false),
+		_stateMachine(nullptr),
 		_animationTime(0.0f) { }
 
 	Animator::~Animator() noexcept { }
@@ -22,30 +21,54 @@ namespace bae
 		Behaviour::Destroy();
 	}
 
-	void Animator::Play(in<std::string> stateName) noexcept
+	void Animator::Play(in<std::string> stateName, bool resetTime) noexcept
 	{
-		if (animation == nullptr)
+		if (_stateMachine.machine == nullptr)
 		{
-			DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT << " (AnimationControl)", DEBUG_NODE_NAME(this) << " doesn't have an Animation reference, therefore the state '" << stateName << "' is invalid.");
+			DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT << " (AnimationControl)", 
+				DEBUG_NODE_NAME(this) << " doesn't have an Animation reference, therefore the state '" << stateName << "' is invalid.");
 			return;
 		}
 
-		AnimationState* state = animation->GetState(stateName);
+		AnimationState* state = _stateMachine.machine->GetState(stateName);
 
 		if (state == nullptr)
 		{
-			DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT << " (AnimationControl)", DEBUG_NODE_NAME(this) << " doesn't have the state '" << stateName << "'.");
+			DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT << " (AnimationControl)", 
+				DEBUG_NODE_NAME(this) << " doesn't have the state '" << stateName << "'.");
 			return;
 		}
 
-		Play(state);
+		Play(state, resetTime);
 	}
 
-	void Animator::Play(in<AnimationState*> state) noexcept
+	void Animator::Play(in<size_t> stateIndex, bool resetTime) noexcept
 	{
-		_animationState = state;
+		if (_stateMachine.machine == nullptr)
+		{
+			DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT << " (AnimationControl)", 
+				DEBUG_NODE_NAME(this) << " doesn't have an Animation reference, therefore the index '" << stateIndex << "' is invalid.");
+			return;
+		}
+
+		AnimationState* state = _stateMachine.machine->GetState(stateIndex);
+
+		if (state == nullptr)
+		{
+			DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT << " (AnimationControl)", 
+				DEBUG_NODE_NAME(this) << " doesn't have the index '" << stateIndex << "'.");
+			return;
+		}
+
+		Play(state, resetTime);
+	}
+
+	void Animator::Play(in<AnimationState*> state, bool resetTime) noexcept
+	{
+		_stateMachine.QueueState(state);
 		isPlaying = true;
-		_animationTime = 0.0f;
+		if (resetTime)
+			_animationTime = 0.0f;
 	}
 
 	void Animator::Pause() noexcept
@@ -60,18 +83,13 @@ namespace bae
 
 	void Animator::Stop() noexcept
 	{
-		_animationState = nullptr;
+		_stateMachine.QueueState(nullptr);
 		isPlaying = true;
 		_animationTime = 0.0f;
 	}
 
 	void Animator::_Process(in<float> deltaTime) noexcept
 	{
-		if (_animationState != nullptr)
-		{
-			_animationTime += deltaTime * animationSpeed;
-
-			_animationState->_Process(this, _animationTime);
-		}
+		_stateMachine.Tick({ this, _animationTime += deltaTime * animationSpeed });
 	}
 }

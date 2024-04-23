@@ -18,7 +18,7 @@ namespace bae
 		TTF_CloseFont(_sdlFont);
 	}
 
-	Font* Font::Load(in_value<char*> path, in<int> fontSize) noexcept
+	Font* Font::Load(in<const char*> path, in<int> fontSize) noexcept
 	{
 		TTF_Font* sdlFont = TTF_OpenFont(path, fontSize);
 
@@ -31,7 +31,7 @@ namespace bae
 		return new Font(sdlFont);
 	}
 
-	bool Font::TryLoad(in_value<char*> path, in<int> fontSize, out<Font*> font) noexcept
+	bool Font::TryLoad(in<const char*> path, in<int> fontSize, out<Font*> font) noexcept
 	{
 		font = Load(path, fontSize);
 		return font != nullptr;

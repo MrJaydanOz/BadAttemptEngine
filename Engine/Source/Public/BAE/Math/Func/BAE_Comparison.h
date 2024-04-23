@@ -3,7 +3,6 @@
 #if defined(MESSAGE_WHEN_INCLUDED)
 #pragma message(MESSAGE_WHEN_INCLUDED("BAE_Comparison.h"))
 #endif
-#include <type_traits>
 #include <cmath>
 
 namespace bae
@@ -47,4 +46,14 @@ namespace bae
 	template<typename T, typename TLessThanPredicate>
 	_NODISCARD constexpr in<T> Clamp(in<T> value, in<T> min, in<T> max, in<TLessThanPredicate> predicate) noexcept(noexcept(Min<T>(Max<T>(min, value, predicate), max, predicate)))
 	{ return Min<T, TLessThanPredicate>(Max<T, TLessThanPredicate>(min, value, predicate), max, predicate); }
+	
+	template<typename T>
+	_NODISCARD constexpr T Mod(in<T> value, in<T> length) noexcept
+	{ 
+		T result = value % length;
+		if (result < 0)
+			result += length;
+
+		return result;
+	}
 }

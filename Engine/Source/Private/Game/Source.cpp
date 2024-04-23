@@ -1,5 +1,5 @@
 #include "BAE/BAE_Engine.h"
-#include "BAE/BAE_Animation.h"
+#include "BAE/Nodes/BAE_Animator.h"
 
 using namespace bae;
 
@@ -38,46 +38,14 @@ public:
 
 		if (velocity.SqrMagnitude() > 1.0f)
 		{
-			std::pair<uint8, Vector2F> pointsAroundAnimations[8]
+			float angle = ATan2(velocity.y, velocity.x) + (DEG_TO_RAD * 180.0f);
+			int direction = Mod(RoundI(angle * RAD_TO_TURN * 16.0f), 16);
+
+			if (!_lastIsWalking || _lastAnimationDirection != direction)
 			{
-				{ 0, Vector2F(-1.0f    , +0.0f    ) },
-				{ 1, Vector2F(-R_SQRT_2, -R_SQRT_2) },
-				{ 2, Vector2F(+0.0f    , -1.0f    ) },
-				{ 3, Vector2F(+R_SQRT_2, -R_SQRT_2) },
-				{ 4, Vector2F(+1.0f    , +0.0f    ) },
-				{ 5, Vector2F(+R_SQRT_2, +R_SQRT_2) },
-				{ 6, Vector2F(+0.0f    , +1.0f    ) },
-				{ 7, Vector2F(-R_SQRT_2, +R_SQRT_2) }
-			};
+				_lastAnimationDirection = direction;
 
-			const auto distanceComparison = [&](in<std::pair<uint8, Vector2F>> a, in<std::pair<uint8, Vector2F>> b) noexcept -> bool 
-				{ return a.second.SqrDistance(velocity) < b.second.SqrDistance(velocity); };
-
-			std::pair<uint8, Vector2F> pointAroundAnimation = Min(Min(Min(Min(Min(Min(Min(
-				pointsAroundAnimations[0],
-				pointsAroundAnimations[1], distanceComparison),
-				pointsAroundAnimations[2], distanceComparison),
-				pointsAroundAnimations[3], distanceComparison),
-				pointsAroundAnimations[4], distanceComparison),
-				pointsAroundAnimations[5], distanceComparison),
-				pointsAroundAnimations[6], distanceComparison),
-				pointsAroundAnimations[7], distanceComparison);
-
-			if (!_lastIsWalking || _lastAnimationDirection != pointAroundAnimation.first)
-			{
-				_lastAnimationDirection = pointAroundAnimation.first;
-
-				switch (_lastAnimationDirection)
-				{
-				case 0: animator->Play("walking -x"); break;
-				case 1: animator->Play("walking -x-y"); break;
-				case 2: animator->Play("walking -y"); break;
-				case 3: animator->Play("walking +x-y"); break;
-				case 4: animator->Play("walking +x"); break;
-				case 5: animator->Play("walking +x+y"); break;
-				case 6: animator->Play("walking +y"); break;
-				case 7: animator->Play("walking -x+y"); break;
-				}
+				animator->Play((size_t)_lastAnimationDirection + 16, !_lastIsWalking);
 
 				_lastIsWalking = true;
 			}
@@ -86,17 +54,7 @@ public:
 		{
 			if (_lastIsWalking)
 			{
-				switch (_lastAnimationDirection)
-				{
-				case 0: animator->Play("idle -x"); break;
-				case 1: animator->Play("idle -x-y"); break;
-				case 2: animator->Play("idle -y"); break;
-				case 3: animator->Play("idle +x-y"); break;
-				case 4: animator->Play("idle +x"); break;
-				case 5: animator->Play("idle +x+y"); break;
-				case 6: animator->Play("idle +y"); break;
-				case 7: animator->Play("idle -x+y"); break;
-				}
+				animator->Play((size_t)_lastAnimationDirection, _lastIsWalking);
 
 				_lastIsWalking = false;
 			}
@@ -231,7 +189,7 @@ void BAE_Start()
 {
 	// Load images.
 	playerSprites = Image::Load("Content/Sprites/PlayerSprites.png");
-	enemySprites = Image::Load("Content/Sprites/EnemySprites.png");
+	enemySprites = Image::Load("Content/Sprites/BasicEnemySprites.png");
 	collectableSprites = Image::Load("Content/Sprites/Cube4.png");
 	largeFont = Font::Load("Content/Fonts/Roboto/Roboto-Medium.ttf", 64);
 	smallFont = Font::Load("Content/Fonts/Roboto/Roboto-Medium.ttf", 24);
@@ -239,95 +197,57 @@ void BAE_Start()
 	// Load animations.
 	playerAnimation = new Animation({});
 
+	using CreateStateT = in_initializer_list<AnimationControl*>;
+
 	// Path to node from Animator node.
 	auto animationControl = AnimationControlSpriteImage({ "Sprite" });
 	// AnimationControl settings.
 	animationControl.clipSize = Vector2I(32, 32);
-	animationControl.frameCount = 12;
+	animationControl.frameCount = 8;
 	animationControl.frameRate = 8.0f;
 	animationControl.image = playerSprites;
 	// Add an AnimationState with the AnimationControl in it.
 	animationControl.clipStartPosition = Vector2I(0, 0);
-	playerAnimation->CreateAnimationState("idle -x", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("idle -x-y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("idle -y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("idle +x-y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("idle +x", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("idle +x+y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("idle +y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("idle -x+y", { new AnimationControlSpriteImage(animationControl) });
+	LOOP(i, 16)
+	{
+		playerAnimation->CreateState<CreateStateT>("idle r" + std::to_string(i), {new AnimationControlSpriteImage(animationControl)});
+		animationControl.clipStartPosition.y += 32;
+	}
 
 	animationControl.clipSize = Vector2I(32, 32);
-	animationControl.frameCount = 12;
+	animationControl.frameCount = 8;
 	animationControl.frameRate = 24.0f;
 	animationControl.image = playerSprites;
 	animationControl.clipStartPosition = Vector2I(0, 0);
-	playerAnimation->CreateAnimationState("walking -x", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("walking -x-y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("walking -y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("walking +x-y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("walking +x", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("walking +x+y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("walking +y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	playerAnimation->CreateAnimationState("walking -x+y", { new AnimationControlSpriteImage(animationControl) });
+	LOOP(i, 16)
+	{
+		playerAnimation->CreateState<CreateStateT>("walking r" + std::to_string(i), { new AnimationControlSpriteImage(animationControl) });
+		animationControl.clipStartPosition.y += 32;
+	}
 
 	enemyAnimation = new Animation({});
 
 	animationControl.clipSize = Vector2I(32, 32);
-	animationControl.frameCount = 12;
+	animationControl.frameCount = 8;
 	animationControl.frameRate = 8.0f;
 	animationControl.image = enemySprites;
 	animationControl.clipStartPosition = Vector2I(0, 0);
-	enemyAnimation->CreateAnimationState("idle -x", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("idle -x-y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("idle -y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("idle +x-y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("idle +x", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("idle +x+y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("idle +y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("idle -x+y", { new AnimationControlSpriteImage(animationControl) });
+	LOOP(i, 16)
+	{
+		enemyAnimation->CreateState<CreateStateT>("idle r" + std::to_string(i), { new AnimationControlSpriteImage(animationControl) });
+		animationControl.clipStartPosition.y += 32;
+	}
 
 	animationControl.clipSize = Vector2I(32, 32);
-	animationControl.frameCount = 12;
+	animationControl.frameCount = 8;
 	animationControl.frameRate = 24.0f;
 	animationControl.image = enemySprites;
 	animationControl.clipStartPosition = Vector2I(0, 0);
-	enemyAnimation->CreateAnimationState("walking -x", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("walking -x-y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("walking -y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("walking +x-y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("walking +x", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("walking +x+y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("walking +y", { new AnimationControlSpriteImage(animationControl) });
-	animationControl.clipStartPosition.y += 32;
-	enemyAnimation->CreateAnimationState("walking -x+y", { new AnimationControlSpriteImage(animationControl) });
+	LOOP(i, 16)
+	{
+		enemyAnimation->CreateState<CreateStateT>("walking r" + std::to_string(i), { new AnimationControlSpriteImage(animationControl) });
+		animationControl.clipStartPosition.y += 32;
+	}
 
 	collectableAnimation = new Animation({});
 
@@ -336,7 +256,7 @@ void BAE_Start()
 	animationControl.frameRate = 12.0f;
 	animationControl.image = collectableSprites;
 	animationControl.clipStartPosition = Vector2I(0, 0);
-	collectableAnimation->CreateAnimationState("spin", { new AnimationControlSpriteImage(animationControl) });
+	collectableAnimation->CreateState<CreateStateT>("spin", { new AnimationControlSpriteImage(animationControl) });
 
 	// Create Objects.
 
@@ -502,10 +422,10 @@ void SpawnEnemy()
 	enemyCharacter->SetPosition(Vector2F(100.0f, 100.0f));
 	enemyCharacter->speed = 200.0f;
 	enemyCharacter->acceleration = 1000.0f;
-	enemyCharacter->animator->animation = enemyAnimation;
-	enemyCharacter->animator->Play("idle +y");
+	enemyCharacter->animator->SetAnimation(enemyAnimation);
+	enemyCharacter->animator->Play("idle r0");
 	enemyCharacter->sprite->scale = Vector2F(3.0f, 3.0f);
-	enemyCharacter->collider->size = Vector2F(60.0f, 60.0f);
+	enemyCharacter->collider->size = Vector2F(40.0f, 40.0f);
 
 	enemyCharacters.Append(enemyCharacter);
 }
@@ -518,7 +438,7 @@ void SpawnCollectable(in<Vector2F> position)
 	collectable->SetMass(0.01f);
 	collectable->SetDrag(0.05f);
 	collectable->SetVelocity(Vector2F(Lerp(-1.0f, 1.0f, std::rand() / (float)RAND_MAX), Lerp(-1.0f, 1.0f, std::rand() / (float)RAND_MAX)) * 200.0f);
-	collectable->animator->animation = collectableAnimation;
+	collectable->animator->SetAnimation(collectableAnimation);
 	collectable->animator->Play("spin");
 	collectable->sprite->scale = Vector2F(1.0f, 1.0f);
 	collectable->collider->size = Vector2F(10.0f, 10.0f);
@@ -550,8 +470,8 @@ void Restart()
 	playerCharacter->SetPosition(Vector2F(100.0f, 100.0f));
 	playerCharacter->speed = 500.0f;
 	playerCharacter->acceleration = 5000.0f;
-	playerCharacter->animator->animation = playerAnimation;
-	playerCharacter->animator->Play("idle +y");
+	playerCharacter->animator->SetAnimation(playerAnimation);
+	playerCharacter->animator->Play("idle r0");
 	playerCharacter->sprite->scale = Vector2F(3.0f, 3.0f);
-	playerCharacter->collider->size = Vector2F(60.0f, 60.0f);
+	playerCharacter->collider->size = Vector2F(40.0f, 40.0f);
 }

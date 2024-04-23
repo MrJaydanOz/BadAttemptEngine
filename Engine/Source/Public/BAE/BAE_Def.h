@@ -34,6 +34,27 @@ typedef unsigned long int      uint64;
 typedef signed long long int   int128;
 typedef unsigned long long int uint128;
 
+template<typename T>
+using in = const T&;
+//template<typename T> 
+//using in_value = std::conditional_t<std::is_same_v<std::remove_pointer_t<T>, T>, const T, const std::remove_pointer_t<T>*>;
+template<typename T>
+using in_delegate = const T;
+template<typename T>
+using in_optional = const std::optional<T>&;
+template<typename T>
+using in_initializer_list = const std::initializer_list<T>&;
+
+template<typename T>
+using out = T&;
+
+template<typename T>
+using ref = T&;
+template<typename T>
+using ref_optional = const std::optional<T&>&;
+
+struct nothing { };
+
 namespace bae
 {
 	template<size_t bitCount>
@@ -86,14 +107,61 @@ namespace bae
 	template<long long int limit>
 	using int_fit_t = typename bae::int_fit<limit>::type;
 
+	template<typename... T>
+	struct tuple { };
+
+	template<typename TA>
+	struct tuple<TA> 
+	{
+	public:
+		TA a;
+
+	public:
+		tuple(in<TA> a) noexcept : a(a) { }
+	};
+
+	template<typename TA, typename TB>
+	struct tuple<TA, TB> : public tuple<TA>
+	{
+	public:
+		TB b;
+
+	public:
+		tuple(in<TA> a, in<TB> b) noexcept : tuple<TA>(a), b(b) { }
+	};
+
+	template<typename TA, typename TB, typename TC>
+	struct tuple<TA, TB, TC> : public tuple<TA, TB>
+	{
+	public:
+		TC c;
+
+	public:
+		tuple(in<TA> a, in<TB> b, in<TC> c) noexcept : tuple<TA, TB>(a, b), c(c) { }
+	};
+
+	template<typename TA, typename TB, typename TC, typename TD>
+	struct tuple<TA, TB, TC, TD> : public tuple<TA, TB, TC>
+	{
+	public:
+		TD d;
+
+	public:
+		tuple(in<TA> a, in<TB> b, in<TC> c, in<TD> d) noexcept : tuple<TA, TB, TC>(a, b, c), d(d) { }
+	};
+
 	template<typename TLeft, typename TRight = TLeft>
 	concept Equatable =
-		requires(TLeft a, TRight b) { { a == b } -> std::convertible_to<bool>; }&&
+		requires(TLeft a, TRight b) { { a == b } -> std::convertible_to<bool>; } &&
 		requires(TLeft a, TRight b) { { a != b } -> std::convertible_to<bool>; };
 
 	template<typename T>
 	concept EmptyConstructor =
 		requires { { T() } -> std::convertible_to<T>; };
+
+	template<typename T>
+	concept CopyConstructor =
+		requires(T v) { { T(v) } -> std::convertible_to<T>; };
 
 	template<typename TFrom, typename TTo = TFrom>
 	concept CopyOperator =
@@ -124,28 +192,6 @@ namespace bae
 		requires(std::ostream s, T v) { s << v; };
 }
 
-template<typename T> 
-using in = const T&;
-//template<typename T> 
-//using in_value = std::conditional_t<std::is_same_v<std::remove_pointer_t<T>, T>, const T, const std::remove_pointer_t<T>*>;
-template<typename T>
-using in_delegate = T;
-template<typename T>
-using in_optional = in<std::optional<T>>;
-template<typename T>
-using in_initializer_list = in<std::initializer_list<T>>;
-
-template<typename T>
-using out = T&;
-
-template<typename T>
-using ref = T&;
-template<typename T>
-using ref_optional = std::optional<T*>;
-
-template<typename T>
-using value = T;
-
 #define COMMA ,
 #define COMMA2 COMMA_ BRACKET_OPEN2 BRACKET_CLOSE2
 #define COMMA_() ,
@@ -158,4 +204,4 @@ using value = T;
 #define UNPACK(...) __VA_ARGS__
 #define UNPACK2(...) UNPACK BRACKET_OPEN __VA_ARGS__ BRACKET_CLOSE
 
-#define CASEVARIATION2(v_,c1,c2,_v) v_ c1 _v v_ c2 _v
+#define LOOP(varable, amount) for (size_t varable = 0; varable < amount; varable++)

@@ -105,6 +105,7 @@
     <ClCompile Include="Source\Private\BAE\BAE_Image.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_StateMachine.cpp" />
     <ClCompile Include="Source\Private\BAE\Math\BAE_Color.cpp" />
+    <ClCompile Include="Source\Private\BAE\Math\Func\BAE_Trig.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Behaviour.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Collider.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_PhysicsBody.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="Source\Public\BAE\BAE_Debug.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Game.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Image.h" />
+    <ClInclude Include="Source\Public\BAE\Math\Func\BAE_Trig.h" />
     <ClInclude Include="Source\Public\BAE\Menus\BAE_WinMenu.h" />
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Animator.h" />
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Behaviour.h" />

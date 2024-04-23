@@ -99,6 +99,9 @@
     <ClCompile Include="Source\Private\BAE\BAE_StateMachine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Private\BAE\Math\Func\BAE_Trig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\BAE\BAE_Game.h">
@@ -447,6 +450,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Public\BAE\BAE_StateMachine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\BAE\Math\Func\BAE_Trig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,4 +1,5 @@
 #include "BAE_Animation.h"
+#include "Nodes/BAE_Animator.h"
 #include "Nodes/BAE_Sprite.h"
 #include <numeric>
 
@@ -38,9 +39,11 @@ namespace bae
 		);
 	}
 
-	AnimationState::AnimationState() noexcept :
+	AnimationState::AnimationState(in<std::string> name) noexcept :
+		State::State(name),
 		_controls() { }
-	AnimationState::AnimationState(in_initializer_list<AnimationControl*> controls) noexcept :
+	AnimationState::AnimationState(in<std::string> name, in_initializer_list<AnimationControl*> controls) noexcept :
+		State::State(name),
 		_controls(controls) { }
 
 	AnimationState::~AnimationState()
@@ -49,11 +52,14 @@ namespace bae
 			delete control;
 	}
 
-	void AnimationState::_Process(in<Animator*> animator, in<float> animationTime) noexcept
+	void AnimationState::OnStart(ParameterType)
+	{ }
+
+	void AnimationState::OnTick(ParameterType parameter)
 	{
 		for (auto& control : _controls)
 		{
-			Node* foundNode = animator;
+			Node* foundNode = parameter.a;
 			for (const std::string& name : control->nodePath)
 			{
 				Node* resultNode;
@@ -69,42 +75,10 @@ namespace bae
 				}
 			}
 
-			control->Process(foundNode, animationTime);
+			control->Process(foundNode, parameter.b);
 		}
 	}
 
-	Animation::Animation(in_initializer_list<bae::Pair<std::string, AnimationState*>> states) noexcept :
-		_states(states) { }
-
-	Animation::~Animation()
-	{
-		for (auto& state : _states)
-			delete state.second;
-	}
-
-	void Animation::CreateAnimationState(in<std::string> name, in_initializer_list<AnimationControl*> controls) noexcept
-	{
-		AnimationState* result = GetState(name);
-		if (result != nullptr)
-		{
-			delete result;
-			result = new AnimationState(controls);
-		}
-		else
-			_states.Append({ name, new AnimationState(controls) });
-	}
-
-	void Animation::RemoveAnimationState(in<std::string> name) noexcept
-	{
-		_states.RemoveFirstWhere([&](in<bae::Pair<std::string, AnimationState*>> pair) -> bool { return pair.first.compare(name) == 0; });
-	}
-
-	AnimationState* Animation::GetState(in<std::string> name) noexcept
-	{
-		bae::Pair<std::string, AnimationState*>* result;
-		if (_states.TryFindIf([&](in<bae::Pair<std::string, AnimationState*>> pair) -> bool { return pair.first.compare(name) == 0; }, result))
-			return (*result).second;
-		else
-			return nullptr;
-	}
+	void AnimationState::OnEnd(ParameterType)
+	{ }
 }

@@ -11,3 +11,4 @@
 #include "Math/BAE_Color.h"
 #include "Math/Func/BAE_Comparison.h"
 #include "Math/Func/BAE_Simple.h"
+#include "Math/Func/BAE_Trig.h"

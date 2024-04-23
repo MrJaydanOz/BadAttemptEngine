@@ -176,6 +176,9 @@ namespace bae
 				_physics->_Simulate(_time->DeltaTime());
 			}
 
+			if (!_isRunning) 
+				break;
+
 			_scene->_ProcessAnimation(_time->DeltaTime());
 
 			BAE_LateUpdate();
@@ -194,6 +197,8 @@ namespace bae
 
 	void Game::Dispose()
 	{
+		_scene->_DeleteDestroyed();
+
 		BAE_End();
 
 		SDL_Quit();

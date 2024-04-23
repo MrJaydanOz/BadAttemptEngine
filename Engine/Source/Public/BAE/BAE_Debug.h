@@ -46,11 +46,17 @@
 #define DEBUG_LOG_ERROR(message)											DEBUG_LOG_COLOURED          ("ERROR"    ,          message         , CONSOLE_COLORID_RED    )
 #define DEBUG_LOG_ERROR_CONTEXTED(context, message)							DEBUG_LOG_CONTEXTED_COLOURED("ERROR"    , context, message         , CONSOLE_COLORID_RED    )
 #if THROW_EXCEPTIONS_INSTEAD_OF_LOG
+#define DEBUG_EXCEPTION_NOEXCEPT                                            false
 #define DEBUG_LOG_EXCEPTION(exception)										throw exception
 #define DEBUG_LOG_EXCEPTION_CONTEXTED(context, exception)					throw exception
+#define DEBUG_RETURN_EXCEPTION(exception)									DEBUG_LOG_EXCEPTION(exception)
+#define DEBUG_RETURN_EXCEPTION_CONTEXTED(context, exception)				DEBUG_LOG_EXCEPTION_CONTEXTED(context, exception)
 #else
+#define DEBUG_EXCEPTION_NOEXCEPT                                            true
 #define DEBUG_LOG_EXCEPTION(exception)										DEBUG_LOG_COLOURED          ("EXCEPTION",          exception.what(), CONSOLE_COLORID_RED    )
 #define DEBUG_LOG_EXCEPTION_CONTEXTED(context, exception)					DEBUG_LOG_CONTEXTED_COLOURED("EXCEPTION", context, exception.what(), CONSOLE_COLORID_RED    )
+#define DEBUG_RETURN_EXCEPTION(exception)									{ DEBUG_LOG_EXCEPTION(exception); return; }
+#define DEBUG_RETURN_EXCEPTION_CONTEXTED(context, exception)				{ DEBUG_LOG_EXCEPTION_CONTEXTED(context, exception); return; }
 #endif
 #define DEBUG_LOG_SDL_ERROR(message)                                        DEBUG_LOG_ERROR_CONTEXTED(SDL_LOG_CONTEXT, message << SDL_GetError());
 

@@ -65,7 +65,7 @@ namespace bae
 		/// </summary>
 		/// <param name="path">- char[]</param>
 		/// <returns>Image* or nullptr if failed.</returns>
-		_NODISCARD static Image* Load(in_value<char*> path) noexcept;
+		_NODISCARD static Image* Load(in<const char*> path) noexcept;
 
 		/// <summary>
 		/// Tries to load the image at the given path into memory and returns the pointer.
@@ -73,7 +73,7 @@ namespace bae
 		/// <param name="path">- char[]</param>
 		/// <param name="image">- OUT Image*</param>
 		/// <returns>true if successful, false otherwise.</returns>
-		static bool TryLoad(in_value<char*> path, out<Image*> image) noexcept;
+		static bool TryLoad(in<const char*> path, out<Image*> image) noexcept;
 
 		~Image() noexcept;
 

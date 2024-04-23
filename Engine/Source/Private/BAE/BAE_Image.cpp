@@ -24,7 +24,7 @@ namespace bae
 			SDL_FreeSurface(_sdlSurface);
 	}
 
-	Image* Image::Load(in_value<char*> path) noexcept
+	Image* Image::Load(in<const char*> path) noexcept
 	{
 		SDL_Surface* sdlSurface = IMG_Load(path);
 
@@ -45,7 +45,7 @@ namespace bae
 		return new Image(sdlSurface, sdlTexture);
 	}
 
-	bool Image::TryLoad(in_value<char*> path, out<Image*> image) noexcept
+	bool Image::TryLoad(in<const char*> path, out<Image*> image) noexcept
 	{
 		image = Load(path);
 		return image != nullptr;

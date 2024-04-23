@@ -39,13 +39,13 @@ namespace bae
 		/// Loads the font at the given path into memory and returns the pointer.
 		/// </summary>
 		/// <returns>Image* or nullptr if failed.</returns>
-		_NODISCARD static Font* Load(in_value<char*> path, in<int> fontSize) noexcept;
+		_NODISCARD static Font* Load(in<const char*> path, in<int> fontSize) noexcept;
 
 		/// <summary>
 		/// Tries to load the font at the given path into memory and returns the pointer.
 		/// </summary>
 		/// <returns>true if successful, false otherwise.</returns>
-		static bool TryLoad(in_value<char*> path, in<int> fontSize, out<Font*> font) noexcept;
+		static bool TryLoad(in<const char*> path, in<int> fontSize, out<Font*> font) noexcept;
 
 		~Font() noexcept;
 

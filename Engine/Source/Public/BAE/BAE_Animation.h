@@ -44,44 +44,33 @@ namespace bae
 		virtual void Process(in<Node*> targetNode, in<float> animationTime) noexcept override;
 	};
 
-	class AnimationState : public State<std::string, in<float>>
+	class AnimationState : protected State<std::string, in<tuple<in<Animator*>, in<float>>>>
 	{
+	public:
+		using KeyType = State::KeyType;
+		using ParameterType = State::ParameterType;
+
+		using InstanceType = State::InstanceType;
+
 		friend class Animator;
 
 	private:
 		bae::List<AnimationControl*> _controls;
 
 	public:
-		AnimationState() noexcept;
-		AnimationState(in_initializer_list<AnimationControl*> controls) noexcept;
+		AnimationState(in<KeyType> name) noexcept;
+		AnimationState(in<KeyType> name, in_initializer_list<AnimationControl*> controls) noexcept;
 		~AnimationState();
 
-	protected:
-		virtual void OnStart(ref<MachineType> machine, in<float>) override;
+		const KeyType& GetKey()
+		{ return State::GetKey(); }
 
-		virtual void OnTick(ref<MachineType> machine, in<float> animationTime) override;
+		virtual void OnStart(ParameterType) override;
 
-		virtual void OnEnd(ref<MachineType> machine, in<float>) override;
+		virtual void OnTick(ParameterType parameter) override;
 
-	private:
-		void _Process(in<Animator*> animator, in<float> animationTime) noexcept;
+		virtual void OnEnd(ParameterType) override;
 	};
 
-	class Animation : public StateMachine<State<std::string, in<float>>>
-	{
-		friend class Animator;
-
-	private:
-		bae::List<bae::Pair<std::string, AnimationState*>> _states;
-
-	public:
-		Animation(in_initializer_list<bae::Pair<std::string, AnimationState*>> states) noexcept;
-		~Animation();
-
-		void CreateAnimationState(in<std::string> name, in_initializer_list<AnimationControl*> controls) noexcept;
-
-		void RemoveAnimationState(in<std::string> name) noexcept;
-
-		AnimationState* GetState(in<std::string> name) noexcept;
-	};
+	using Animation = StateMachine<AnimationState>;
 }

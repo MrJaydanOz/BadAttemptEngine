@@ -3,7 +3,6 @@
 #if defined(MESSAGE_WHEN_INCLUDED)
 #pragma message(MESSAGE_WHEN_INCLUDED("BAE_Simple.h"))
 #endif
-#include <type_traits>
 #include <cmath>
 
 namespace bae
@@ -36,14 +35,26 @@ namespace bae
 	{ std::swap<T>(a, b); }
 
 	template<typename T>
-	constexpr bool BitGet(in<T> bitMask, in<int> bitIndex)
+	constexpr bool BitGet(in<T> bitMask, in<int> bitIndex) noexcept
 	{ return (bitMask & ((T)1 << bitIndex)) != 0; }
 	template<typename T>
-	constexpr void BitSet(ref<T> bitMask, in<int> bitIndex, in<bool> value)
+	constexpr void BitSet(ref<T> bitMask, in<int> bitIndex, in<bool> value) noexcept
 	{
 		const T mask = (T)1 << bitIndex;
 		bitMask &= ~mask;
 		if (value)
 			bitMask |= mask;
 	}
+	
+	int RoundI(in<float> value) noexcept;
+	long RoundL(in<float> value) noexcept;
+	long long RoundLL(in<float> value) noexcept;
+
+	int RoundI(in<double> value) noexcept;
+	long RoundL(in<double> value) noexcept;
+	long long RoundLL(in<double> value) noexcept;
+
+	int RoundI(in<long double> value) noexcept;
+	long RoundL(in<long double> value) noexcept;
+	long long RoundLL(in<long double> value) noexcept;
 }
