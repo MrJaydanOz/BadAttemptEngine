@@ -217,6 +217,7 @@
     <ClInclude Include="Source\Public\BAE\BAE_Nodes.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Resources.h" />
     <ClInclude Include="Source\Public\BAE\BAE_StateMachine.h" />
+    <ClInclude Include="Source\Public\BAE\BAE_CameraTransform.h" />
     <ClInclude Include="Source\Public\BAE\Math\BAE_Color.h" />
     <ClInclude Include="Source\Public\BAE\Math\BAE_Constants.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Collections.h" />

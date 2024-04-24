@@ -187,6 +187,13 @@ void Restart();
 
 void BAE_Start()
 {
+	Camera camera;
+	camera.center = PoseF(Vector2F(0.0f, 0.0f), 0.0f);
+	camera.size = 256.0f;
+	camera.sizeAxisFactor = 0.0f;
+
+	Game::GetGraphics()->camera = camera;
+
 	// Load images.
 	playerSprites = Image::Load("Content/Sprites/PlayerSprites.png");
 	enemySprites = Image::Load("Content/Sprites/BasicEnemySprites.png");
@@ -267,6 +274,7 @@ void BAE_Start()
 	scoreDisplay->pivot = Vector2F(1.0f, 1.0f);
 	scoreDisplay->font = smallFont;
 	scoreDisplay->SetZIndex(100);
+	scoreDisplay->isUI = true;
 
 	Transform* infoDisplayHolder = Game::GetScene()->AddNode<Transform>("Info Display Holder");
 	infoDisplayHolder->SetPosition(((Vector2F)Game::GetGraphics()->GetScreenSize()) - Vector2F(20.0f, 20.0f));
@@ -275,6 +283,7 @@ void BAE_Start()
 	infoDisplay->pivot = Vector2F(1.0f, 1.0f);
 	infoDisplay->font = smallFont;
 	infoDisplay->SetZIndex(100);
+	infoDisplay->isUI = true;
 
 	Restart();
 }
@@ -302,7 +311,7 @@ void BAE_Update()
 		{
 			enemy->UpdateAnimation();
 
-			if (Game::GetInput()->KeyPressed(KeyCode::KEYCODE_LMB) && mousePosition.SqrDistance(enemy->GetPosition()) < 40.0f * 40.0f)
+			if (Game::GetInput()->KeyPressed(KeyCode::KEYCODE_LMB) && Game::GetGraphics()->ScreenToWorldPoint(mousePosition).SqrDistance(enemy->GetPosition()) < 10.0f * 10.0f)
 			{
 				enemy->Damage(40.0f);
 				if (enemy->health <= 0.0f)
@@ -371,6 +380,7 @@ void BAE_PhysicsUpdate()
 		text->textAlignment = TextHorizonalAlignment::TEXT_ALIGNMENT_CENTER;
 		text->text = "Game Over";
 		text->SetZIndex(100);
+		text->isUI = true;
 
 		isGameOver = true;
 
@@ -419,13 +429,12 @@ void BAE_End()
 void SpawnEnemy()
 {
 	EnemyCharacter* enemyCharacter = Game::GetScene()->AddNode<EnemyCharacter>("Enemy");
-	enemyCharacter->SetPosition(Vector2F(100.0f, 100.0f));
-	enemyCharacter->speed = 200.0f;
+	enemyCharacter->SetPosition(Vector2F(0.0f, 0.0f));
+	enemyCharacter->speed = 50.0f;
 	enemyCharacter->acceleration = 1000.0f;
 	enemyCharacter->animator->SetAnimation(enemyAnimation);
 	enemyCharacter->animator->Play("idle r0");
-	enemyCharacter->sprite->scale = Vector2F(3.0f, 3.0f);
-	enemyCharacter->collider->size = Vector2F(40.0f, 40.0f);
+	enemyCharacter->collider->size = Vector2F(10.0f, 10.0f);
 
 	enemyCharacters.Append(enemyCharacter);
 }
@@ -467,11 +476,10 @@ void Restart()
 	spawnTimer = 3.0f;
 
 	playerCharacter = Game::GetScene()->AddNode<PlayerCharacter>("Player");
-	playerCharacter->SetPosition(Vector2F(100.0f, 100.0f));
-	playerCharacter->speed = 500.0f;
-	playerCharacter->acceleration = 5000.0f;
+	playerCharacter->SetPosition(Vector2F(0.0f, 0.0f));
+	playerCharacter->speed = 100.0f;
+	playerCharacter->acceleration = 1000.0f;
 	playerCharacter->animator->SetAnimation(playerAnimation);
 	playerCharacter->animator->Play("idle r0");
-	playerCharacter->sprite->scale = Vector2F(3.0f, 3.0f);
-	playerCharacter->collider->size = Vector2F(40.0f, 40.0f);
+	playerCharacter->collider->size = Vector2F(10.0f, 10.0f);
 }

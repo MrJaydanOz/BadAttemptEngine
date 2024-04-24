@@ -7,10 +7,12 @@
 #include "Math/BAE_VectorT.h"
 #include "Math/BAE_RectT.h"
 #include "Math/BAE_PoseT.h"
+#include "BAE_CameraTransform.h"
 
 namespace bae
 {
 	class Graphics;
+	struct Camera;
 
 #if defined(MESSAGE_WHEN_CLASS_DECLARED)
 #pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Visual))
@@ -37,6 +39,6 @@ namespace bae
 
 		virtual void OnDisabled() override;
 
-		virtual void Render() = 0;
+		virtual void Render(in<CameraTransform> camera) = 0;
 	};
 }

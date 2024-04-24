@@ -20,6 +20,7 @@ namespace bae
 		NODE_BEGIN;
 
 	public:
+		bool isUI;
 		Image* image;
 		std::optional<RectI> clipRect;
 		Color color;
@@ -35,6 +36,6 @@ namespace bae
 		virtual void Create(in<const char*> name = "") override;
 		virtual void Destroy() override;
 
-		virtual void Render() override;
+		virtual void Render(in<CameraTransform> camera) override;
 	};
 }

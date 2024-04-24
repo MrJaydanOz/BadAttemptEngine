@@ -455,6 +455,9 @@
     <ClInclude Include="Source\Public\BAE\Math\Func\BAE_Trig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Public\BAE\BAE_CameraTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="ExternalLibs\StaticLibs\SDL2.lib" />

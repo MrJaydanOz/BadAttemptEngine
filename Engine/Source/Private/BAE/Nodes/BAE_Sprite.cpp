@@ -10,6 +10,7 @@ namespace bae
 {
 	Sprite::Sprite(in<Node*> parent) noexcept :
 		Visual::Visual(parent),
+		isUI(false),
 		image(nullptr),
 		clipRect({}),
 		color(COLOR_WHITE),
@@ -31,7 +32,7 @@ namespace bae
 		Visual::Destroy();
 	}
 
-	void Sprite::Render()
+	void Sprite::Render(in<CameraTransform> camera)
 	{
 		if (image != nullptr)
 		{
@@ -41,7 +42,25 @@ namespace bae
 			if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
 				pose = parentTransform->TransformPose(pose);
 
-			image->RenderAsObject(clipRect, pose, pivot, scale, flipMode, color, blendingMode);
+			DEBUG_LOG_INFO(camera.offset << ", " << camera.scale);
+
+			Vector2F usedScale = scale;
+
+			if (!isUI)
+			{
+				pose = camera.offset.InverseTransformPose(pose);
+				pose.position *= camera.scale;
+				usedScale *= camera.scale;
+			}
+
+			image->RenderAsObject(
+				clipRect, 
+				pose,
+				pivot,
+				usedScale,
+				flipMode, 
+				color, 
+				blendingMode);
 		}
 	}
 }

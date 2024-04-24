@@ -9,6 +9,7 @@
 #include "Math/BAE_VectorT.h"
 #include "Math/BAE_Color.h"
 #include "Menus/BAE_WinMenu.h"
+#include "BAE_CameraTransform.h"
 
 // !! TEMPORARY SOLUTION !!
 #include "Nodes/BAE_Node.h"
@@ -21,6 +22,22 @@ namespace bae
 	struct Font;
 
 #if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Camera))
+#endif
+	struct Camera
+	{
+	public:
+		PoseF center;
+		float size;
+		float sizeAxisFactor;
+
+	public:
+		float CalculateUnitsPerPixel(in<Vector2F> screenSize) const;
+
+		CameraTransform CalculateTransform(in<float> unitsPerPixel) const;
+	};
+
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
 #pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Graphics))
 #endif
 	class Graphics
@@ -29,6 +46,9 @@ namespace bae
 		friend class Visual;
 		friend struct Image;
 		friend struct Font;
+
+	public:
+		Camera camera;
 
 	private:
 		SDL_Window* _sdlWindow;
@@ -47,6 +67,10 @@ namespace bae
 		void SetBackgroundColor(in<Color> color) noexcept;
 
 		_NODISCARD WinMenu* GetWinMenu() const noexcept;
+
+		_NODISCARD Vector2F WorldToScreenPoint(in<Vector2F> point) const noexcept;
+
+		_NODISCARD Vector2F ScreenToWorldPoint(in<Vector2F> point) const noexcept;
 
 	private:
 		Graphics();

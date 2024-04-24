@@ -10,6 +10,7 @@ namespace bae
 {
 	Text::Text(in<Node*> parent) noexcept :
 		Visual::Visual(parent),
+		isUI(false),
 		font(nullptr),
 		color(COLOR_WHITE),
 		flipMode(ImageFlipMode::FLIP_NONE),
@@ -41,7 +42,7 @@ namespace bae
 		Visual::Destroy();
 	}
 
-	void Text::Render()
+	void Text::Render(in<CameraTransform> camera)
 	{
 		if (font != nullptr)
 		{
@@ -58,7 +59,25 @@ namespace bae
 				_lastFont = font;
 			}
 
-			font->_RenderAsObject(_sdlSurface, _sdlTexture, pose, pivot, textAlignment, scale, flipMode, color, blendingMode);
+			Vector2F usedScale = scale;
+
+			if (!isUI)
+			{
+				pose = camera.offset.InverseTransformPose(pose);
+				pose.position *= camera.scale;
+				usedScale *= camera.scale;
+			}
+
+			font->_RenderAsObject(
+				_sdlSurface, 
+				_sdlTexture,
+				pose,
+				pivot, 
+				textAlignment, 
+				usedScale,
+				flipMode, 
+				color, 
+				blendingMode);
 		}
 	}
 }

@@ -7,6 +7,27 @@
 
 namespace bae
 {
+	float Camera::CalculateUnitsPerPixel(in<Vector2F> screenSize) const
+	{
+		Vector2F scaleInAxis = Vector2F
+		(
+			size / screenSize.x,
+			size / screenSize.y
+		);
+
+		return Lerp(scaleInAxis.x, scaleInAxis.y, sizeAxisFactor);
+	}
+
+	CameraTransform Camera::CalculateTransform(in<float> unitsPerPixel) const
+	{
+		CameraTransform transform;
+		transform.offset = Game::GetGraphics()->camera.center;
+		transform.scale = 1.0f / unitsPerPixel;
+		transform.offset.position *= transform.scale;
+
+		return transform;
+	}
+
 	Vector2I Graphics::GetScreenSize() const noexcept
 	{
 		Vector2I size;
@@ -22,6 +43,26 @@ namespace bae
 
 	WinMenu* Graphics::GetWinMenu() const noexcept
 	{ return _winMenu; }
+
+	Vector2F Graphics::WorldToScreenPoint(in<Vector2F> point) const noexcept
+	{
+		CameraTransform transform = camera.CalculateTransform(camera.CalculateUnitsPerPixel((Vector2F)GetScreenSize()));
+		
+		Vector2F result = transform.offset.InverseTransformPoint(point);
+		result *= transform.scale;
+
+		return result;
+	}
+
+	Vector2F Graphics::ScreenToWorldPoint(in<Vector2F> point) const noexcept
+	{
+		CameraTransform transform = camera.CalculateTransform(camera.CalculateUnitsPerPixel((Vector2F)GetScreenSize()));
+		
+		Vector2F result = point / transform.scale;
+		result = transform.offset.TransformPoint(result);
+
+		return result;
+	}
 
 	Graphics::Graphics() :
 		_sdlWindow(nullptr), 
@@ -97,8 +138,10 @@ namespace bae
 		SDL_SetRenderDrawColor(_sdlRenderer, _backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a);
 		SDL_RenderFillRect(_sdlRenderer, nullptr);
 
+		CameraTransform cameraTransform = camera.CalculateTransform(camera.CalculateUnitsPerPixel((Vector2F)GetScreenSize()));
+
 		for (Visual* visual : *_visualsInZOrder)
-			visual->Render();
+			visual->Render(cameraTransform);
 
 		SDL_RenderPresent(_sdlRenderer);
 	}

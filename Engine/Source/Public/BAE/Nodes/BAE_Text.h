@@ -23,6 +23,7 @@ namespace bae
 		NODE_BEGIN;
 
 	public:
+		bool isUI;
 		std::string text;
 		Font* font;
 		Color color;
@@ -46,6 +47,6 @@ namespace bae
 		virtual void Create(in<const char*> name = "") override;
 		virtual void Destroy() override;
 
-		virtual void Render() override;
+		virtual void Render(in<CameraTransform> camera) override;
 	};
 }
