@@ -118,6 +118,11 @@
     <ClCompile Include="Source\Private\BAE\BAE_Engine.cpp" />
     <ClCompile Include="Source\Private\BAE\Nodes\BAE_Visual.cpp" />
     <ClCompile Include="Source\Private\BAE\BAE_Time.cpp" />
+    <ClCompile Include="Source\Private\Game\Button.cpp" />
+    <ClCompile Include="Source\Private\Game\Character.cpp" />
+    <ClCompile Include="Source\Private\Game\GameState.cpp" />
+    <ClCompile Include="Source\Private\Game\GameStateMainMenu.cpp" />
+    <ClCompile Include="Source\Private\Game\GameStateOptions.cpp" />
     <ClCompile Include="Source\Private\Game\Source.cpp" />
     <ClCompile Include="Source\Private\BAE\Menus\BAE_WinMenu.cpp" />
     <ClCompile Include="Source\Public\BAE\BAE_Animation.h" />
@@ -208,6 +213,9 @@
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_video.h" />
     <ClInclude Include="ExternalLibs\Includes\SDL2\SDL_vulkan.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\Public\Game\Button.h" />
+    <ClInclude Include="Source\Public\Game\Character.h" />
+    <ClInclude Include="Source\Public\Game\GameState.h" />
     <ClInclude Include="Source\Public\BAE\BAE.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Def.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Engine.h" />
@@ -245,6 +253,8 @@
     <ClInclude Include="Source\Public\BAE\Nodes\BAE_Visual.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Input.h" />
     <ClInclude Include="Source\Public\BAE\BAE_Time.h" />
+    <ClInclude Include="Source\Public\Game\GameStateMainMenu.h" />
+    <ClInclude Include="Source\Public\Game\GameStateOptions.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="ExternalLibs\StaticLibs\SDL2.lib" />
@@ -260,6 +270,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\..\Downloads\CollectableSprites.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

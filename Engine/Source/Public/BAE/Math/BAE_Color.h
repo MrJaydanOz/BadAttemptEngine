@@ -90,13 +90,13 @@ namespace bae
 		}
 	};
 
-	static const Color COLOR_WHITE =    0xFFFFFFFFu;
-	static const Color COLOR_BLACK =    0x000000FFu;
-	static const Color COLOR_RED =      0xFF0000FFu;
-	static const Color COLOR_YELLOW =   0xFFFF00FFu;
-	static const Color COLOR_GREEN =    0x00FF00FFu;
-	static const Color COLOR_AQUA =     0x00FFFFFFu;
-	static const Color COLOR_BLUE =     0x0000FFFFu;
-	static const Color COLOR_MAGENTA =  0xFF00FFFFu;
-	static const Color COLOR_CLEAR =    0x00000000u;
+	static const bae::uintx_t<8 * 4> COLOR_WHITE =    0xFFFFFFFFu;
+	static const bae::uintx_t<8 * 4> COLOR_BLACK =    0x000000FFu;
+	static const bae::uintx_t<8 * 4> COLOR_RED =      0xFF0000FFu;
+	static const bae::uintx_t<8 * 4> COLOR_YELLOW =   0xFFFF00FFu;
+	static const bae::uintx_t<8 * 4> COLOR_GREEN =    0x00FF00FFu;
+	static const bae::uintx_t<8 * 4> COLOR_AQUA =     0x00FFFFFFu;
+	static const bae::uintx_t<8 * 4> COLOR_BLUE =     0x0000FFFFu;
+	static const bae::uintx_t<8 * 4> COLOR_MAGENTA =  0xFF00FFFFu;
+	static const bae::uintx_t<8 * 4> COLOR_CLEAR =    0x00000000u;
 }

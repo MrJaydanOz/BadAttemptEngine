@@ -1,5 +1,9 @@
 #pragma once
 #include "BAE_Def.h"
+#if defined(MESSAGE_WHEN_INCLUDED)
+#pragma message(MESSAGE_WHEN_INCLUDED("BAE_Animation.h"))
+#endif
+
 #include "BAE_Collections.h"
 #include "Nodes/BAE_Node.h"
 #include "Math/BAE_VectorT.h"
@@ -8,9 +12,18 @@
 
 namespace bae
 {
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Animator))
+#endif
 	class Animator;
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class AnimationState))
+#endif
 	class AnimationState;
 
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class AnimationControl))
+#endif
 	class AnimationControl
 	{
 		friend class AnimationState;
@@ -26,6 +39,9 @@ namespace bae
 		virtual void Process(in<Node*> targetNode, in<float> animationTime) noexcept { }
 	};
 
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class AnimationControlSpriteImage))
+#endif
 	class AnimationControlSpriteImage : public AnimationControl
 	{
 	public:
@@ -44,7 +60,7 @@ namespace bae
 		virtual void Process(in<Node*> targetNode, in<float> animationTime) noexcept override;
 	};
 
-	class AnimationState : protected State<std::string, in<tuple<in<Animator*>, in<float>>>>
+	class AnimationState : public State<std::string, in<tuple<in<Animator*>, in<float>>>>
 	{
 	public:
 		using KeyType = State::KeyType;
@@ -62,9 +78,6 @@ namespace bae
 		AnimationState(in<KeyType> name, in_initializer_list<AnimationControl*> controls) noexcept;
 		~AnimationState();
 
-		const KeyType& GetKey()
-		{ return State::GetKey(); }
-
 		virtual void OnStart(ParameterType) override;
 
 		virtual void OnTick(ParameterType parameter) override;
@@ -72,5 +85,8 @@ namespace bae
 		virtual void OnEnd(ParameterType) override;
 	};
 
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class Animation))
+#endif
 	using Animation = StateMachine<AnimationState>;
 }

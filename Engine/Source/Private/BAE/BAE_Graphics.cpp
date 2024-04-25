@@ -64,6 +64,24 @@ namespace bae
 		return result;
 	}
 
+	Vector2I Graphics::PixelToScreenPoint(in<Vector2I> pixel)
+	{ return Vector2I(pixel.x, GetScreenSize().y - pixel.y); }
+	Vector2F Graphics::PixelToScreenPoint(in<Vector2F> pixel)
+	{ return Vector2F(pixel.x, GetScreenSize().y - pixel.y); }
+
+	Vector2I Graphics::ScreenToPixelPoint(in<Vector2I> point)
+	{ return Vector2I(point.x, GetScreenSize().y - point.y); }
+	Vector2F Graphics::ScreenToPixelPoint(in<Vector2F> point)
+	{ return Vector2F(point.x, GetScreenSize().y - point.y); }
+
+	Vector2F Graphics::PixelToWorldPoint(in<Vector2I> pixel)
+	{ return ScreenToWorldPoint((Vector2F)PixelToScreenPoint(pixel)); }
+	Vector2F Graphics::PixelToWorldPoint(in<Vector2F> pixel)
+	{ return ScreenToWorldPoint(PixelToScreenPoint(pixel)); }
+
+	Vector2F Graphics::WorldToPixelPoint(in<Vector2F> point)
+	{ return ScreenToPixelPoint(WorldToScreenPoint(point)); }
+
 	Graphics::Graphics() :
 		_sdlWindow(nullptr), 
 		_sdlRenderer(nullptr),

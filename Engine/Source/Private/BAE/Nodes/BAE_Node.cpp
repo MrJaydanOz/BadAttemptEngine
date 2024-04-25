@@ -45,12 +45,7 @@ namespace bae
 	void Node::SetName(in<std::string> name) noexcept
 	{ _name = name; }
 	bool Node::NameIs(in<std::string> name) const noexcept
-	{
-		// Jesus christ, C++. Why can't I just safely equate empty strings?
-		return _name.size() == 0
-			? name.size() == 0
-			: name.size() != 0 && _name.compare(name) == 0;
-	}
+	{ return string_equal_to{}(_name, name); }
 
 	bool Node::HasParentNode() const noexcept 
 	{ return GetParentNode() != nullptr; }

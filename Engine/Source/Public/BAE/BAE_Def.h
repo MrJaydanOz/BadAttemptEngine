@@ -150,6 +150,36 @@ namespace bae
 		tuple(in<TA> a, in<TB> b, in<TC> c, in<TD> d) noexcept : tuple<TA, TB, TC>(a, b, c), d(d) { }
 	};
 
+	struct string_equal_to 
+	{
+		using _FIRST_ARGUMENT_TYPE_NAME _CXX17_DEPRECATE_ADAPTOR_TYPEDEFS = std::string;
+		using _SECOND_ARGUMENT_TYPE_NAME _CXX17_DEPRECATE_ADAPTOR_TYPEDEFS = std::string;
+		using _RESULT_TYPE_NAME _CXX17_DEPRECATE_ADAPTOR_TYPEDEFS = bool;
+
+		_NODISCARD constexpr bool operator()(const std::string& _Left, const std::string& _Right) const noexcept
+		{
+			// Jesus christ, C++. Why can't I just safely equate empty strings?
+			return _Left.size() == 0
+				? _Right.size() == 0
+				: _Right.size() != 0 && _Left.compare(_Right) == 0;
+		}
+	};
+
+	struct string_not_equal_to
+	{
+		using _FIRST_ARGUMENT_TYPE_NAME _CXX17_DEPRECATE_ADAPTOR_TYPEDEFS = std::string;
+		using _SECOND_ARGUMENT_TYPE_NAME _CXX17_DEPRECATE_ADAPTOR_TYPEDEFS = std::string;
+		using _RESULT_TYPE_NAME _CXX17_DEPRECATE_ADAPTOR_TYPEDEFS = bool;
+
+		_NODISCARD constexpr bool operator()(const std::string& _Left, const std::string& _Right) const noexcept
+		{
+			// Jesus christ, C++. Why can't I just safely equate empty strings?
+			return !(_Left.size() == 0
+				? _Right.size() == 0
+				: _Right.size() != 0 && _Left.compare(_Right) == 0);
+		}
+	};
+
 	template<typename TLeft, typename TRight = TLeft>
 	concept Equatable =
 		requires(TLeft a, TRight b) { { a == b } -> std::convertible_to<bool>; } &&

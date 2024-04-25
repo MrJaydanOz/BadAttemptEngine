@@ -72,6 +72,17 @@ namespace bae
 
 		_NODISCARD Vector2F ScreenToWorldPoint(in<Vector2F> point) const noexcept;
 
+		_NODISCARD Vector2I PixelToScreenPoint(in<Vector2I> pixel);
+		_NODISCARD Vector2F PixelToScreenPoint(in<Vector2F> pixel);
+
+		_NODISCARD Vector2I ScreenToPixelPoint(in<Vector2I> point);
+		_NODISCARD Vector2F ScreenToPixelPoint(in<Vector2F> point);
+
+		_NODISCARD Vector2F PixelToWorldPoint(in<Vector2I> pixel);
+		_NODISCARD Vector2F PixelToWorldPoint(in<Vector2F> pixel);
+
+		_NODISCARD Vector2F WorldToPixelPoint(in<Vector2F> point);
+
 	private:
 		Graphics();
 		~Graphics();

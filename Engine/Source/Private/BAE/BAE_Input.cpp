@@ -50,7 +50,7 @@ namespace bae
 		return KeyHeld(keyCode);
 	}
 
-	Vector2I Input::GetMousePosition() const noexcept
+	Vector2I Input::GetMousePixel() const noexcept
 	{
 		Vector2I position = Vector2I(0, 0);
 

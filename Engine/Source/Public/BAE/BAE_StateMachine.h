@@ -24,12 +24,13 @@ namespace bae
 #if defined(MESSAGE_WHEN_CLASS_DECLARED)
 #pragma message(MESSAGE_WHEN_CLASS_DECLARED(class State))
 #endif
-	template<typename TKey, typename TParameter>
+	template<typename TKey, typename TParameter, typename TKeyCompare = std::equal_to<TKey>>
 	class State
 	{
 	public:
 		using KeyType = TKey;
 		using ParameterType = TParameter;
+		using KeyCompareType = TKeyCompare;
 
 		using InstanceType = StateMachineInstance<StateMachine<State>>;
 
@@ -58,6 +59,7 @@ namespace bae
 
 		using StateKeyType = StateType::KeyType;
 		using StateParameterType = StateType::ParameterType;
+		using StateKeyCompareType = StateType::KeyCompareType;
 		using IndexType = List<StateType>::size_type;
 
 	private:
@@ -82,20 +84,24 @@ namespace bae
 		_NODISCARD_ONLY_READ const List<StateType*>& GetStates() const noexcept
 		{ return _states; }
 
-		template<typename... TConstructorArguments>
-		const void CreateState(in<StateKeyType> key, TConstructorArguments... constructorArguments) noexcept(noexcept(StateType(key, constructorArguments...)))
-		{ AssignState(new StateType(key, constructorArguments...), true); }
-		const void AssignState(in<StateType*> state, bool deleteOnDestruction = false) noexcept
+		template<typename TNewStateType, typename... TConstructorArguments>
+		TNewStateType* CreateState(in<StateKeyType> key, TConstructorArguments... constructorArguments) noexcept(noexcept(TNewStateType(key, constructorArguments...)))
+		{ 
+			TNewStateType* newState = new TNewStateType(key, constructorArguments...);
+			AssignState(newState, true);
+			return newState;
+		}
+		void AssignState(in<StateType*> state, bool deleteOnDestruction = false) noexcept
 		{
 			_states.Append(state);
 			if (deleteOnDestruction)
 				_deleteInDestructor.Append(state);
 		}
 
-		_NODISCARD_RESULT StateType* GetState(in<StateKeyType> key) const noexcept requires requires(in<StateType*> state, in<StateKeyType> key) { state->GetKey() == key; }
+		_NODISCARD_RESULT StateType* GetState(in<StateKeyType> key) const noexcept
 		{ 
 			StateType*const* result;
-			return _states.TryFindIf([&](in<StateType*> state) -> bool { return state != nullptr && state->GetKey() == key; }, result) 
+			return _states.TryFindIf([&](in<StateType*> state) -> bool { return state != nullptr && StateKeyCompareType{}(state->GetKey(), key); }, result)
 				? *result 
 				: nullptr;
 		}
@@ -115,6 +121,7 @@ namespace bae
 		using StateType = MachineType::StateType;
 		using StateKeyType = MachineType::StateKeyType;
 		using StateParameterType = MachineType::StateParameterType;
+		using StateKeyCompareType = MachineType::StateKeyCompareType;
 		using IndexType = MachineType::IndexType;
 
 	public:
@@ -160,7 +167,7 @@ namespace bae
 			}
 		}
 
-		void ChangeState(in<StateType*> targetState, StateParameterType parameter)
+		void ChangeStateToState(in<StateType*> targetState, StateParameterType parameter)
 		{
 			if (_doNoRecursionError)
 				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
@@ -185,7 +192,9 @@ namespace bae
 				_doNoRecursionError = false;
 			}
 		}
-		void ChangeState(in<StateKeyType> targetStateKey, StateParameterType parameter) requires requires(in<StateType> state, in<StateKeyType> key) { state._key == key; }
+		void ChangeState(in<StateType*> targetState, StateParameterType parameter)
+		{ return ChangeStateToState(targetState, parameter); }
+		void ChangeStateToKey(in<StateKeyType> targetStateKey, StateParameterType parameter)
 		{
 			if (machine == nullptr)
 				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
@@ -197,12 +206,14 @@ namespace bae
 
 			StateType* targetState = machine->GetState(targetStateKey);
 
-			if (targetState)
+			if (targetState == nullptr)
 				DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, "No state has the given stateKey, setting state to null.");
 
 			ChangeState(targetState, parameter);
 		}
-		void ChangeState(in<IndexType> targetStateIndex, StateParameterType parameter) requires !std::is_convertible_v<StateKeyType, IndexType>
+		void ChangeState(in<StateKeyType> targetStateKey, StateParameterType parameter)
+		{ return ChangeStateToKey(targetStateKey, parameter); }
+		void ChangeStateToIndex(in<IndexType> targetStateIndex, StateParameterType parameter)
 		{
 			if (machine == nullptr)
 				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
@@ -214,18 +225,22 @@ namespace bae
 
 			StateType* targetState = machine->GetState(targetStateIndex);
 
-			if (targetState)
+			if (targetState == nullptr)
 				DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, "Index outside of range, setting state to null.");
 
 			ChangeState(targetState, parameter);
 		}
+		void ChangeState(in<IndexType> targetStateIndex, StateParameterType parameter)
+		{ return ChangeStateToIndex(targetStateIndex, parameter); }
 
-		void QueueState(in<StateType*> targetState) noexcept
+		void QueueStateToState(in<StateType*> targetState) noexcept
 		{
 			_queuedState = targetState;
 			_useQueuedState = true;
 		}
-		void QueueState(in<StateKeyType> targetStateKey) noexcept requires requires(in<StateType> state, in<StateKeyType> key) { state._key == key; }
+		void QueueState(in<StateType*> targetState) noexcept
+		{ return QueueStateToState(targetState); }
+		void QueueStateToKey(in<StateKeyType> targetStateKey) noexcept
 		{
 			if (machine == nullptr)
 				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
@@ -233,12 +248,14 @@ namespace bae
 
 			StateType* targetState = machine->GetState(targetStateKey);
 
-			if (targetState)
+			if (targetState == nullptr)
 				DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, "No state has the given stateKey, setting state to null.");
 
 			QueueState(targetState);
 		}
-		void QueueState(in<IndexType> targetStateIndex) noexcept requires !std::is_convertible_v<StateKeyType, IndexType>
+		void QueueState(in<StateKeyType> targetStateKey) noexcept
+		{ return QueueStateToKey(targetStateKey); }
+		void QueueStateToIndex(in<IndexType> targetStateIndex) noexcept
 		{
 			if (machine == nullptr)
 				DEBUG_RETURN_EXCEPTION_CONTEXTED(BAE_LOG_CONTEXT, std::exception(
@@ -246,10 +263,12 @@ namespace bae
 
 			StateType* targetState = machine->GetState(targetStateIndex);
 
-			if (targetState)
+			if (targetState == nullptr)
 				DEBUG_LOG_WARNING_CONTEXTED(BAE_LOG_CONTEXT, "Index outside of range, setting state to null.");
 
 			QueueState(targetState);
 		}
+		void QueueState(in<IndexType> targetStateIndex) noexcept
+		{ return QueueStateToIndex(targetStateIndex); }
 	};
 }

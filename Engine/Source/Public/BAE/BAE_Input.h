@@ -410,7 +410,7 @@ namespace bae
         _NODISCARD bool KeyPressed(in<KeyCode> keyCode) const noexcept;
         _NODISCARD bool KeyReleased(in<KeyCode> keyCode) const noexcept;
 
-        _NODISCARD Vector2I GetMousePosition() const noexcept;
+        _NODISCARD Vector2I GetMousePixel() const noexcept;
 
 	private:
 		Input();

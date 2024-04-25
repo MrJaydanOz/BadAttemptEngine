@@ -15,5 +15,9 @@ namespace bae
 	public:
 		PoseF offset;
 		float scale;
+
+		CameraTransform() noexcept :
+			offset(PoseF(Vector2F(0.0f, 0.0f), 0.0f)),
+			scale(1.0f) { }
 	};
 }
