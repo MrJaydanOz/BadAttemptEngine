@@ -1,6 +1,6 @@
 #include "Character.h"
 
-void Character::UpdateAnimation()
+void Character::UpdateAnimation(in<bae::Vector2F> lookDirection)
 {
 	if (_hurtAnimationTimer >= 0.0f)
 	{
@@ -14,35 +14,24 @@ void Character::UpdateAnimation()
 
 	bae::Vector2F velocity = GetVelocity();
 
-	if (velocity.SqrMagnitude() > 1.0f)
-	{
-		float angle = bae::ATan2(velocity.y, velocity.x) + (DEG_TO_RAD * 180.0f);
-		int direction = bae::Mod(bae::RoundI(angle * RAD_TO_TURN * 16.0f), 16);
+	bool isWalking = velocity.SqrMagnitude() > 1.0f;
 
-		if (!_lastIsWalking || _lastAnimationDirection != direction)
-		{
-			_lastAnimationDirection = direction;
+	float angle = bae::ATan2(lookDirection.y, lookDirection.x) + (DEG_TO_RAD * 180.0f);
+	int direction = bae::Mod(bae::RoundI(angle * RAD_TO_TURN * 16.0f), 16);
 
-			animator->Play((size_t)_lastAnimationDirection + 16, !_lastIsWalking);
+	animator->Play(isWalking 
+		? ((size_t)direction + 16) 
+		: (size_t)direction + 0,
+		isWalking != _lastIsWalking);
 
-			_lastIsWalking = true;
-		}
-	}
-	else
-	{
-		if (_lastIsWalking)
-		{
-			animator->Play((size_t)_lastAnimationDirection, _lastIsWalking);
-
-			_lastIsWalking = false;
-		}
-	}
+	_lastIsWalking = isWalking;
 }
 
 void Character::Damage(in<float> amount)
 {
 	_hurtAnimationTimer = 0.0f;
 	healthBar->currentHealth -= amount;
+	healthBar->Update();
 }
 
 void Character::MoveWithInput(in<bae::Vector2F> input)
@@ -60,4 +49,21 @@ void Character::Create(in<const char*> name)
 	sprite = animator->AddChild<bae::Sprite>("Sprite");
 	collider = AddChild<bae::ColliderAxisBox>("Collider");
 	healthBar = AddChild<HealthBar>("HealthBar");
+}
+
+void Character::Destroy()
+{ PhysicsBody::Destroy(); }
+
+void PlayerCharacter::Create(in<const char*> name)
+{
+	Character::Create(name);
+
+	healthBar->SetLocalPosition(bae::Vector2F(0.0f, 12.0f));
+	healthBar->SetWidth(16.0f);
+	healthBar->SetColor(0x0088FFFF);
+}
+
+void PlayerCharacter::Destroy()
+{
+	Character::Destroy();
 }

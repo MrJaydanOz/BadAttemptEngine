@@ -55,10 +55,12 @@ namespace bae
 	int Image::GetWidth() const noexcept { return _sdlSurface->w; }
 	int Image::GetHeight() const noexcept { return _sdlSurface->h; }
 
-	/*void Image::RenderBlankAsObject(in<PoseF> pose, in<Vector2F> pivot, in<Vector2F> size, in<Color> color, ImageBlendMode blendingMode)
+	Image* Image::WhitePixel()
 	{
+		static Image* image = Load("Source/Public/BAE/Sprites/WhitePixel.png");
 
-	}*/
+		return image;
+	}
 
 	void Image::RenderAsObject(in_optional<RectI> sourceRect, in<PoseF> pose, in<Vector2F> pivot, in<Vector2F> scale, in<ImageFlipMode> flipMode, in<Color> color, ImageBlendMode blendingMode)
 	{
@@ -72,11 +74,6 @@ namespace bae
 
 		RenderAsDefault(sourceRect, destinationRect, rotation, rotationCenter, flipMode, color, blendingMode);
 	}
-
-	/*void Image::RenderBlankAsDefault(in_optional<RectF> destinationRect, in<double> rotation, in_optional<Vector2F> rotationCenter, in<Color> color, ImageBlendMode blendingMode)
-	{
-	
-	}*/
 
 	void Image::RenderAsDefault(in_optional<RectI> sourceRect, in_optional<RectF> destinationRect, in<double> rotationClockwise, in_optional<Vector2F> rotationCenter, in<ImageFlipMode> flipMode, in<Color> color, ImageBlendMode blendingMode)
 	{
@@ -130,5 +127,10 @@ namespace bae
 		rotation = pose.rotation;
 
 		rotationCenter = Vector2F(pivot.x * resultSize.x, (1.0f - pivot.y) * resultSize.y);
+	}
+
+	void Image::_DeleteStatics() noexcept
+	{
+		delete WhitePixel();
 	}
 }

@@ -7,7 +7,6 @@
 #include "Math/BAE_VectorT.h"
 #include "Math/BAE_Color.h"
 #include "Math/BAE_PoseT.h"
-#include "BAE_Game.h"
 
 struct SDL_Surface;
 struct SDL_Texture;
@@ -55,9 +54,13 @@ namespace bae
 #endif
 	struct Image
 	{
+		friend class Graphics;
+
 	private:
 		SDL_Surface* _sdlSurface;
 		SDL_Texture* _sdlTexture;
+
+		static Image* _whitePixel;
 
 	public:
 		/// <summary>
@@ -81,11 +84,9 @@ namespace bae
 		_NODISCARD int GetWidth() const noexcept;
 		_NODISCARD int GetHeight() const noexcept;
 
-		//static void RenderBlankAsObject(in_optional<RectI> sourceRect, in<PoseF> pose, in<Vector2F> pivot, in<Vector2F> scale = Vector2F(1.0f, 1.0f), in<Color> color = COLOR_WHITE, ImageBlendMode blendingMode = ImageBlendMode::BLENDMODE_NONE);
+		_NODISCARD static Image* WhitePixel();
 
 		void RenderAsObject(in_optional<RectI> sourceRect, in<PoseF> pose, in<Vector2F> pivot, in<Vector2F> scale = Vector2F(1.0f, 1.0f), in<ImageFlipMode> flipMode = ImageFlipMode::FLIP_NONE, in<Color> color = COLOR_WHITE, ImageBlendMode blendingMode = ImageBlendMode::BLENDMODE_NONE);
-
-		//static void RenderBlankAsDefault(in_optional<RectF> destinationRect, in<double> rotation = 0.0, in_optional<Vector2F> rotationCenter = {}, in<Color> color = COLOR_WHITE, ImageBlendMode blendingMode = ImageBlendMode::BLENDMODE_NONE);
 
 		void RenderAsDefault(in_optional<RectI> sourceRect, in_optional<RectF> destinationRect, in<double> rotation = 0.0, in_optional<Vector2F> rotationCenter = {}, in<ImageFlipMode> flipMode = ImageFlipMode::FLIP_NONE, in<Color> color = COLOR_WHITE, ImageBlendMode blendingMode = ImageBlendMode::BLENDMODE_NONE);
 
@@ -93,5 +94,7 @@ namespace bae
 		Image(in<SDL_Surface*> sdlSurface, in<SDL_Texture*> sdlTexture) noexcept;
 	
 		static void _ObjectParamsToDefaultParams(in<PoseF> pose, in<Vector2F> pivot, in<Vector2F> resultSize, ref<RectF> destinationRect, ref<double> rotation, ref<Vector2F> rotationCenter);
+
+		static void _DeleteStatics() noexcept;
 	};
 }

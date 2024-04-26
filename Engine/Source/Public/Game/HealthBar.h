@@ -16,6 +16,10 @@ public:
 public:
 	void Update() noexcept;
 
+	void SetWidth(in<float> width) noexcept;
+
+	void SetColor(in<bae::Color> color) noexcept;
+
 protected:
 	HealthBar(in<Node*> parent) noexcept : bae::Transform::Transform(parent),
 		maxHealth(0.0f),
@@ -24,7 +28,7 @@ protected:
 		fill(nullptr) { }
 	virtual ~HealthBar() noexcept override { }
 
-	virtual void Create(in<const char*> name, in<bae::Image*> image, in<float> health = 100.0f, in<float> width = 48.0f, bae::Color color = bae::COLOR_WHITE);
+	virtual void Create(in<const char*> name, in<float> health = 100.0f);
 	virtual void Create(in<const char*> name = "") override;
 
 	virtual void Destroy() override;

@@ -2,6 +2,7 @@
 #include "GameState.h"
 #include "GameStateMainMenu.h"
 #include "GameStateOptions.h"
+#include "GameStateLevel.h"
 
 bae::StateMachineInstance<bae::StateMachine<GameState>> stateMachine;
 GlobalState state;
@@ -12,6 +13,7 @@ void BAE_Start()
 	stateMachine.QueueState(
 		stateMachine.machine->CreateState<GameStateMainMenu>("MainMenu"));
 	stateMachine.machine->CreateState<GameStateOptions>("Options");
+	stateMachine.machine->CreateState<GameStateLevel>("Game");
 }
 
 void BAE_Update()

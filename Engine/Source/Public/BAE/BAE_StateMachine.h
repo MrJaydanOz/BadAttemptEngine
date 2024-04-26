@@ -167,6 +167,9 @@ namespace bae
 			}
 		}
 
+		const StateType* GetCurrentState() const noexcept
+		{ return _currentState; }
+
 		void ChangeStateToState(in<StateType*> targetState, StateParameterType parameter)
 		{
 			if (_doNoRecursionError)

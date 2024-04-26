@@ -1,6 +1,7 @@
 #include "Nodes/BAE_Visual.h"
 #include "BAE_Image.h"
 #include "BAE_Graphics.h"
+#include "BAE_Game.h"
 
 namespace bae
 {
