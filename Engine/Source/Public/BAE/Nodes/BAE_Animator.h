@@ -26,11 +26,12 @@ namespace bae
 		float _animationTime;
 
 	public:
-		void SetAnimation(Animation* animation)
-		{ _stateMachine.machine = animation; }
+		void SetAnimation(Animation* animation) noexcept;
+		Animation* GetAnimation() const noexcept;
 
-		float GetAnimationTime() const noexcept
-		{ return _animationTime; }
+		AnimationState* GetCurrentState() const noexcept;
+
+		float GetAnimationTime() const noexcept;
 
 		void Play(in<std::string> stateName, bool resetTime = true) noexcept;
 		void Play(in<size_t> stateIndex, bool resetTime = true) noexcept;

@@ -41,9 +41,13 @@ namespace bae
 
 	AnimationState::AnimationState(in<std::string> name) noexcept :
 		State::State(name),
+		changeToStateAfterDuration(nullptr),
+		duration(0.0f),
 		_controls() { }
 	AnimationState::AnimationState(in<std::string> name, in_initializer_list<AnimationControl*> controls) noexcept :
 		State::State(name),
+		changeToStateAfterDuration(nullptr),
+		duration(0.0f),
 		_controls(controls) { }
 
 	AnimationState::~AnimationState()
@@ -57,6 +61,12 @@ namespace bae
 
 	void AnimationState::OnTick(ParameterType parameter)
 	{
+		if (duration > 0.0f && parameter.b > duration)
+		{
+			parameter.a->Play(changeToStateAfterDuration, true);
+			return;
+		}
+
 		for (auto& control : _controls)
 		{
 			Node* foundNode = parameter.a;

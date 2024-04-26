@@ -22,10 +22,12 @@ public:
 
 private:
 	bool _lastIsWalking = false;
+	bool _lastIsShooting = false;
+	int _lastLookDirection = -1;
 	float _hurtAnimationTimer = 1.0f;
 
 public:
-	void UpdateAnimation(in<bae::Vector2F> lookDirection);
+	void UpdateAnimation(in<bae::Vector2F> lookDirection, bool shoot);
 
 	void Damage(in<float> amount);
 

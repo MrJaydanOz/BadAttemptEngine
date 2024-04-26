@@ -23,7 +23,7 @@ namespace bae
 		CameraTransform transform;
 		transform.offset = Game::GetGraphics()->camera.center;
 		transform.scale = 1.0f / unitsPerPixel;
-		transform.offset.position *= transform.scale;
+		transform.offset.position -= transform.offset.TransformDirection((Vector2F)Game::GetGraphics()->GetScreenSize() * (unitsPerPixel * 0.5f));
 
 		return transform;
 	}

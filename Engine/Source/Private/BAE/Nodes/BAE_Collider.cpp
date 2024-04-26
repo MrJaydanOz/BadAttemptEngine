@@ -5,6 +5,7 @@ namespace bae
 {
 	Collider::Collider(in<Node*> parent) noexcept :
 		Transform::Transform(parent),
+		collisionLayers(std::numeric_limits<decltype(collisionLayers)>::max()),
 		isTrigger(false) { }
 
 	Collider::~Collider() noexcept { }

@@ -18,6 +18,7 @@ namespace bae
 		friend class Physics;
 
 	public:
+		uint32 collisionLayers;
 		bool isTrigger;
 
 	protected:

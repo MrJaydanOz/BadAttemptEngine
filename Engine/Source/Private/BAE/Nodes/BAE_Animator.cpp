@@ -21,6 +21,17 @@ namespace bae
 		Behaviour::Destroy();
 	}
 
+	void Animator::SetAnimation(Animation* animation) noexcept
+	{ _stateMachine.machine = animation; }
+	Animation* Animator::GetAnimation() const noexcept
+	{ return _stateMachine.machine; }
+
+	AnimationState* Animator::GetCurrentState() const noexcept
+	{ return _stateMachine.GetCurrentState(); }
+
+	float Animator::GetAnimationTime() const noexcept
+	{ return _animationTime; }
+
 	void Animator::Play(in<std::string> stateName, bool resetTime) noexcept
 	{
 		if (_stateMachine.machine == nullptr)

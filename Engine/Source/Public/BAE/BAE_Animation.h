@@ -70,6 +70,9 @@ namespace bae
 
 		friend class Animator;
 
+		AnimationState* changeToStateAfterDuration;
+		float duration;
+
 	private:
 		bae::List<AnimationControl*> _controls;
 

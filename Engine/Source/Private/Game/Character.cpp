@@ -1,6 +1,6 @@
 #include "Character.h"
 
-void Character::UpdateAnimation(in<bae::Vector2F> lookDirection)
+void Character::UpdateAnimation(in<bae::Vector2F> lookDirection, bool shoot)
 {
 	if (_hurtAnimationTimer >= 0.0f)
 	{
@@ -16,15 +16,33 @@ void Character::UpdateAnimation(in<bae::Vector2F> lookDirection)
 
 	bool isWalking = velocity.SqrMagnitude() > 1.0f;
 
-	float angle = bae::ATan2(lookDirection.y, lookDirection.x) + (DEG_TO_RAD * 180.0f);
+	float angle = bae::ATan2(lookDirection.y, lookDirection.x);
 	int direction = bae::Mod(bae::RoundI(angle * RAD_TO_TURN * 16.0f), 16);
 
-	animator->Play(isWalking 
-		? ((size_t)direction + 16) 
-		: (size_t)direction + 0,
-		isWalking != _lastIsWalking);
+	if (shoot)
+	{
+		animator->Play((size_t)direction + 32, true);
+
+		_lastIsShooting = true;
+	}
+	else
+	{
+		auto currentState = animator->GetCurrentState();
+		bool isShooting = currentState != nullptr && currentState->GetKey().starts_with("shoot");
+
+		if ((direction != _lastLookDirection) || (isWalking != _lastIsWalking) || (isShooting != _lastIsShooting))
+			animator->Play(isShooting
+				? (size_t)direction + 32
+				: isWalking
+				? (size_t)direction + 16
+				: (size_t)direction + 0,
+				(isWalking != _lastIsWalking) || (isShooting != _lastIsShooting));
+
+		_lastIsShooting = isShooting;
+	}
 
 	_lastIsWalking = isWalking;
+	_lastLookDirection = direction;
 }
 
 void Character::Damage(in<float> amount)

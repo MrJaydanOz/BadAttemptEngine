@@ -42,8 +42,6 @@ namespace bae
 			if (TryFindParentOfTypeRecursive<Transform>(parentTransform))
 				pose = parentTransform->TransformPose(pose);
 
-			DEBUG_LOG_INFO(camera.offset << ", " << camera.scale);
-
 			Vector2F usedScale = scale;
 
 			if (!isUI)

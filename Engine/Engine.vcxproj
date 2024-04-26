@@ -125,6 +125,7 @@
     <ClCompile Include="Source\Private\Game\GameStateMainMenu.cpp" />
     <ClCompile Include="Source\Private\Game\GameStateOptions.cpp" />
     <ClCompile Include="Source\Private\Game\HealthBar.cpp" />
+    <ClCompile Include="Source\Private\Game\Projectiles.cpp" />
     <ClCompile Include="Source\Private\Game\Source.cpp" />
     <ClCompile Include="Source\Private\BAE\Menus\BAE_WinMenu.cpp" />
     <ClCompile Include="Source\Public\BAE\BAE_Animation.h" />
@@ -259,6 +260,7 @@
     <ClInclude Include="Source\Public\Game\GameStateMainMenu.h" />
     <ClInclude Include="Source\Public\Game\GameStateOptions.h" />
     <ClInclude Include="Source\Public\Game\HealthBar.h" />
+    <ClInclude Include="Source\Public\Game\Projectiles.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="ExternalLibs\StaticLibs\SDL2.lib" />

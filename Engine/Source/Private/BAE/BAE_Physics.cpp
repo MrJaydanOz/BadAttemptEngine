@@ -83,7 +83,7 @@ namespace bae
 					{
 						for (auto& [collider1, collider1physicsBody] : _collidersWithConnectedBodyBuffer)
 						{
-							if (collider1 != nullptr && collider1physicsBody == physicsBody1 && !(collider1->isTrigger && collider2->isTrigger))
+							if (collider1 != nullptr && collider1physicsBody == physicsBody1 && !(collider1->isTrigger && collider2->isTrigger) && (collider1->collisionLayers & collider2->collisionLayers) != 0)
 							{
 								didCollide = false;
 
