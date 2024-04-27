@@ -60,4 +60,4 @@
 #endif
 #define DEBUG_LOG_SDL_ERROR(message)                                        DEBUG_LOG_ERROR_CONTEXTED(SDL_LOG_CONTEXT, message << SDL_GetError());
 
-#define DEBUG_NODE_NAME(nodePointer) "\'" << (nodePointer)->GetName() << "'(" << typeid(nodePointer).name() << ')'
+#define DEBUG_NODE_NAME(nodePointer) "\'" << (nodePointer)->GetName() << "'(" << typeid(std::remove_pointer_t<decltype(nodePointer)>).name() << ')'

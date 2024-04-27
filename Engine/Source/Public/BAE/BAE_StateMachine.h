@@ -47,8 +47,47 @@ namespace bae
 
 		virtual void OnEnd(ParameterType parameter) = 0;
 
+	protected:
 		State(in<TKey> key) noexcept :
 			_key(key) { }
+	};
+
+#if defined(MESSAGE_WHEN_CLASS_DECLARED)
+#pragma message(MESSAGE_WHEN_CLASS_DECLARED(class DelegateState))
+#endif
+	template<typename TKey, typename TParameter, typename TKeyCompare = std::equal_to<TKey>>
+	class DelegateState : public State<TKey, TParameter, TKeyCompare>
+	{
+	public:
+		using DelegateType = void(TParameter);
+
+	public:
+		DelegateType* start;
+		DelegateType* tick;
+		DelegateType* end;
+
+	public:
+		virtual void OnStart(TParameter parameter)
+		{ if (start != nullptr) start(parameter); }
+
+		virtual void OnTick(TParameter parameter)
+		{ if (tick != nullptr) tick(parameter); }
+
+		virtual void OnEnd(TParameter parameter)
+		{ if (end != nullptr) end(parameter); }
+
+	protected:
+		DelegateState(in<TKey> key, DelegateType* tick) noexcept :
+			State::State(key),
+			tick(tick),
+			start(nullptr),
+			end(nullptr) { }
+
+		DelegateState(in<TKey> key, DelegateType* tick, DelegateType* start, DelegateType* end) noexcept :
+			State::State(key),
+			tick(tick),
+			start(start),
+			end(end) { }
 	};
 
 	template<typename TStateType>

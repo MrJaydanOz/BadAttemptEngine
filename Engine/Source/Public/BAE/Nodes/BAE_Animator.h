@@ -43,12 +43,13 @@ namespace bae
 
 		void Stop() noexcept;
 
-	private:
+	protected:
 		Animator(in<Node*> parent) noexcept;
 		virtual ~Animator() noexcept override;
 		virtual void Create(in<const char*> name = "") override;
 		virtual void Destroy() override;
 
+	private:
 		void _Process(in<float> deltaTime) noexcept;
 	};
 }

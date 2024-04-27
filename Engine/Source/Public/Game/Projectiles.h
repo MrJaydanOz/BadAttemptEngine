@@ -1,4 +1,4 @@
-#pragma 
+#pragma once
 #include "BAE/Nodes/BAE_PhysicsBody.h"
 #include "BAE/Nodes/BAE_ColliderAxisBox.h"
 #include "BAE/Nodes/BAE_Animator.h"

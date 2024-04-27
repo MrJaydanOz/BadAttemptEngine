@@ -404,6 +404,7 @@ namespace bae
 	private:
 		bool _isWorking;
         uint8 _previousKeyStates[(size_t)KeyCode::KEYCODE_NUM_CODES];
+        uint8 _currentKeyStates[(size_t)KeyCode::KEYCODE_NUM_CODES];
 
     public:
         _NODISCARD bool KeyHeld(in<KeyCode> keyCode) const noexcept;

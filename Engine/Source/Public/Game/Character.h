@@ -8,6 +8,8 @@
 #include "BAE/BAE_Game.h"
 #include "HealthBar.h"
 
+class GameStateLevel;
+
 class Character : public bae::PhysicsBody
 {
 	NODE_BEGIN;
@@ -33,12 +35,16 @@ public:
 
 	void MoveWithInput(in<bae::Vector2F> input);
 
+	virtual void Setup(in<GameStateLevel> level) { }
+
+	static int GetDirectionAnimationIndex(in<bae::Vector2F> direction);
+
 protected:
 	Character(in<Node*> parent) noexcept : 
 		PhysicsBody::PhysicsBody(parent) { }
 	virtual ~Character() noexcept override { }
 
-	virtual void Create(in<const char*> name = "") override;
+	virtual void Create(in<const char*> name) override;
 
 	virtual void Destroy() override;
 };
@@ -47,11 +53,54 @@ class PlayerCharacter : public Character
 {
 	NODE_BEGIN;
 
+public:
+	virtual void Setup(in<GameStateLevel> level) override;
+
+protected:
 	PlayerCharacter(in<Node*> parent) noexcept : 
 		Character::Character(parent) { }
 	virtual ~PlayerCharacter() noexcept override { }
 
-	virtual void Create(in<const char*> name = "") override;
+	virtual void Create(in<const char*> name) override;
+
+	virtual void Destroy() override;
+};
+
+class EnemyCharacter : public Character
+{
+	NODE_BEGIN;
+
+public:
+	virtual void Tick(in<GameStateLevel> level) noexcept = 0;
+
+protected:
+	EnemyCharacter(in<Node*> parent) noexcept :
+		Character::Character(parent) { }
+	virtual ~EnemyCharacter() noexcept override { }
+
+	virtual void Create(in<const char*> name) override;
+
+	virtual void Destroy() override;
+};
+
+class RollingEnemy : public EnemyCharacter
+{
+	NODE_BEGIN;
+
+public:
+	float blinkTimer = 0.0f;
+
+public:
+	virtual void Setup(in<GameStateLevel> level) override;
+
+	virtual void Tick(in<GameStateLevel> level) noexcept override;
+
+protected:
+	RollingEnemy(in<Node*> parent) noexcept :
+		EnemyCharacter::EnemyCharacter(parent) { }
+	virtual ~RollingEnemy() noexcept override { }
+
+	virtual void Create(in<const char*> name) override;
 
 	virtual void Destroy() override;
 };

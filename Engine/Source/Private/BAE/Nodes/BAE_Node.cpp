@@ -145,6 +145,20 @@ namespace bae
 		NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, OnParentChanged);
 	}
 
+	void Node::_CallCreate(in<const char*> name)
+	{
+		try { Create(name); }
+		catch (in<std::exception> exception)
+		{
+			DEBUG_LOG_EXCEPTION_CONTEXTED(DEBUG_NODE_NAME(this) << ".Create()", exception);
+		};
+
+		if (!_IsActive())
+			DEBUG_LOG_ERROR_CONTEXTED(BAE_LOG_CONTEXT,
+				"A node has been created with Create() has not also called its base::Create(). "
+				"All nodes have to call their base::Create().");
+	}
+
 	void Node::_CallDestroy()
 	{
 		NODE_TRIGGER_EVENT_WITH_TRY_CATCH(this, Destroy);

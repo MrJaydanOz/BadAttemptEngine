@@ -234,15 +234,15 @@ namespace bae
 		bool TryFindParentWithNameRecursive(in<std::string> name, out<T*> result) const noexcept requires std::is_base_of_v<Node, T>
 		{ return TryFindParentThatRecursive<T>([&](in<T*> node) -> bool { return node->NameIs(name); }, result); }
 
-		template<typename T, typename... TConstructorArguments>
-		T* AddChild(in<const char*> name, TConstructorArguments... constructorArguments) requires std::is_base_of_v<Node, T>
-		{ return AddChildIn<T, TConstructorArguments...>(this, name, constructorArguments...); }
+		template<typename T>
+		T* AddChild(in<const char*> name) requires std::is_base_of_v<Node, T>
+		{ return AddChildIn<T>(this, name); }
 
-		template<typename T, typename... TConstructorArguments>
-		static T* AddChildIn(in<Node*> parent, in<const char*> name, TConstructorArguments... constructorArguments) requires std::is_base_of_v<Node, T>
+		template<typename T>
+		static T* AddChildIn(in<Node*> parent, in<const char*> name) requires std::is_base_of_v<Node, T>
 		{
 			T* newNode = _ConstructNode<T>(parent);
-			newNode->_CallCreate(name, constructorArguments...);
+			newNode->_CallCreate(name);
 			return newNode;
 		}
 
@@ -275,18 +275,7 @@ namespace bae
 		static T* _ConstructNode(in<Node*> parent) requires std::is_base_of_v<Node, T>
 		{ return new T(parent); }
 
-		template<typename... TConstructorArguments>
-		void _CallCreate(in<const char*> name, TConstructorArguments... constructorArguments)
-		{
-			try { Create(name, constructorArguments...); }
-			catch (in<std::exception> exception) 
-			{ DEBUG_LOG_EXCEPTION_CONTEXTED(DEBUG_NODE_NAME(this) << ".Create()", exception); };
-
-			if (!_IsActive())
-				DEBUG_LOG_ERROR_CONTEXTED(BAE_LOG_CONTEXT,
-					"A node has been created with Create() has not also called its base::Create(). "
-					"All nodes have to call their base::Create().");
-		}
+		void _CallCreate(in<const char*> name);
 
 		void _CallDestroy();
 

@@ -36,8 +36,6 @@ typedef unsigned long long int uint128;
 
 template<typename T>
 using in = const T&;
-//template<typename T> 
-//using in_value = std::conditional_t<std::is_same_v<std::remove_pointer_t<T>, T>, const T, const std::remove_pointer_t<T>*>;
 template<typename T>
 using in_delegate = const T;
 template<typename T>

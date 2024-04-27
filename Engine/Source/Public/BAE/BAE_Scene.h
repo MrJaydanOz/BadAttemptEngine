@@ -149,12 +149,12 @@ namespace bae
 		size_t FindNodesWithName(in<std::string> name, ref<TResultCollection> results) requires std::is_base_of_v<Node, T>
 		{ return FindNodesThat<T>([&](in<T*> node) -> bool { return node->NameIs(name); }); }
 
-		template<typename T, typename... TConstructorArguments>
-		T* AddNode(in<const char*> name, TConstructorArguments... constructorArguments) requires std::is_base_of_v<Node, T>
+		template<typename T>
+		T* AddNode(in<const char*> name) requires std::is_base_of_v<Node, T>
 		{
 			T* newNode = Node::_ConstructNode<T>(nullptr);
 			newNode->_location_type = Node::_Node_Location_Type::_NODE_LOCATION_SCENE_ROOT;
-			newNode->_CallCreate<TConstructorArguments...>(name, constructorArguments...);
+			newNode->_CallCreate(name);
 			return newNode;
 		}
 
@@ -174,12 +174,12 @@ namespace bae
 			return nullptr;
 		}
 
-		template<typename T, typename... TConstructorArguments>
-		T* AddPrefab(in<const char*> name, TConstructorArguments... constructorArguments) requires std::is_base_of_v<Node, T>
+		template<typename T>
+		T* AddPrefab(in<const char*> name) requires std::is_base_of_v<Node, T>
 		{
 			T* newNode = Node::_ConstructNode<T>(nullptr);
 			newNode->_location_type = Node::_Node_Location_Type::_NODE_LOCATION_SCENE_PREFAB;
-			newNode->_CallCreate(name, constructorArguments...);
+			newNode->_CallCreate(name);
 			return newNode;
 		}
 

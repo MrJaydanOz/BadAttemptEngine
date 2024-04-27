@@ -53,10 +53,15 @@ namespace bae
 		template<typename TResultCollection = bae::List<PhysicsCollision>>
 		size_t FindCollisionsOf(in<PhysicsBody*> physicsBody, ref<TResultCollection> results)
 		{
+			size_t count = 0u;
+
 			for (const PhysicsCollision& collision : _collisionLog)
 			{
 				if (collision.physicsBody1 == physicsBody)
+				{
 					results.push_back(collision);
+					count++;
+				}
 				else if (collision.physicsBody2 == physicsBody)
 				{
 					PhysicsCollision flippedCollision = collision;
@@ -65,17 +70,25 @@ namespace bae
 					flippedCollision.contactNormal = -flippedCollision.contactNormal;
 
 					results.push_back(flippedCollision);
+					count++;
 				}
 			}
+
+			return count;
 		}
 
 		template<typename TResultCollection = bae::List<PhysicsCollision>>
 		size_t FindCollisionsOf(in<Collider*> collider, ref<TResultCollection> results)
 		{
+			size_t count = 0u;
+
 			for (const PhysicsCollision& collision : _collisionLog)
 			{
 				if (collision.collider1 == collider)
+				{
 					results.push_back(collision);
+					count++;
+				}
 				else if (collision.collider2 == collider)
 				{
 					PhysicsCollision flippedCollision = collision;
@@ -84,8 +97,11 @@ namespace bae
 					flippedCollision.contactNormal = -flippedCollision.contactNormal;
 
 					results.push_back(flippedCollision);
+					count++;
 				}
 			}
+
+			return count;
 		}
 
 		template<typename TPredicate = bool(PhysicsCollision)>
