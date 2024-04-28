@@ -110,7 +110,11 @@ namespace bae
 		case ID_GAME_GAMECONTROLS:
 			Game::GetWinMenu()->ActivatePopup("Game Controls",
 				"WASD - Move Ship\n"
-				"Left Mouse Button - Attack"
+				"Left Mouse Button - Attack\n"
+				"White Cubie - Points +50\n"
+				"Red Cubie - Health +25%\n"
+				"Green Cubie - Fire Rate +1/s\n"
+				"Blue Cubie - Move Speed +5 units/s"
 			);
 			break;
 		case ID_ABOUT_ABOUTBADATTEMPTENGINE:
@@ -133,11 +137,19 @@ namespace bae
 				"everything they held dear."
 			);
 			break;
-		case ID_GAME_CHEATS_DOUBLETIMESCALE:
+		case ID_CHEATS_DOUBLETIMESCALE:
 			Game::GetTime()->SetTimeScale(Game::GetTime()->GetTimeScale() * 2.0f);
 			break;
-		case ID_GAME_CHEATS_HALFTIMESCALE:
+		case ID_CHEATS_HALFTIMESCALE:
 			Game::GetTime()->SetTimeScale(Game::GetTime()->GetTimeScale() * 0.5f);
+			break;
+		case ID_CHEATS_RESETTIMESCALE:
+			Game::GetTime()->SetTimeScale(1.0f);
+			break;
+		case ID_GAME_CRY:
+			Game::GetWinMenu()->ActivatePopup("Cried",
+				"WHY IS THIS 4 LINES OF CODE, OF ALL THINGS, WORTH 20% OF THE MARKS!?"
+			);
 			break;
 		default:
 			break;

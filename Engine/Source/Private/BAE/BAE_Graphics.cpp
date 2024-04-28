@@ -159,7 +159,8 @@ namespace bae
 		CameraTransform cameraTransform = camera.CalculateTransform(camera.CalculateUnitsPerPixel((Vector2F)GetScreenSize()));
 
 		for (Visual* visual : *_visualsInZOrder)
-			visual->Render(cameraTransform);
+			if (visual->IsEnabled())
+				visual->Render(cameraTransform);
 
 		SDL_RenderPresent(_sdlRenderer);
 	}

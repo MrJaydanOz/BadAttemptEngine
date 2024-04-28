@@ -143,7 +143,7 @@ namespace bae
 
 								if (didCollide)
 								{
-									if (!collider1->isTrigger)
+									if (!collider1->isTrigger && !collider2->isTrigger)
 									{
 										if (physicsBody2 == nullptr)
 										{

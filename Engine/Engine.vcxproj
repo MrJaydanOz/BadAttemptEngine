@@ -120,6 +120,7 @@
     <ClCompile Include="Source\Private\BAE\BAE_Time.cpp" />
     <ClCompile Include="Source\Private\Game\Button.cpp" />
     <ClCompile Include="Source\Private\Game\Character.cpp" />
+    <ClCompile Include="Source\Private\Game\Collectables.cpp" />
     <ClCompile Include="Source\Private\Game\Effect.cpp" />
     <ClCompile Include="Source\Private\Game\GameState.cpp" />
     <ClCompile Include="Source\Private\Game\GameStateLevel.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Public\Game\Button.h" />
     <ClInclude Include="Source\Public\Game\Character.h" />
+    <ClInclude Include="Source\Public\Game\Collectables.h" />
     <ClInclude Include="Source\Public\Game\Effect.h" />
     <ClInclude Include="Source\Public\Game\GameState.h" />
     <ClInclude Include="Source\Public\BAE\BAE.h" />

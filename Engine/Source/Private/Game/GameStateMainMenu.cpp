@@ -1,8 +1,45 @@
 #include "GameStateMainMenu.h"
 #include "BAE/BAE_Game.h"
-#include "Bae/BAE_Font.h"
-#include "Bae/Nodes/BAE_Text.h"
-#include "Bae/BAE_Debug.h"
+#include "BAE/BAE_Font.h"
+#include "BAE/Nodes/BAE_Text.h"
+#include "BAE/BAE_Debug.h"
+#include "BAE/BAE_Math.h"
+
+void GameStateSplashScreen::OnStart(ParameterType machine)
+{
+	bae::Vector2I screenSize = bae::Game::GetGraphics()->GetScreenSize();
+	bae::Vector2F screenSizef = (bae::Vector2F)screenSize;
+
+	bae::Scene& scene = *bae::Game::GetScene();
+
+	titleFont = bae::Font::Load("Content/Fonts/Roboto/Roboto-Bold.ttf", 86);
+
+	title = scene.AddNode<bae::Text>("Title");
+	title->offset = bae::PoseF((screenSizef * 0.5f), 0.0f);
+	title->font = titleFont;
+	title->isUI = true;
+	title->text = "Bad Attempt Engine";
+}
+
+void GameStateSplashScreen::OnTick(ParameterType machine)
+{
+	timer += bae::Game::GetTime()->UnscaledDeltaTime();
+
+	float brightness = bae::Min(1.0f, timer, 3.0f - timer);
+
+	title->color = (bae::Color)bae::ColorF(1.0f, 1.0f, 1.0f, brightness);
+	title->scale = bae::Vector2F(1.0f, 1.0f) * (1.0f + (timer * 0.01f));
+
+	if (timer > 3.0f)
+		machine.a.QueueState("MainMenu");
+}
+
+void GameStateSplashScreen::OnEnd(ParameterType machine)
+{
+	delete titleFont;
+
+	bae::Destroy(title);
+}
 
 void GameStateMainMenu::OnStart(ParameterType machine)
 {

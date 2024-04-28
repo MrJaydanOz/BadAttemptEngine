@@ -8,6 +8,7 @@ struct GlobalState
 {
 public:
 	bool yesState;
+	int lastGameScore;
 
 public:
 	GlobalState() noexcept :

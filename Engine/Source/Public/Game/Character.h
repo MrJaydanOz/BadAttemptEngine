@@ -19,14 +19,15 @@ public:
 	float acceleration = 0.0f;
 	bae::Animator* animator = nullptr;
 	bae::Sprite* sprite = nullptr;
+	bae::Sprite* shadow = nullptr;
 	bae::ColliderAxisBox* collider = nullptr;
 	HealthBar* healthBar = nullptr;
 
-private:
-	bool _lastIsWalking = false;
-	bool _lastIsShooting = false;
-	int _lastLookDirection = -1;
-	float _hurtAnimationTimer = 1.0f;
+protected:
+	bool lastIsWalking = false;
+	bool lastIsShooting = false;
+	int lastLookDirection = -1;
+	float hurtAnimationTimer = -1.0f;
 
 public:
 	void UpdateAnimation(in<bae::Vector2F> lookDirection, bool shoot);
@@ -35,7 +36,7 @@ public:
 
 	void MoveWithInput(in<bae::Vector2F> input);
 
-	virtual void Setup(in<GameStateLevel> level) { }
+	virtual void Setup(ref<GameStateLevel> level) { }
 
 	static int GetDirectionAnimationIndex(in<bae::Vector2F> direction);
 
@@ -54,7 +55,7 @@ class PlayerCharacter : public Character
 	NODE_BEGIN;
 
 public:
-	virtual void Setup(in<GameStateLevel> level) override;
+	virtual void Setup(ref<GameStateLevel> level) override;
 
 protected:
 	PlayerCharacter(in<Node*> parent) noexcept : 
@@ -71,7 +72,9 @@ class EnemyCharacter : public Character
 	NODE_BEGIN;
 
 public:
-	virtual void Tick(in<GameStateLevel> level) noexcept = 0;
+	virtual void Tick(ref<GameStateLevel> level) noexcept;
+
+	virtual void Die(ref<GameStateLevel> level) noexcept = 0;
 
 protected:
 	EnemyCharacter(in<Node*> parent) noexcept :
@@ -91,14 +94,68 @@ public:
 	float blinkTimer = 0.0f;
 
 public:
-	virtual void Setup(in<GameStateLevel> level) override;
+	virtual void Setup(ref<GameStateLevel> level) override;
 
-	virtual void Tick(in<GameStateLevel> level) noexcept override;
+	virtual void Tick(ref<GameStateLevel> level) noexcept override;
+
+	virtual void Die(ref<GameStateLevel> level) noexcept;
 
 protected:
 	RollingEnemy(in<Node*> parent) noexcept :
 		EnemyCharacter::EnemyCharacter(parent) { }
 	virtual ~RollingEnemy() noexcept override { }
+
+	virtual void Create(in<const char*> name) override;
+
+	virtual void Destroy() override;
+};
+
+class BasicEnemy : public EnemyCharacter
+{
+	NODE_BEGIN;
+
+public:
+	float shootTimer = 0.0f;
+	float moveTimer = 0.0f;
+	bae::Vector2F moveTarget = bae::Vector2F();
+
+public:
+	virtual void Setup(ref<GameStateLevel> level) override;
+
+	virtual void Tick(ref<GameStateLevel> level) noexcept override;
+
+	virtual void Die(ref<GameStateLevel> level) noexcept;
+
+protected:
+	BasicEnemy(in<Node*> parent) noexcept :
+		EnemyCharacter::EnemyCharacter(parent) { }
+	virtual ~BasicEnemy() noexcept override { }
+
+	virtual void Create(in<const char*> name) override;
+
+	virtual void Destroy() override;
+};
+
+class ShotgunEnemy : public EnemyCharacter
+{
+	NODE_BEGIN;
+
+public:
+	float shootTimer = 0.0f;
+	float moveTimer = 0.0f;
+	bae::Vector2F moveTarget = bae::Vector2F();
+
+public:
+	virtual void Setup(ref<GameStateLevel> level) override;
+
+	virtual void Tick(ref<GameStateLevel> level) noexcept override;
+
+	virtual void Die(ref<GameStateLevel> level) noexcept;
+
+protected:
+	ShotgunEnemy(in<Node*> parent) noexcept :
+		EnemyCharacter::EnemyCharacter(parent) { }
+	virtual ~ShotgunEnemy() noexcept override { }
 
 	virtual void Create(in<const char*> name) override;
 

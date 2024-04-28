@@ -10,7 +10,7 @@ namespace bae
 		_parent(parent),
 		_name(""),
 		_children(),
-		_statusFlags(0b01),
+		_statusFlags(0b00),
 		_location_type(_Node_Location_Type::_NODE_LOCATION_INVALID) { }
 
 	Node::~Node() noexcept { }

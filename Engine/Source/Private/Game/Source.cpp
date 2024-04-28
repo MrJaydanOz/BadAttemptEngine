@@ -11,9 +11,11 @@ void BAE_Start()
 {
 	stateMachine.machine = new bae::StateMachine<GameState>();
 	stateMachine.QueueState(
-		stateMachine.machine->CreateState<GameStateMainMenu>("MainMenu"));
+		stateMachine.machine->CreateState<GameStateSplashScreen>("SplashScreen"));
+	stateMachine.machine->CreateState<GameStateMainMenu>("MainMenu");
 	stateMachine.machine->CreateState<GameStateOptions>("Options");
 	stateMachine.machine->CreateState<GameStateLevel>("Game");
+	stateMachine.machine->CreateState<GameStateDiedScreen>("DiedScreen");
 }
 
 void BAE_Update()
