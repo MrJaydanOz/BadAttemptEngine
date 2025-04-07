@@ -5,11 +5,6 @@ Final project on [BAE-2 Branch](https://github.com/MrJaydanOz/BadAttemptEngine/t
 BadAttemptEngine is a uni project and an emotional rollercoaster. It is a basic C++ Game Engine that uses SDL2 to
 draw graphics. I was so bored in class because most of it was 'fOlLoW AlOnG WiTh tHe iNsTrUcToR' so I went _lone wolf_...
 
-&nbsp;&nbsp;_After all a project not easy,_ <br>
-&nbsp;&nbsp;&nbsp;&nbsp;_A project that was not at all planned,_ <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_This code almost made me give up, though_ <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_After all a perfect score._ (only on the last assignment tho)
-
 --------
 
 - [Technical Document](https://docs.google.com/document/d/1ep7xmiB2JU8VjFywWRHdd07OJuIpHz6M6iHj5UjrukI/edit?usp=sharing)
