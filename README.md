@@ -3,7 +3,7 @@
 Final project on [BAE-2 Branch](https://github.com/MrJaydanOz/BadAttemptEngine/tree/BAE-2).
 
 BadAttemptEngine is a uni project and an emotional rollercoaster. It is a basic C++ Game Engine that uses SDL2 to
-draw graphics. I was so bored in class because most of it was 'fOlLoW AlOnG WiTh tHe iNsTrUcToR' so I went _lone wolf_...
+draw graphics.
 
 --------
 
